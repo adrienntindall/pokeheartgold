@@ -3,6 +3,12 @@
 
 #include "battle.h"
 
+typedef struct SEND_DATA {
+    u8 unk0;
+    u8 unk1;
+    u16 size;
+} SEND_DATA;
+
 void BattleController_EmitPlayEncounterAnimation(BattleSystem *bsys, BOOL a1);
 void BattleController_EmitPokemonEncounter(BattleSystem *bsys, int battlerId);
 void BattleController_EmitPokemonSlideIn(BattleSystem *bsys, int battlerId);
