@@ -101,7 +101,7 @@ BOOL BattleArcadeGameBoard_InitOverlay(OVY_MANAGER *man, int *state) {
     work->unk2A = args->unk1E;
     work->winstreak = args->winstreak;
     work->multiWinstreak = args->multiWinstreak;
-    work->unk12 = args->unk7;
+    work->unk12 = args->bp;
     work->returnWork = &args->returnWork;
     work->options = Sav2_PlayerData_GetOptionsAddr(work->savedata);
     work->playerParty = args->playerParty;

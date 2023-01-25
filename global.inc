@@ -8079,8 +8079,8 @@
 .public ov80_0222BCE0
 .public ov80_0222BD44
 .public ov80_0222BDD4
-.public ov80_0222BDF4
-.public ov80_0222BE10
+.public FrontierScript_GetVarPointer
+.public FrontierScript_ReadHalfword
 .public ov80_0222BE24
 .public ov80_0222BE9C
 .public ov80_0222EFD0

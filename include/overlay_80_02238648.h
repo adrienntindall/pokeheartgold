@@ -1,0 +1,9 @@
+#ifndef POKEHEARTGOLD_OVERLAY_80_02238648_H
+#define POKEHEARTGOLD_OVERLAY_80_02238648_H
+
+typedef struct UnkStruct_80_02238648 {
+    void *unk0;
+    void *unk4;
+} UnkStruct_80_02238648;
+
+#endif //POKEHEARTGOLD_OVERLAY_80_02238648_H

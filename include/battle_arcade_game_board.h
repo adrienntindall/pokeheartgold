@@ -15,13 +15,12 @@
 #define ARCADE_ENEMY_POKEMON_MAX    4
 #define HEAP_ID_GAME_BOARD        110
 
-
 typedef struct GAME_BOARD_ARGS {
     SAVEDATA *savedata;
     u8 type;
     u8 level;
     u8 unk6;
-    u8 unk7;
+    u8 bp;
     int *weather;
     u8 *cursorSpeed;
     u8 *unk10;
