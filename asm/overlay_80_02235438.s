@@ -26,7 +26,7 @@ ov80_0223544C: ; 0x0223544C
 	bl ov80_0222AC58
 	add r6, r0, #0
 	add r0, r7, #0
-	bl FrontierScript_ReadHalfword
+	bl FrontierScript_ReadWord
 	str r0, [sp]
 	add r0, r7, #0
 	bl FrontierScript_GetVarPointer
@@ -338,10 +338,10 @@ ov80_022356AC: ; 0x022356AC
 	ldr r0, [r0]
 	bl sub_02096808
 	add r0, r4, #0
-	bl FrontierScript_ReadHalfword
+	bl FrontierScript_ReadWord
 	add r6, r0, #0
 	add r0, r4, #0
-	bl FrontierScript_ReadHalfword
+	bl FrontierScript_ReadWord
 	add r7, r0, #0
 	add r0, r4, #0
 	bl FrontierScript_GetVarPointer

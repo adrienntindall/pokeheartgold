@@ -1,8 +1,8 @@
 #ifndef POKEHEARTGOLD_OVERLAY_80_H
 #define POKEHEARTGOLD_OVERLAY_80_H
 
-BOOL BattleArcade_MultiplayerCheck(int type);
-u8 ov80_022384BC(u8 a0);
+BOOL BattleArcade_IsMultiplayer(int type);
+u8 BattleArcade_GetPanelColor(u8 a0);
 u8 BattleArcade_GetMonCount(u8 type, int a1);
 u8 BattleArcade_GetOpponentMonCount(u8 type, int a1);
 

@@ -67,7 +67,7 @@ typedef struct UnkFrontierStruct {
     void *unk10;
 } UnkFrontierStruct;
 
-u32 FrontierScript_ReadHalfword(FRONTIER_CONTEXT *ctx);
+u32 FrontierScript_ReadWord(FRONTIER_CONTEXT *ctx);
 u16 *FrontierScript_GetVarPointer(FRONTIER_CONTEXT *ctx);
 UnkFrontierStruct *sub_02096808(void *);
 void *sub_02096810(void *);

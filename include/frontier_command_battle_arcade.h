@@ -70,17 +70,17 @@ typedef struct BattleArcadeWork {
 } BattleArcadeWork;
 
 //Commands
-BOOL ov80_02233688(FRONTIER_CONTEXT *ctx);
-BOOL ov80_022336EC(FRONTIER_CONTEXT *ctx);
-BOOL ov80_02233770(FRONTIER_CONTEXT *ctx);
-BOOL ov80_02233908(FRONTIER_CONTEXT *ctx);
+BOOL FrontierCmd_BattleArcadeAlloc(FRONTIER_CONTEXT *ctx);
+BOOL FrontierCmd_BattleArcadeInit(FRONTIER_CONTEXT *ctx);
+BOOL FrontierCmd_BattleArcadeGetResult(FRONTIER_CONTEXT *ctx);
+BOOL FrontierCmd_BattleArcadeStartBattle(FRONTIER_CONTEXT *ctx);
 BOOL ov80_02233A30(FRONTIER_CONTEXT *ctx);
 BOOL ov80_02233A44(FRONTIER_CONTEXT *ctx);
 BOOL ov80_02233A58(FRONTIER_CONTEXT *ctx);
 
 //Sub
-BattleArcadeWork *ov80_022340E8(SAVEDATA *, u32, u8, u32, u32, u32, u16 *);
-BattleArcadeWork *ov80_0223437C(BattleArcadeWork *, u32);
-void ov80_02234520(BattleArcadeWork *work);
+BattleArcadeWork *BattleArcade_Alloc(SAVEDATA *, u32, u8, u32, u32, u32, u16 *);
+BattleArcadeWork *BattleArcade_Init(BattleArcadeWork *, u32);
+void BattleArcade_Free(BattleArcadeWork *work);
 
 #endif

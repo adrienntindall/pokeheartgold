@@ -130,7 +130,7 @@ BOOL BattleArcadeGameBoard_InitOverlay(OVY_MANAGER *man, int *state) {
     
     BattleArcadeGameBoard_InitObjects(work);
     
-    if (BattleArcade_MultiplayerCheck(work->type) == TRUE) {
+    if (BattleArcade_IsMultiplayer(work->type) == TRUE) {
         sub_02096910(work);
     }
     
@@ -160,7 +160,7 @@ BOOL BattleArcadeGameBoard_Main(OVY_MANAGER *man, int *state) {
         if (BattleArcadeGameBoard_MoveCursor(work) == TRUE) {
             if (work->unk2F_1 == 1) {
                 BattleArcadeGameBoard_SetState(work, state, 2);
-            } else if (BattleArcade_MultiplayerCheck(work->type) == TRUE) {
+            } else if (BattleArcade_IsMultiplayer(work->type) == TRUE) {
                 BattleArcadeGameBoard_SetState(work, state, 3);
             } else {    
                 BattleArcadeGameBoard_SetState(work, state, 4);
@@ -195,7 +195,7 @@ BOOL BattleArcadeGameBoard_Main(OVY_MANAGER *man, int *state) {
     return FALSE;
 }
 
-BOOL ov84_0223DFF0(OVY_MANAGER *man, int *state) {
+BOOL BattleArcadeGameBoard_Exit(OVY_MANAGER *man, int *state) {
     int i;
     GAME_BOARD_WORK *work = OverlayManager_GetData(man);
     
@@ -217,7 +217,7 @@ BOOL ov84_0223DFF0(OVY_MANAGER *man, int *state) {
 static BOOL BattleArcadeGameBoard_Init(GAME_BOARD_WORK *work) {
     switch (work->substate) {
     case 0:
-        if (BattleArcade_MultiplayerCheck(work->type) == TRUE) {
+        if (BattleArcade_IsMultiplayer(work->type) == TRUE) {
             sub_02037BEC();
             sub_02037AC0(199);
             work->substate++;
@@ -226,7 +226,7 @@ static BOOL BattleArcadeGameBoard_Init(GAME_BOARD_WORK *work) {
         }
         break;
     case 1:
-        if (BattleArcade_MultiplayerCheck(work->type) == TRUE) {
+        if (BattleArcade_IsMultiplayer(work->type) == TRUE) {
             if (sub_02037B38(199) == TRUE) {
                 sub_02037BEC();
                 work->substate++;
@@ -248,7 +248,7 @@ static BOOL BattleArcadeGameBoard_Init(GAME_BOARD_WORK *work) {
         work->substate++;
         break;
     case 5:
-        if (BattleArcade_MultiplayerCheck(work->type) == TRUE) {
+        if (BattleArcade_IsMultiplayer(work->type) == TRUE) {
             sub_02037BEC();
             sub_02037AC0(201);
             work->substate++;
@@ -257,7 +257,7 @@ static BOOL BattleArcadeGameBoard_Init(GAME_BOARD_WORK *work) {
         }
         break;
     case 6:
-        if (BattleArcade_MultiplayerCheck(work->type) == TRUE) {
+        if (BattleArcade_IsMultiplayer(work->type) == TRUE) {
             if (sub_02037B38(201) == TRUE) {
                 sub_02037BEC();
                 work->substate++;
@@ -267,7 +267,7 @@ static BOOL BattleArcadeGameBoard_Init(GAME_BOARD_WORK *work) {
         }
         break;
     case 7:
-        if (BattleArcade_MultiplayerCheck(work->type) == TRUE) {
+        if (BattleArcade_IsMultiplayer(work->type) == TRUE) {
             if (ov84_0223ECBC(work, 30, 0) == TRUE) {
                 work->substate++;
             }
@@ -277,7 +277,7 @@ static BOOL BattleArcadeGameBoard_Init(GAME_BOARD_WORK *work) {
         }
         break;
     case 8:
-        if (BattleArcade_MultiplayerCheck(work->type) == TRUE) {
+        if (BattleArcade_IsMultiplayer(work->type) == TRUE) {
             if (work->unkF >= 2) {
                 work->unkF = 0;
                 BeginNormalPaletteFade(0, 1, 1, 0, 6, 3, HEAP_ID_GAME_BOARD);
@@ -376,7 +376,7 @@ static BOOL BattleArcadeGameBoard_MoveCursor(GAME_BOARD_WORK *work) {
         }
         if (BattleArcadeGameBoard_CheckButtonPress(work) == TRUE || work->unk18 ==0) {
             BattleArcadeGameBoard_StartCursorSlowdown(work);
-            if (BattleArcade_MultiplayerCheck(work->type) == FALSE) {
+            if (BattleArcade_IsMultiplayer(work->type) == FALSE) {
                 work->substate = 7;
             } else {
                 work->unk2F_1 = 1;
@@ -571,7 +571,7 @@ static void BattleArcadeGameBoard_InitObjects(GAME_BOARD_WORK *work) {
     
     max = BattleArcade_GetMonCount(work->type, 1);
     
-    if (BattleArcade_MultiplayerCheck(work->type) == FALSE) {
+    if (BattleArcade_IsMultiplayer(work->type) == FALSE) {
         yOffset = 46;
         yOffset2 = 50;
     } else {
@@ -618,7 +618,7 @@ static void ov84_0223E8DC(GAME_BOARD_WORK *work) {
 }
 
 static void ov84_0223E934(GAME_BOARD_WORK *work) {
-    ov84_0223F2B4(&work->unk3E8, work->playerParty, work->opponentParty, BattleArcade_MultiplayerCheck(work->type));
+    ov84_0223F2B4(&work->unk3E8, work->playerParty, work->opponentParty, BattleArcade_IsMultiplayer(work->type));
 }
 
 static void ov84_0223E958(BGCONFIG *config) {
@@ -682,7 +682,7 @@ static void ov84_0223EAAC(GAME_BOARD_WORK *work, u32 a1) {
     
     GfGfxLoader_LoadCharDataFromOpenNarc(work->narc, 124, work->bgConfig, a1, 0, 0, 1, HEAP_ID_GAME_BOARD);
     
-    if (BattleArcade_MultiplayerCheck(work->type) == FALSE) {
+    if (BattleArcade_IsMultiplayer(work->type) == FALSE) {
         var = 120;
     } else {
         var = 122;
@@ -694,7 +694,7 @@ static void ov84_0223EAAC(GAME_BOARD_WORK *work, u32 a1) {
 static void ov84_0223EB08(GAME_BOARD_WORK *work, u32 a1) {
     u32 var;
     
-    if (BattleArcade_MultiplayerCheck(work->type) == FALSE) {
+    if (BattleArcade_IsMultiplayer(work->type) == FALSE) {
         var = 121;
     } else {
         var = 123;
@@ -768,7 +768,7 @@ static u8 ov84_0223EC88(u8 area, u8 a2) {
 static u16 BattleArcade_GetWinstreak(GAME_BOARD_WORK *work) {
     u16 winstreak = work->winstreak;
     
-    if (BattleArcade_MultiplayerCheck(work->type) == TRUE && work->multiWinstreak > work->winstreak) {
+    if (BattleArcade_IsMultiplayer(work->type) == TRUE && work->multiWinstreak > work->winstreak) {
         winstreak = work->multiWinstreak;
     }
     
@@ -1055,13 +1055,13 @@ static void ov84_0223EFE0(GAME_BOARD_WORK *work) {
     work->unk11 = i;
     
     for (i = 0; i < work->unk64; i++) {
-        if (ov80_022384BC(work->unk44[i]) == 0) {
+        if (BattleArcade_GetPanelColor(work->unk44[i]) == 0) {
             work->unk30[0]++;
-        } else if (ov80_022384BC(work->unk44[i]) == 1) {
+        } else if (BattleArcade_GetPanelColor(work->unk44[i]) == 1) {
             work->unk30[1]++;
-        } else if (ov80_022384BC(work->unk44[i]) == 2) {
+        } else if (BattleArcade_GetPanelColor(work->unk44[i]) == 2) {
             work->unk30[2]++;
-        } else if (ov80_022384BC(work->unk44[i]) == 3) {
+        } else if (BattleArcade_GetPanelColor(work->unk44[i]) == 3) {
             work->unk30[3]++;
         }
     }
@@ -1104,7 +1104,7 @@ static void ov84_0223F094(GAME_BOARD_WORK *work) {
                 break;
             }
             
-            if (ov80_022384BC(work->unk44[rand]) == color) {
+            if (BattleArcade_GetPanelColor(work->unk44[rand]) == color) {
                 work->unk34[i] = work->unk44[rand];
                 break;
             }

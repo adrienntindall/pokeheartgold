@@ -3,8 +3,8 @@
 
     .text
 
-	thumb_func_start ov80_022340E8
-ov80_022340E8: ; 0x022340E8
+	thumb_func_start BattleArcade_Alloc
+BattleArcade_Alloc: ; 0x022340E8
 	push {r4, r5, r6, r7, lr}
 	sub sp, #0x1c
 	add r7, r1, #0
@@ -285,7 +285,7 @@ _0223434E:
 	ldr r0, _02234374 ; =ov80_0223DD4C
 	ldr r0, [r0]
 	ldrb r0, [r0, #0x10]
-	bl BattleArcade_MultiplayerCheck
+	bl BattleArcade_IsMultiplayer
 	cmp r0, #1
 	bne _02234366
 	ldr r0, _02234374 ; =ov80_0223DD4C
@@ -301,10 +301,10 @@ _02234366:
 _02234370: .word 0x00000A88
 _02234374: .word ov80_0223DD4C
 _02234378: .word 0x00000412
-	thumb_func_end ov80_022340E8
+	thumb_func_end BattleArcade_Alloc
 
-	thumb_func_start ov80_0223437C
-ov80_0223437C: ; 0x0223437C
+	thumb_func_start BattleArcade_Init
+BattleArcade_Init: ; 0x0223437C
 	push {r3, lr}
 	cmp r1, #0
 	bne _02234388
@@ -314,7 +314,7 @@ _02234388:
 	bl ov80_02234424
 	pop {r3, pc}
 	.balign 4, 0
-	thumb_func_end ov80_0223437C
+	thumb_func_end BattleArcade_Init
 
 	thumb_func_start ov80_02234390
 ov80_02234390: ; 0x02234390
@@ -334,7 +334,7 @@ ov80_02234390: ; 0x02234390
 	bl BattleArcade_GetOpponentMonCount
 	add r6, r0, #0
 	ldrb r0, [r5, #0x10]
-	bl BattleArcade_MultiplayerCheck
+	bl BattleArcade_IsMultiplayer
 	mov r3, #0x33
 	lsl r3, r3, #4
 	add r1, r5, r3
@@ -515,8 +515,8 @@ _0223451A:
 	.balign 4, 0
 	thumb_func_end ov80_022344D4
 
-	thumb_func_start ov80_02234520
-ov80_02234520: ; 0x02234520
+	thumb_func_start BattleArcade_Free
+BattleArcade_Free: ; 0x02234520
 	push {r4, lr}
 	add r4, r0, #0
 	beq _0223454A
@@ -540,7 +540,7 @@ _0223454A:
 	pop {r4, pc}
 	.balign 4, 0
 _0223454C: .word 0x00000A88
-	thumb_func_end ov80_02234520
+	thumb_func_end BattleArcade_Free
 
 	thumb_func_start ov80_02234550
 ov80_02234550: ; 0x02234550
@@ -898,7 +898,7 @@ ov80_022347EC: ; 0x022347EC
 	bl BattleArcade_GetOpponentMonCount
 	add r6, r0, #0
 	ldrb r0, [r5, #0x10]
-	bl BattleArcade_MultiplayerCheck
+	bl BattleArcade_IsMultiplayer
 	mov r3, #0x33
 	lsl r3, r3, #4
 	add r1, r5, r3
@@ -1025,7 +1025,7 @@ _022348EA:
 _022348F2:
 	ldr r0, [sp]
 	ldrb r0, [r0, #0x10]
-	bl BattleArcade_MultiplayerCheck
+	bl BattleArcade_IsMultiplayer
 	cmp r0, #1
 	bne _0223494C
 	ldr r0, [sp, #0xc]

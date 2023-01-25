@@ -435,8 +435,8 @@ ov80_02238370: ; 0x02238370
 	bx lr
 	thumb_func_end ov80_02238370
 
-	thumb_func_start BattleArcade_MultiplayerCheck
-BattleArcade_MultiplayerCheck: ; 0x02238374
+	thumb_func_start BattleArcade_IsMultiplayer
+BattleArcade_IsMultiplayer: ; 0x02238374
 	cmp r0, #2
 	beq _0223837C
 	cmp r0, #3
@@ -447,7 +447,7 @@ _0223837C:
 _02238380:
 	mov r0, #0
 	bx lr
-	thumb_func_end BattleArcade_MultiplayerCheck
+	thumb_func_end BattleArcade_IsMultiplayer
 
 	thumb_func_start ov80_02238384
 ov80_02238384: ; 0x02238384
@@ -605,7 +605,7 @@ ov80_02238498: ; 0x02238498
 	add r5, r0, #0
 	ldrb r0, [r5, #0x10]
 	ldrh r4, [r5, #0x1a]
-	bl BattleArcade_MultiplayerCheck
+	bl BattleArcade_IsMultiplayer
 	cmp r0, #1
 	bne _022384B4
 	ldr r0, _022384B8 ; =0x00000A76
@@ -621,8 +621,8 @@ _022384B4:
 _022384B8: .word 0x00000A76
 	thumb_func_end ov80_02238498
 
-	thumb_func_start ov80_022384BC
-ov80_022384BC: ; 0x022384BC
+	thumb_func_start BattleArcade_GetPanelColor
+BattleArcade_GetPanelColor: ; 0x022384BC
 	cmp r0, #9
 	bhs _022384C4
 	mov r0, #0
@@ -640,7 +640,7 @@ _022384CC:
 _022384D4:
 	mov r0, #3
 	bx lr
-	thumb_func_end ov80_022384BC
+	thumb_func_end BattleArcade_GetPanelColor
 
     .rodata
     

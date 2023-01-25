@@ -12,45 +12,45 @@ static void ov80_02233944(GAME_BOARD_ARGS *args, BattleArcadeWork *work);
 static void ov80_02233A1C(void *_args);
 
 
-BOOL ov80_02233688(FRONTIER_CONTEXT *ctx) {
+BOOL FrontierCmd_BattleArcadeAlloc(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work;
     UnkFrontierStruct *ptr;
     
-    u32 a0 = FrontierScript_ReadHalfword(ctx);
-    u32 a1 = FrontierScript_ReadHalfword(ctx);
-    u32 pos1 = FrontierScript_ReadHalfword(ctx);
-    u32 pos2 = FrontierScript_ReadHalfword(ctx);
-    u32 pos3 = FrontierScript_ReadHalfword(ctx);
+    u32 a0 = FrontierScript_ReadWord(ctx);
+    u32 a1 = FrontierScript_ReadWord(ctx);
+    u32 pos1 = FrontierScript_ReadWord(ctx);
+    u32 pos2 = FrontierScript_ReadWord(ctx);
+    u32 pos3 = FrontierScript_ReadWord(ctx);
     u16 *a5 = FrontierScript_GetVarPointer(ctx);
     
     ptr = sub_02096808(ctx->frsys->unk0);
     
-    work = ov80_022340E8(ptr->savedata, a0, a1, pos1, pos2, pos3, a5);
+    work = BattleArcade_Alloc(ptr->savedata, a0, a1, pos1, pos2, pos3, a5);
     sub_02096818(ctx->frsys->unk0, work);
     
     return FALSE;
 }
 
-BOOL ov80_022336EC(FRONTIER_CONTEXT *ctx) {
+BOOL FrontierCmd_BattleArcadeInit(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work;
-    u32 a0 = FrontierScript_ReadHalfword(ctx);
+    u32 a0 = FrontierScript_ReadWord(ctx);
     
     work = sub_02096810(ctx->frsys->unk0);
-    ov80_0223437C(work, a0);
+    BattleArcade_Init(work, a0);
     
     return FALSE;
 }
 
-BOOL ov80_02233708(FRONTIER_CONTEXT *ctx) {
+BOOL FrontierCmd_BattleArcadeFree(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work = sub_02096810(ctx->frsys->unk0);
-    ov80_02234520(work);
+    BattleArcade_Free(work);
     
     return FALSE;
 }
 
-extern OVY_MGR_TEMPLATE ov80_0223BE78;
+extern OVY_MGR_TEMPLATE sBattleArcadeGameBoardTemplate;
 
-BOOL ov80_0223371C(FRONTIER_CONTEXT *ctx) {
+BOOL FrontierCmd_BattleArcadeRankUp(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work;
     GAME_BOARD_ARGS *args;
     UnkFrontierStruct *ptr = sub_02096808(ctx->frsys->unk0);
@@ -62,12 +62,12 @@ BOOL ov80_0223371C(FRONTIER_CONTEXT *ctx) {
     args->savedata = ptr->savedata;
     ov80_02233944(args, work);
     
-    sub_02096820(ctx->frsys->unk0, &ov80_0223BE78, args, FALSE, ov80_02233A1C);
+    sub_02096820(ctx->frsys->unk0, &sBattleArcadeGameBoardTemplate, args, FALSE, ov80_02233A1C);
     
     return TRUE;
 }
 
-BOOL ov80_02233770(FRONTIER_CONTEXT *ctx) {
+BOOL FrontierCmd_BattleArcadeGetResult(FRONTIER_CONTEXT *ctx) {
     u8 monCount;
     int i, partyIndex1, partyIndex2, partyMonCount, temp;
     u32 exp, level, item;
@@ -143,7 +143,7 @@ BOOL ov80_02233770(FRONTIER_CONTEXT *ctx) {
 
 extern OVY_MGR_TEMPLATE _020FA484;
 
-BOOL ov80_02233908(FRONTIER_CONTEXT *ctx) {
+BOOL FrontierCmd_BattleArcadeStartBattle(FRONTIER_CONTEXT *ctx) {
     BATTLE_SETUP *setup;
     BattleArcadeWork *work;
     UnkFrontierStruct *ptr = sub_02096808(ctx->frsys->unk0);
@@ -227,8 +227,8 @@ BOOL ov80_02233A58(FRONTIER_CONTEXT *ctx) {
 
     
     u8 var = FrontierScript_ReadByte(ctx);
-    u8 a1 = FrontierScript_ReadHalfword(ctx);
-    u8 a2 = FrontierScript_ReadHalfword(ctx);
+    u8 a1 = FrontierScript_ReadWord(ctx);
+    u8 a2 = FrontierScript_ReadWord(ctx);
     u16 *ret = FrontierScript_GetVarPointer(ctx);
     
     work = sub_02096810(ctx->frsys->unk0);
@@ -336,7 +336,7 @@ BOOL ov80_02233A58(FRONTIER_CONTEXT *ctx) {
         sub_02096910(work);
         break;
     case 28:
-        *ret = BattleArcade_MultiplayerCheck(work->type);
+        *ret = BattleArcade_IsMultiplayer(work->type);
         break;
     case 17:
         *ret = work->type;
@@ -382,17 +382,17 @@ BOOL ov80_02233A58(FRONTIER_CONTEXT *ctx) {
         ov80_02234968(work, map);
         break;
     case 37:
-        if (BattleArcade_MultiplayerCheck(work->type) == TRUE) {
+        if (BattleArcade_IsMultiplayer(work->type) == TRUE) {
             ov80_02234A38(work, map);
         }
         break;
     case 38:
-        colour = ov80_022384BC(work->decide);
+        colour = BattleArcade_GetPanelColor(work->decide);
         
         if (colour == 0) {
             BufferFrontierOpponentName(ctx->frsys->msgfmt, a1, work->trainerIndex[ov80_022347A8(work, a2)]);
         } else {
-            if (BattleArcade_MultiplayerCheck(work->type) == FALSE) {
+            if (BattleArcade_IsMultiplayer(work->type) == FALSE) {
                 profile = Sav2_PlayerData_GetProfileAddr(ptr->savedata);
             } else {
                 profile = sub_02034818(a2);

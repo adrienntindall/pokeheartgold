@@ -150,6 +150,6 @@ typedef struct BATTLE_ARCADE_OBJECT {
 
 BOOL BattleArcadeGameBoard_InitOverlay(OVY_MANAGER *man, int *state);
 BOOL BattleArcadeGameBoard_Main(OVY_MANAGER *man, int *state);
-BOOL ov84_0223DFF0(OVY_MANAGER *man, int *state);
+BOOL BattleArcadeGameBoard_Exit(OVY_MANAGER *man, int *state);
 
 #endif

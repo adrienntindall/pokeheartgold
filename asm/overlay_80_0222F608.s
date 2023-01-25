@@ -7,13 +7,13 @@
 ov80_0222F608: ; 0x0222F608
 	push {r3, r4, r5, r6, r7, lr}
 	add r5, r0, #0
-	bl FrontierScript_ReadHalfword
+	bl FrontierScript_ReadWord
 	add r7, r0, #0
 	add r0, r5, #0
-	bl FrontierScript_ReadHalfword
+	bl FrontierScript_ReadWord
 	add r4, r0, #0
 	add r0, r5, #0
-	bl FrontierScript_ReadHalfword
+	bl FrontierScript_ReadWord
 	add r6, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
@@ -37,7 +37,7 @@ ov80_0222F608: ; 0x0222F608
 ov80_0222F648: ; 0x0222F648
 	push {r3, r4, r5, lr}
 	add r5, r0, #0
-	bl FrontierScript_ReadHalfword
+	bl FrontierScript_ReadWord
 	add r4, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
@@ -824,10 +824,10 @@ ov80_0222FC34: ; 0x0222FC34
 ov80_0222FC50: ; 0x0222FC50
 	push {r3, r4, r5, r6, r7, lr}
 	add r5, r0, #0
-	bl FrontierScript_ReadHalfword
+	bl FrontierScript_ReadWord
 	add r6, r0, #0
 	add r0, r5, #0
-	bl FrontierScript_ReadHalfword
+	bl FrontierScript_ReadWord
 	add r7, r0, #0
 	add r0, r5, #0
 	bl FrontierScript_GetVarPointer

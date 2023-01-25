@@ -5,7 +5,6 @@ ov80_0223437C BattleArcade_Init
 ov80_022340E8 BattleArcade_Alloc
 ov80_02234520 BattleArcade_Free
 ov84_0223DFF0 BattleArcadeGameBoard_Exit
-OVY_84 battle_arcade_game_board
 ov80_0223BE78 sBattleArcadeGameBoardTemplate
 ov80_0223371C FrontierCmd_BattleArcadeRankUp
 ov80_02233770 FrontierCmd_BattleArcadeGetResult
