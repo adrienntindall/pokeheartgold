@@ -4349,10 +4349,10 @@
 .public sub_02095FF8
 .public sub_020961D8
 .public sub_02096594
-.public sub_02096808
+.public Frontier_GetExternalData
 .public sub_0209680C
-.public sub_02096810
-.public sub_02096818
+.public Frontier_GetWork
+.public Frontier_SetWork
 .public sub_02096820
 .public sub_0209684C
 .public sub_02096854

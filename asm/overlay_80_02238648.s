@@ -7,7 +7,7 @@
 ov80_02238648: ; 0x02238648
 	push {r3, r4, r5, r6, r7, lr}
 	add r6, r0, #0
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	add r4, r0, #0
 	ldr r0, [r4, #8]
 	bl Sav2_PlayerData_GetProfileAddr
@@ -222,7 +222,7 @@ ov80_0223885C: ; 0x0223885C
 	push {r4, lr}
 	add r4, r0, #0
 	ldr r0, [r4, #8]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	add r2, r4, #0
 	add r2, #0xc1
 	add r1, r4, #0
@@ -545,7 +545,7 @@ ov80_02238B28: ; 0x02238B28
 	push {r3, r4, r5, lr}
 	add r5, r0, #0
 	ldr r0, [r5, #8]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	add r4, r0, #0
 	add r0, #0x20
 	ldrb r0, [r0]
@@ -590,7 +590,7 @@ ov80_02238B7C: ; 0x02238B7C
 	sub sp, #0x10
 	add r5, r0, #0
 	ldr r0, [r5, #8]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	add r7, r0, #0
 	add r0, r5, #0
 	add r0, #0x1c
@@ -1025,7 +1025,7 @@ ov80_02238F10: ; 0x02238F10
 	mov r3, #0x65
 	bl PaletteData_LoadNarc
 	ldr r0, [r4, #8]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	ldr r0, [r0, #4]
 	bl Options_GetFrame
 	lsl r0, r0, #0x18

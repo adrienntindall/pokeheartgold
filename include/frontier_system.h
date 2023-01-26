@@ -59,18 +59,18 @@ struct FrontierSystem {
     u16 *unkAC;
 };
 
-typedef struct UnkFrontierStruct {
+typedef struct FrontierExternalData {
     void *work;
     void *unk4;
     SAVEDATA *savedata;
     void *unkC;
     void *unk10;
-} UnkFrontierStruct;
+} FrontierExternalData;
 
 u32 FrontierScript_ReadWord(FRONTIER_CONTEXT *ctx);
 u16 *FrontierScript_GetVarPointer(FRONTIER_CONTEXT *ctx);
-UnkFrontierStruct *sub_02096808(void *);
-void *sub_02096810(void *);
+FrontierExternalData *Frontier_GetExternalData(void *);
+void *Frontier_GetWork(void *);
 
 typedef struct FRONTIER_MON {
     u16 unk0;

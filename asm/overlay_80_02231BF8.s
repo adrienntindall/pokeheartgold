@@ -27,7 +27,7 @@ ov80_02231BF8: ; 0x02231BF8
 	str r0, [sp, #0x14]
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	str r6, [sp]
 	lsl r2, r4, #0x18
 	ldr r1, [sp, #0x14]
@@ -41,7 +41,7 @@ ov80_02231BF8: ; 0x02231BF8
 	add r1, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096818
+	bl Frontier_SetWork
 	mov r0, #0
 	add sp, #0x18
 	pop {r3, r4, r5, r6, r7, pc}
@@ -56,7 +56,7 @@ ov80_02231C5C: ; 0x02231C5C
 	add r4, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r1, r4, #0
 	bl ov80_02232824
 	mov r0, #0
@@ -68,7 +68,7 @@ ov80_02231C78: ; 0x02231C78
 	push {r3, lr}
 	ldr r0, [r0]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	bl ov80_02232ABC
 	mov r0, #0
 	pop {r3, pc}
@@ -81,11 +81,11 @@ ov80_02231C8C: ; 0x02231C8C
 	add r5, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	add r6, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r7, r0, #0
 	mov r0, #0xb
 	mov r1, #0x30
@@ -120,11 +120,11 @@ ov80_02231CE0: ; 0x02231CE0
 	add r5, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	add r6, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r7, r0, #0
 	mov r0, #0xb
 	mov r1, #0x30
@@ -158,7 +158,7 @@ ov80_02231D34: ; 0x02231D34
 	push {r3, r4, r5, lr}
 	ldr r0, [r0]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r4, r0, #0
 	ldr r5, [r4, #0xc]
 	mov r1, #0
@@ -220,11 +220,11 @@ ov80_02231DBC: ; 0x02231DBC
 	add r5, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	add r6, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r1, r6, #0
 	add r4, r0, #0
 	bl ov80_02237B8C
@@ -249,11 +249,11 @@ ov80_02231DF8: ; 0x02231DF8
 	add r5, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	add r6, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r7, r0, #0
 	mov r0, #0xb
 	mov r1, #0x30
@@ -340,7 +340,7 @@ ov80_02231EA8: ; 0x02231EA8
 	push {r3, lr}
 	ldr r0, [r0]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	bl ov80_02232F00
 	mov r0, #0
 	pop {r3, pc}
@@ -352,7 +352,7 @@ ov80_02231EBC: ; 0x02231EBC
 	push {r3, lr}
 	ldr r0, [r0]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	bl ov80_02232F08
 	mov r0, #0
 	pop {r3, pc}
@@ -383,12 +383,12 @@ ov80_02231ED0: ; 0x02231ED0
 	ldr r0, [sp, #0x10]
 	ldr r0, [r0]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r4, r0, #0
 	ldr r0, [sp, #0x10]
 	ldr r0, [r0]
 	ldr r0, [r0]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	add r7, r0, #0
 	ldr r0, [sp, #0x18]
 	cmp r0, #0x2c
@@ -859,7 +859,7 @@ ov80_022322AC: ; 0x022322AC
 	add r4, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	ldr r0, [r0, #0x1c]
 	strh r0, [r4]
 	mov r0, #0
@@ -881,7 +881,7 @@ ov80_022322C8: ; 0x022322C8
 	add r4, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r1, r6, #0
 	add r2, r7, #0
 	bl ov80_02233280
@@ -917,7 +917,7 @@ ov80_02232318: ; 0x02232318
 	bl ov80_0222BE9C
 	ldr r0, [r4]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	ldr r1, _02232344 ; =0x00000A1A
 	ldrb r2, [r0, r1]
 	cmp r2, #2
@@ -961,7 +961,7 @@ ov80_02232368: ; 0x02232368
 	add r4, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	ldr r2, _0223239C ; =0x00000A1B
 	ldrb r1, [r0, r2]
 	cmp r1, #0
@@ -986,7 +986,7 @@ ov80_022323A0: ; 0x022323A0
 	add r4, r0, #0
 	ldr r0, [r4]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r1, r0, #0
 	ldr r0, [r4]
 	bl ov80_022332D0
@@ -1000,7 +1000,7 @@ ov80_022323B8: ; 0x022323B8
 	add r4, r0, #0
 	ldr r0, [r4]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r1, r0, #0
 	ldr r0, [r4]
 	bl ov80_022333F0
@@ -1014,7 +1014,7 @@ ov80_022323D0: ; 0x022323D0
 	add r4, r0, #0
 	ldr r0, [r4]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r1, r0, #0
 	ldr r0, [r4]
 	bl ov80_02233490
@@ -1033,7 +1033,7 @@ ov80_022323E8: ; 0x022323E8
 	add r6, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	ldr r0, [r0, #8]
 	bl sub_0203107C
 	add r5, r0, #0
@@ -1065,7 +1065,7 @@ ov80_02232430: ; 0x02232430
 	add r6, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	ldr r0, [r0, #8]
 	bl sub_0203107C
 	lsl r1, r4, #0x18
@@ -1088,7 +1088,7 @@ ov80_02232460: ; 0x02232460
 	add r6, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	lsl r1, r4, #0x18
 	ldr r0, [r0, #8]
 	lsr r1, r1, #0x18
@@ -1105,14 +1105,14 @@ ov80_0223248C: ; 0x0223248C
 	add r5, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	ldr r1, [r5, #0x1c]
 	add r0, r1, #1
 	str r0, [r5, #0x1c]
 	ldr r0, [r5]
 	ldrb r4, [r1]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r2, r0, #0
 	bne _022324B0
 	mov r0, #0

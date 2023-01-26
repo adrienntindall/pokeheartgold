@@ -17,35 +17,35 @@ static void ov80_02233A1C(void *_args);
 
 BOOL FrontierCmd_BattleArcadeAlloc(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work;
-    UnkFrontierStruct *ptr;
+    FrontierExternalData *ptr;
     
-    u32 a0 = FrontierScript_ReadWord(ctx);
-    u32 a1 = FrontierScript_ReadWord(ctx);
+    u32 init = FrontierScript_ReadWord(ctx);
+    u32 type = FrontierScript_ReadWord(ctx);
     u32 pos1 = FrontierScript_ReadWord(ctx);
     u32 pos2 = FrontierScript_ReadWord(ctx);
     u32 pos3 = FrontierScript_ReadWord(ctx);
     u16 *a5 = FrontierScript_GetVarPointer(ctx);
     
-    ptr = sub_02096808(ctx->frsys->unk0);
+    ptr = Frontier_GetExternalData(ctx->frsys->unk0);
     
-    work = BattleArcade_Alloc(ptr->savedata, a0, a1, pos1, pos2, pos3, a5);
-    sub_02096818(ctx->frsys->unk0, work);
+    work = BattleArcade_Alloc(ptr->savedata, init, type, pos1, pos2, pos3, a5);
+    Frontier_SetWork(ctx->frsys->unk0, work);
     
     return FALSE;
 }
 
 BOOL FrontierCmd_BattleArcadeInit(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work;
-    u32 a0 = FrontierScript_ReadWord(ctx);
+    u32 init = FrontierScript_ReadWord(ctx);
     
-    work = sub_02096810(ctx->frsys->unk0);
-    BattleArcade_Init(work, a0);
+    work = Frontier_GetWork(ctx->frsys->unk0);
+    BattleArcade_Init(work, init);
     
     return FALSE;
 }
 
 BOOL FrontierCmd_BattleArcadeFree(FRONTIER_CONTEXT *ctx) {
-    BattleArcadeWork *work = sub_02096810(ctx->frsys->unk0);
+    BattleArcadeWork *work = Frontier_GetWork(ctx->frsys->unk0);
     BattleArcade_Free(work);
     
     return FALSE;
@@ -56,8 +56,8 @@ extern OVY_MGR_TEMPLATE sBattleArcadeGameBoardTemplate;
 BOOL FrontierCmd_BattleArcadeRankUp(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work;
     GAME_BOARD_ARGS *args;
-    UnkFrontierStruct *ptr = sub_02096808(ctx->frsys->unk0);
-    work = sub_02096810(ctx->frsys->unk0);
+    FrontierExternalData *ptr = Frontier_GetExternalData(ctx->frsys->unk0);
+    work = Frontier_GetWork(ctx->frsys->unk0);
     
     args = AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(GAME_BOARD_ARGS));
     MI_CpuFill8(args, 0, sizeof(GAME_BOARD_ARGS));
@@ -79,7 +79,7 @@ BOOL FrontierCmd_BattleArcadeGetResult(FRONTIER_CONTEXT *ctx) {
     BATTLE_SETUP *setup;
     POKEMON *mon;
     
-    work = sub_02096810(ctx->frsys->unk0);
+    work = Frontier_GetWork(ctx->frsys->unk0);
     setup = work->setup;
     work->bp = ov80_02234848(work, setup->party[0], setup->party[2], setup->unk1B4);
     work->winResult = IsBattleResultWin(setup->winFlag);
@@ -149,9 +149,9 @@ extern OVY_MGR_TEMPLATE _020FA484;
 BOOL FrontierCmd_BattleArcadeStartBattle(FRONTIER_CONTEXT *ctx) {
     BATTLE_SETUP *setup;
     BattleArcadeWork *work;
-    UnkFrontierStruct *ptr = sub_02096808(ctx->frsys->unk0);
+    FrontierExternalData *ptr = Frontier_GetExternalData(ctx->frsys->unk0);
     
-    work = sub_02096810(ctx->frsys->unk0);
+    work = Frontier_GetWork(ctx->frsys->unk0);
     setup = ov80_02238150(work, ptr);
     work->setup = setup; 
     
@@ -201,13 +201,13 @@ static void ov80_02233A1C(void *_args) {
 }
 
 BOOL ov80_02233A30(FRONTIER_CONTEXT *ctx) {
-    BattleArcadeWork *work = sub_02096810(ctx->frsys->unk0);
+    BattleArcadeWork *work = Frontier_GetWork(ctx->frsys->unk0);
     ov80_022347E4(work);
     return FALSE;
 }
 
 BOOL ov80_02233A44(FRONTIER_CONTEXT *ctx) {
-    BattleArcadeWork *work = sub_02096810(ctx->frsys->unk0);
+    BattleArcadeWork *work = Frontier_GetWork(ctx->frsys->unk0);
     ov80_022347EC(work);
     return FALSE;
 }
@@ -224,7 +224,7 @@ BOOL ov80_02233A58(FRONTIER_CONTEXT *ctx) {
     u32 type, typeNumber;
     u16 yOffset;
     int i, j, flag;
-    UnkFrontierStruct *ptr;
+    FrontierExternalData *ptr;
     UnkStruct_80_0222A84C *map;
     PLAYERPROFILE *profile;
 
@@ -234,8 +234,8 @@ BOOL ov80_02233A58(FRONTIER_CONTEXT *ctx) {
     u8 a2 = FrontierScript_ReadWord(ctx);
     u16 *ret = FrontierScript_GetVarPointer(ctx);
     
-    work = sub_02096810(ctx->frsys->unk0);
-    ptr = sub_02096808(ctx->frsys->unk0);
+    work = Frontier_GetWork(ctx->frsys->unk0);
+    ptr = Frontier_GetExternalData(ctx->frsys->unk0);
     map = ov80_0222AB34(ctx->frsys);
     
     switch (var) {
@@ -495,7 +495,7 @@ static void ov80_02233F40(ParticleSystemEmitter *emit) {
 BOOL ov80_02233FBC(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work;
     u16 *ret = FrontierScript_GetVarPointer(ctx);
-    work = sub_02096810(ctx->frsys->unk0);
+    work = Frontier_GetWork(ctx->frsys->unk0);
     *ret = work->winResult;
     return FALSE;
 }
@@ -505,7 +505,7 @@ BOOL ov80_02233FD8(FRONTIER_CONTEXT *ctx) {
     u32 type = FrontierScript_ReadWord(ctx);
     u32 param = FrontierScript_ReadWord(ctx);
     u16 *ret = FrontierScript_GetVarPointer(ctx);
-    work = sub_02096810(ctx->frsys->unk0);
+    work = Frontier_GetWork(ctx->frsys->unk0);
     *ret = ov80_02234E50(work, type, param);
     return TRUE;
 }
@@ -521,7 +521,7 @@ BOOL ov80_02234008(FRONTIER_CONTEXT *ctx) {
 static BOOL ov80_02234028(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work;
     u16 type = ov80_0222BE9C(ctx, ctx->unk64[0]);
-    work = sub_02096810(ctx->frsys->unk0);
+    work = Frontier_GetWork(ctx->frsys->unk0);
     
     if (work->recvCnt >= 2) {
         work->recvCnt = 0;
@@ -533,9 +533,9 @@ static BOOL ov80_02234028(FRONTIER_CONTEXT *ctx) {
 BOOL ov80_02234058(FRONTIER_CONTEXT *ctx) {
     u16 *msg;
     BattleArcadeWork *work;
-    UnkFrontierStruct *ptr = sub_02096808(ctx->frsys->unk0);
+    FrontierExternalData *ptr = Frontier_GetExternalData(ctx->frsys->unk0);
     u16 trainer = FrontierScript_ReadByte(ctx);
-    work = sub_02096810(ctx->frsys->unk0);
+    work = Frontier_GetWork(ctx->frsys->unk0);
     
     if (work == NULL) {
         return FALSE;
@@ -548,7 +548,7 @@ BOOL ov80_02234058(FRONTIER_CONTEXT *ctx) {
 }
 
 BOOL ov80_02234094(FRONTIER_CONTEXT *ctx) {
-    BattleArcadeWork *work = sub_02096810(ctx->frsys->unk0);
+    BattleArcadeWork *work = Frontier_GetWork(ctx->frsys->unk0);
     ov80_02234E98(work, work->decide);
     return TRUE;
 }
@@ -559,7 +559,7 @@ BOOL ov80_022340A8(FRONTIER_CONTEXT *ctx) {
     u32 a1 = FrontierScript_ReadWord(ctx);
     u32 a2 = FrontierScript_ReadWord(ctx);
     u32 a3 = FrontierScript_ReadWord(ctx);
-    work = sub_02096810(ctx->frsys->unk0);
+    work = Frontier_GetWork(ctx->frsys->unk0);
     ov80_02234D04(work, map, a1, a2, a3);
     return FALSE;
 }

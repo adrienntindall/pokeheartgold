@@ -20,7 +20,7 @@ ov80_0223544C: ; 0x0223544C
 	add r7, r0, #0
 	ldr r0, [r7]
 	ldr r0, [r0]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	add r5, r0, #0
 	add r0, r7, #0
 	bl ov80_0222AC58
@@ -33,7 +33,7 @@ ov80_0223544C: ; 0x0223544C
 	add r4, r0, #0
 	ldr r0, [r7]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	cmp r6, #0x3b
 	bgt _022354CC
 	add r1, r6, #0
@@ -225,14 +225,14 @@ ov80_022355D0: ; 0x022355D0
 	add r5, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	ldr r1, [r5, #0x1c]
 	add r0, r1, #1
 	str r0, [r5, #0x1c]
 	ldr r0, [r5]
 	ldrb r6, [r1]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r4, r0, #0
 	bne _022355F4
 	mov r0, #0
@@ -257,7 +257,7 @@ ov80_02235610: ; 0x02235610
 	push {r3, lr}
 	ldr r0, [r0]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	bl sub_0204AA2C
 	mov r0, #0
 	pop {r3, pc}
@@ -271,11 +271,11 @@ ov80_02235624: ; 0x02235624
 	add r5, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	add r6, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r1, r6, #0
 	add r4, r0, #0
 	bl ov80_0223690C
@@ -308,7 +308,7 @@ ov80_02235674: ; 0x02235674
 	add r5, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r4, r0, #0
 	add r0, r5, #0
 	bl FrontierScript_GetVarPointer
@@ -336,7 +336,7 @@ ov80_022356AC: ; 0x022356AC
 	add r4, r0, #0
 	ldr r0, [r4]
 	ldr r0, [r0]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	add r0, r4, #0
 	bl FrontierScript_ReadWord
 	add r6, r0, #0
@@ -348,7 +348,7 @@ ov80_022356AC: ; 0x022356AC
 	add r5, r0, #0
 	ldr r0, [r4]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r4, r0, #0
 	cmp r6, #2
 	bne _022356E6
@@ -408,11 +408,11 @@ ov80_0223573C: ; 0x0223573C
 	add r5, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096808
+	bl Frontier_GetExternalData
 	add r4, r0, #0
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl sub_02096810
+	bl Frontier_GetWork
 	add r1, r0, #0
 	add r0, r5, #0
 	add r0, #0x7a

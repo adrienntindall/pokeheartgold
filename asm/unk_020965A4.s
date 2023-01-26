@@ -314,11 +314,11 @@ _02096800: .word FS_OVERLAY_ID(OVY_81)
 _02096804: .word FS_OVERLAY_ID(OVY_42)
 	thumb_func_end sub_020967E4
 
-	thumb_func_start sub_02096808
-sub_02096808: ; 0x02096808
+	thumb_func_start Frontier_GetExternalData
+Frontier_GetExternalData: ; 0x02096808
 	ldr r0, [r0]
 	bx lr
-	thumb_func_end sub_02096808
+	thumb_func_end Frontier_GetExternalData
 
 	thumb_func_start sub_0209680C
 sub_0209680C: ; 0x0209680C
@@ -326,21 +326,21 @@ sub_0209680C: ; 0x0209680C
 	bx lr
 	thumb_func_end sub_0209680C
 
-	thumb_func_start sub_02096810
-sub_02096810: ; 0x02096810
+	thumb_func_start Frontier_GetWork
+Frontier_GetWork: ; 0x02096810
 	ldr r0, [r0]
 	ldr r0, [r0]
 	bx lr
 	.balign 4, 0
-	thumb_func_end sub_02096810
+	thumb_func_end Frontier_GetWork
 
-	thumb_func_start sub_02096818
-sub_02096818: ; 0x02096818
+	thumb_func_start Frontier_SetWork
+Frontier_SetWork: ; 0x02096818
 	ldr r0, [r0]
 	str r1, [r0]
 	bx lr
 	.balign 4, 0
-	thumb_func_end sub_02096818
+	thumb_func_end Frontier_SetWork
 
 	thumb_func_start sub_02096820
 sub_02096820: ; 0x02096820
