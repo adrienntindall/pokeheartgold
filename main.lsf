@@ -938,7 +938,6 @@ Overlay OVY_80
     Object asm/overlay_80_02231BF8.o
     Object asm/overlay_80_022324C4.o
     Object src/frontier_command_battle_arcade.o
-    Object asm/overlay_80_02233688.o
     Object asm/overlay_80_022340E8.o
     Object asm/overlay_80_02235390.o
     Object asm/overlay_80_02235438.o

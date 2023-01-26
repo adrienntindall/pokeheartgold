@@ -3,7 +3,10 @@
 #include "overlay_80.h"
 #include "overlay_80_0222A84C.h"
 #include "overlay_80_02238648.h"
+#include "overlay_80_0222AB40.h"
+#include "overlay_80_0222BDF4.h"
 #include "palette.h"
+#include "particle_system.h"
 #include "constants/pokemon.h"
 
 FS_EXTERN_OVERLAY(OVY_84);
@@ -463,11 +466,100 @@ BOOL ov80_02233A58(FRONTIER_CONTEXT *ctx) {
     return FALSE;
 }
 
-static void ov80_02233F40(void *emit);
+static void ov80_02233F40(ParticleSystemEmitter *emit);
 
 static void ov80_02233F1C(FRONTIER_CONTEXT *ctx, BattleArcadeWork *work, u16 emit) {
     FrontierSystem *frsys = ctx->frsys;
     UnkStruct_80_0222A84C *map = ov80_0222AB34(ctx->frsys);
-    void *particleSys = ov80_02239A60(map->unk10, 0);
+    ParticleSystemEmitter *particleSys = ov80_02239A60(map->unk10, 0);
     sub_02015494(particleSys, emit, ov80_02233F40, work);
+}
+
+extern VecFx32 ov80_0223BE6C[1];
+
+static void ov80_02233F40(ParticleSystemEmitter *emit) {
+    VecFx32 vec;
+    VecFx16 axis;
+    BattleArcadeWork *work = sub_02015504();
+
+    vec = ov80_0223BE6C[0];
+    
+    if (work->reverseFlag == TRUE) {
+        sub_02015538(emit, &axis);
+        axis.x *= -1;
+        emit->axis = axis;
+        ParticleSystemEmitter_SetEmitPos(emit, &vec);
+    }
+}
+
+BOOL ov80_02233FBC(FRONTIER_CONTEXT *ctx) {
+    BattleArcadeWork *work;
+    u16 *ret = FrontierScript_GetVarPointer(ctx);
+    work = sub_02096810(ctx->frsys->unk0);
+    *ret = work->winResult;
+    return FALSE;
+}
+
+BOOL ov80_02233FD8(FRONTIER_CONTEXT *ctx) {
+    BattleArcadeWork *work;
+    u32 type = FrontierScript_ReadWord(ctx);
+    u32 param = FrontierScript_ReadWord(ctx);
+    u16 *ret = FrontierScript_GetVarPointer(ctx);
+    work = sub_02096810(ctx->frsys->unk0);
+    *ret = ov80_02234E50(work, type, param);
+    return TRUE;
+}
+
+static BOOL ov80_02234028(FRONTIER_CONTEXT *ctx);
+
+BOOL ov80_02234008(FRONTIER_CONTEXT *ctx) {
+    ctx->unk64[0] = ov80_0222AC58(ctx);
+    ov80_0222AB84(ctx, ov80_02234028);
+    return TRUE;
+}
+
+static BOOL ov80_02234028(FRONTIER_CONTEXT *ctx) {
+    BattleArcadeWork *work;
+    u16 type = ov80_0222BE9C(ctx, ctx->unk64[0]);
+    work = sub_02096810(ctx->frsys->unk0);
+    
+    if (work->recvCnt >= 2) {
+        work->recvCnt = 0;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+BOOL ov80_02234058(FRONTIER_CONTEXT *ctx) {
+    u16 *msg;
+    BattleArcadeWork *work;
+    UnkFrontierStruct *ptr = sub_02096808(ctx->frsys->unk0);
+    u16 trainer = FrontierScript_ReadByte(ctx);
+    work = sub_02096810(ctx->frsys->unk0);
+    
+    if (work == NULL) {
+        return FALSE;
+    }
+    
+    msg = work->partner[trainer].trainer.encounterMessage;
+    
+    ov80_0222F44C(ctx, msg);
+    return TRUE;
+}
+
+BOOL ov80_02234094(FRONTIER_CONTEXT *ctx) {
+    BattleArcadeWork *work = sub_02096810(ctx->frsys->unk0);
+    ov80_02234E98(work, work->decide);
+    return TRUE;
+}
+
+BOOL ov80_022340A8(FRONTIER_CONTEXT *ctx) {
+    BattleArcadeWork *work;
+    UnkStruct_80_0222A84C *map = ov80_0222AB34(ctx->frsys);
+    u32 a1 = FrontierScript_ReadWord(ctx);
+    u32 a2 = FrontierScript_ReadWord(ctx);
+    u32 a3 = FrontierScript_ReadWord(ctx);
+    work = sub_02096810(ctx->frsys->unk0);
+    ov80_02234D04(work, map, a1, a2, a3);
+    return FALSE;
 }
