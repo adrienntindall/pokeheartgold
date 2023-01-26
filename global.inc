@@ -4353,7 +4353,7 @@
 .public sub_0209680C
 .public Frontier_GetWork
 .public Frontier_SetWork
-.public sub_02096820
+.public Frontier_LoadFacilityOverlay
 .public sub_0209684C
 .public sub_02096854
 .public sub_02096864
@@ -8225,7 +8225,7 @@
 .public ov80_022347C4
 .public BattleArcade_SetPartyPreBattle
 .public BattleArcade_SetPartyPostBattle
-.public ov80_02234848
+.public Frontier_GetBattlePoints
 .public ov80_02234968
 .public ov80_02234A38
 .public ov80_02234A74
@@ -8261,7 +8261,7 @@
 .public ov80_0223531C
 .public ov80_02235320
 .public ov80_02235324
-.public ov80_02235364
+.public BattleArcade_SetItemPostBattle
 .public ov80_02235390
 .public ov80_022353A0
 .public ov80_022353B0

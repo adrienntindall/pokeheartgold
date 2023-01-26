@@ -11,7 +11,7 @@
 
 FS_EXTERN_OVERLAY(OVY_84);
 
-static void ov80_02233944(GAME_BOARD_ARGS *args, BattleArcadeWork *work);
+static void BattleArcade_SetArgs(GAME_BOARD_ARGS *args, BattleArcadeWork *work);
 static void BattleArcade_FreeArgs(void *_args);
 
 
@@ -63,9 +63,9 @@ BOOL FrontierCmd_BattleArcadeRankUp(FRONTIER_CONTEXT *ctx) {
     MI_CpuFill8(args, 0, sizeof(GAME_BOARD_ARGS));
     
     args->savedata = ptr->savedata;
-    ov80_02233944(args, work);
+    BattleArcade_SetArgs(args, work);
     
-    sub_02096820(ctx->frsys->unk0, &sBattleArcadeGameBoardTemplate, args, FALSE, BattleArcade_FreeArgs);
+    Frontier_LoadFacilityOverlay(ctx->frsys->unk0, &sBattleArcadeGameBoardTemplate, args, FALSE, BattleArcade_FreeArgs);
     
     return TRUE;
 }
@@ -81,7 +81,7 @@ BOOL FrontierCmd_BattleArcadeGetResult(FRONTIER_CONTEXT *ctx) {
     
     work = Frontier_GetWork(ctx->frsys->unk0);
     setup = work->setup;
-    work->bp = ov80_02234848(work, setup->party[0], setup->party[2], setup->unk1B4);
+    work->bp = Frontier_GetBattlePoints(work, setup->party[0], setup->party[2], setup->unk1B4);
     work->winResult = IsBattleResultWin(setup->winFlag);
     
     if (work->decide == 27) {
@@ -92,14 +92,14 @@ BOOL FrontierCmd_BattleArcadeGetResult(FRONTIER_CONTEXT *ctx) {
         partyIndex2 = 2;
     }
     
-    ov80_02235364(setup->party[partyIndex1], work->playerParty, 0, 0);
-    ov80_02235364(setup->party[partyIndex1], work->playerParty, 1, 1);
+    BattleArcade_SetItemPostBattle(setup->party[partyIndex1], work->playerParty, 0, 0);
+    BattleArcade_SetItemPostBattle(setup->party[partyIndex1], work->playerParty, 1, 1);
     
     if (ov80_02237D8C(work->type) == FALSE) {
-        ov80_02235364(setup->party[partyIndex1], work->playerParty, 2, 2);
+        BattleArcade_SetItemPostBattle(setup->party[partyIndex1], work->playerParty, 2, 2);
     } else {
-        ov80_02235364(setup->party[partyIndex2], work->playerParty, 0, 2);
-        ov80_02235364(setup->party[partyIndex2], work->playerParty, 1, 3);
+        BattleArcade_SetItemPostBattle(setup->party[partyIndex2], work->playerParty, 0, 2);
+        BattleArcade_SetItemPostBattle(setup->party[partyIndex2], work->playerParty, 1, 3);
     }
     
     if (work->decide == 17) {
@@ -149,18 +149,18 @@ extern OVY_MGR_TEMPLATE _020FA484;
 BOOL FrontierCmd_BattleArcadeStartBattle(FRONTIER_CONTEXT *ctx) {
     BATTLE_SETUP *setup;
     BattleArcadeWork *work;
-    FrontierExternalData *ptr = Frontier_GetExternalData(ctx->frsys->unk0);
+    FrontierExternalData *exdat = Frontier_GetExternalData(ctx->frsys->unk0);
     
     work = Frontier_GetWork(ctx->frsys->unk0);
-    setup = ov80_02238150(work, ptr);
+    setup = ov80_02238150(work, exdat);
     work->setup = setup; 
     
-    sub_02096820(ctx->frsys->unk0, &_020FA484, setup, FALSE, NULL);
+    Frontier_LoadFacilityOverlay(ctx->frsys->unk0, &_020FA484, setup, FALSE, NULL);
     
     return TRUE;
 }
 
-static void ov80_02233944(GAME_BOARD_ARGS *args, BattleArcadeWork *work) {
+static void BattleArcade_SetArgs(GAME_BOARD_ARGS *args, BattleArcadeWork *work) {
     int i, monCount;
     POKEMON *mon;
     

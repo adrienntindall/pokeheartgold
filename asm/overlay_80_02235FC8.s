@@ -395,7 +395,7 @@ _02236290:
 	ldr r1, _022362B4 ; =_0210159C
 	ldr r2, [r5]
 	add r0, r6, #0
-	bl sub_02096820
+	bl Frontier_LoadFacilityOverlay
 	add sp, #4
 	pop {r3, r4, r5, r6, pc}
 	nop
@@ -567,7 +567,7 @@ ov80_02236330: ; 0x02236330
 	ldr r1, _02236418 ; =_02103A1C
 	ldr r2, [r4]
 	add r0, r5, #0
-	bl sub_02096820
+	bl Frontier_LoadFacilityOverlay
 	pop {r3, r4, r5, pc}
 	.balign 4, 0
 _02236414: .word ov80_0223C040

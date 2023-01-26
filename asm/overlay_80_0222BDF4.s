@@ -1833,7 +1833,7 @@ ov80_0222CB54: ; 0x0222CB54
 	ldr r0, [r4]
 	mov r3, #0
 	ldr r0, [r0]
-	bl sub_02096820
+	bl Frontier_LoadFacilityOverlay
 	mov r0, #1
 	add sp, #8
 	pop {r4, pc}
@@ -2179,7 +2179,7 @@ ov80_0222CD94: ; 0x0222CD94
 	ldr r0, [r0]
 	add r2, r6, #0
 	mov r3, #1
-	bl sub_02096820
+	bl Frontier_LoadFacilityOverlay
 	mov r0, #1
 	add sp, #8
 	pop {r4, r5, r6, pc}

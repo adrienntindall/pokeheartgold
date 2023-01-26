@@ -106,7 +106,7 @@ ov80_02231C8C: ; 0x02231C8C
 	add r2, r4, #0
 	ldr r0, [r0]
 	mov r3, #0
-	bl sub_02096820
+	bl Frontier_LoadFacilityOverlay
 	mov r0, #1
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
@@ -145,7 +145,7 @@ ov80_02231CE0: ; 0x02231CE0
 	add r2, r4, #0
 	ldr r0, [r0]
 	mov r3, #0
-	bl sub_02096820
+	bl Frontier_LoadFacilityOverlay
 	mov r0, #1
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
@@ -235,7 +235,7 @@ ov80_02231DBC: ; 0x02231DBC
 	ldr r0, [r5]
 	ldr r1, _02231DF4 ; =_020FA484
 	ldr r0, [r0]
-	bl sub_02096820
+	bl Frontier_LoadFacilityOverlay
 	mov r0, #1
 	add sp, #4
 	pop {r3, r4, r5, r6, pc}
@@ -274,7 +274,7 @@ ov80_02231DF8: ; 0x02231DF8
 	add r2, r4, #0
 	ldr r0, [r0]
 	mov r3, #0
-	bl sub_02096820
+	bl Frontier_LoadFacilityOverlay
 	mov r0, #1
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0

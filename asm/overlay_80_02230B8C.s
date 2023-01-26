@@ -153,7 +153,7 @@ _02230CB8:
 	add r2, r5, #0
 	ldr r0, [r0]
 	mov r3, #0
-	bl sub_02096820
+	bl Frontier_LoadFacilityOverlay
 	mov r0, #1
 	pop {r3, r4, r5, r6, r7, pc}
 	nop
@@ -213,7 +213,7 @@ ov80_02230D0C: ; 0x02230D0C
 	ldr r1, _02230D58 ; =_020FA484
 	ldr r0, [r0]
 	add r2, r6, #0
-	bl sub_02096820
+	bl Frontier_LoadFacilityOverlay
 	mov r0, #1
 	add sp, #4
 	pop {r3, r4, r5, r6, pc}

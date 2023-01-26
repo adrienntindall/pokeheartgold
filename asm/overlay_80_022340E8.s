@@ -933,8 +933,8 @@ BattleArcade_SetPartyPostBattle: ; 0x022347EC
 	pop {r4, r5, r6, pc}
 	thumb_func_end BattleArcade_SetPartyPostBattle
 
-	thumb_func_start ov80_02234848
-ov80_02234848: ; 0x02234848
+	thumb_func_start Frontier_GetBattlePoints
+Frontier_GetBattlePoints: ; 0x02234848
 	push {r3, r4, r5, r6, r7, lr}
 	add r6, r0, #0
 	ldrb r0, [r6, #0x10]
@@ -972,7 +972,7 @@ _02234886:
 	nop
 _0223488C: .word ov80_0223BE9E
 _02234890: .word ov80_0223BE9F
-	thumb_func_end ov80_02234848
+	thumb_func_end Frontier_GetBattlePoints
 
 	thumb_func_start ov80_02234894
 ov80_02234894: ; 0x02234894
@@ -2455,8 +2455,8 @@ _0223535C: .word ov80_0223C01C
 _02235360: .word ov80_0223C028
 	thumb_func_end ov80_02235324
 
-	thumb_func_start ov80_02235364
-ov80_02235364: ; 0x02235364
+	thumb_func_start BattleArcade_SetItemPostBattle
+BattleArcade_SetItemPostBattle: ; 0x02235364
 	push {r3, r4, r5, lr}
 	add r5, r1, #0
 	add r1, r2, #0
@@ -2475,7 +2475,7 @@ ov80_02235364: ; 0x02235364
 	bl SetMonData
 	pop {r3, r4, r5, pc}
 	.balign 4, 0
-	thumb_func_end ov80_02235364
+	thumb_func_end BattleArcade_SetItemPostBattle
 
     .data
     

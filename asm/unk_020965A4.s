@@ -342,8 +342,8 @@ Frontier_SetWork: ; 0x02096818
 	.balign 4, 0
 	thumb_func_end Frontier_SetWork
 
-	thumb_func_start sub_02096820
-sub_02096820: ; 0x02096820
+	thumb_func_start Frontier_LoadFacilityOverlay
+Frontier_LoadFacilityOverlay: ; 0x02096820
 	push {r3, r4, r5, r6, r7, lr}
 	add r5, r0, #0
 	ldr r0, [r5, #4]
@@ -365,7 +365,7 @@ _02096834:
 	str r0, [r5, #0xc]
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
-	thumb_func_end sub_02096820
+	thumb_func_end Frontier_LoadFacilityOverlay
 
 	thumb_func_start sub_0209684C
 sub_0209684C: ; 0x0209684C
