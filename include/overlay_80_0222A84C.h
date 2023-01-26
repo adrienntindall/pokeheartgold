@@ -1,6 +1,8 @@
 #ifndef POKEHEARTGOLD_OVERLAY_80_0222A84C_H
 #define POKEHEARTGOLD_OVERLAY_80_0222A84C_H
 
+#include "frontier_system.h"
+
 typedef struct UnkStruct_80_0222A84C_Sub3C {
     void *unk0[8];
     u16 unk20[8];
@@ -63,5 +65,7 @@ typedef struct UnkStruct_80_0222A84C {
     u8 unkC6;
     u8 unused;
 } UnkStruct_80_0222A84C;
+
+UnkStruct_80_0222A84C *ov80_0222AB34(FrontierSystem *frsys);
 
 #endif //POKEHEARTGOLD_OVERLAY_80_0222A84C_H

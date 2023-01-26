@@ -5,8 +5,12 @@
 #include "overlay_80_02238648.h"
 #include "overlay_80_0222AB40.h"
 #include "overlay_80_0222BDF4.h"
+#include "overlay_80_02238034.h"
+#include "overlay_80_02239960.h"
 #include "palette.h"
 #include "particle_system.h"
+#include "player_data.h"
+#include "unk_02034354.h"
 #include "constants/pokemon.h"
 
 FS_EXTERN_OVERLAY(OVY_84);
@@ -226,7 +230,6 @@ BOOL FrontierCmd_BattleArcadeScript(FRONTIER_CONTEXT *ctx) {
     FrontierExternalData *ptr;
     UnkStruct_80_0222A84C *map;
     PLAYERPROFILE *profile;
-
     
     u8 var = FrontierScript_ReadByte(ctx);
     u8 a1 = FrontierScript_ReadWord(ctx);

@@ -6,4 +6,6 @@ typedef struct UnkStruct_80_02238648 {
     void *unk4;
 } UnkStruct_80_02238648;
 
+UnkStruct_80_02238648 *ov80_02239938(void *a0, u8 a1);
+
 #endif //POKEHEARTGOLD_OVERLAY_80_02238648_H
