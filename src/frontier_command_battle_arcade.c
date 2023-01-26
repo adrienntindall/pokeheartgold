@@ -12,7 +12,7 @@
 FS_EXTERN_OVERLAY(OVY_84);
 
 static void ov80_02233944(GAME_BOARD_ARGS *args, BattleArcadeWork *work);
-static void ov80_02233A1C(void *_args);
+static void BattleArcade_FreeArgs(void *_args);
 
 
 BOOL FrontierCmd_BattleArcadeAlloc(FRONTIER_CONTEXT *ctx) {
@@ -65,7 +65,7 @@ BOOL FrontierCmd_BattleArcadeRankUp(FRONTIER_CONTEXT *ctx) {
     args->savedata = ptr->savedata;
     ov80_02233944(args, work);
     
-    sub_02096820(ctx->frsys->unk0, &sBattleArcadeGameBoardTemplate, args, FALSE, ov80_02233A1C);
+    sub_02096820(ctx->frsys->unk0, &sBattleArcadeGameBoardTemplate, args, FALSE, BattleArcade_FreeArgs);
     
     return TRUE;
 }
@@ -194,33 +194,32 @@ static void ov80_02233944(GAME_BOARD_ARGS *args, BattleArcadeWork *work) {
     }
 }
 
-static void ov80_02233A1C(void *_args) {
+static void BattleArcade_FreeArgs(void *_args) {
     GAME_BOARD_ARGS *args = _args;
     ov80_02234550(args->work, args);
     FreeToHeap(args);
 }
 
-BOOL ov80_02233A30(FRONTIER_CONTEXT *ctx) {
+BOOL FrontierCmd_BattleArcadeSetPartyPreBattle(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work = Frontier_GetWork(ctx->frsys->unk0);
-    ov80_022347E4(work);
+    BattleArcade_SetPartyPreBattle(work);
     return FALSE;
 }
 
-BOOL ov80_02233A44(FRONTIER_CONTEXT *ctx) {
+BOOL FrontierCmd_BattleArcadeSetPartyPostBattle(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work = Frontier_GetWork(ctx->frsys->unk0);
-    ov80_022347EC(work);
+    BattleArcade_SetPartyPostBattle(work);
     return FALSE;
 }
 
-static void ov80_02233F1C(FRONTIER_CONTEXT *ctx, BattleArcadeWork *work, u16 emit);
+static void BattleArcade_AddParticleEmitter(FRONTIER_CONTEXT *ctx, BattleArcadeWork *work, u16 emit);
 
-BOOL ov80_02233A58(FRONTIER_CONTEXT *ctx) {
+BOOL FrontierCmd_BattleArcadeScript(FRONTIER_CONTEXT *ctx) {
     STRING *str;
     POKEMON *mon;
     PARTY *party;
     BattleArcadeWork *work;
     u8 playerMonCount, opponentMonCount, colour;
-    u32 typeTable[9][2];
     u32 type, typeNumber;
     u16 yOffset;
     int i, j, flag;
@@ -405,7 +404,7 @@ BOOL ov80_02233A58(FRONTIER_CONTEXT *ctx) {
         break;
     case 39:
         work->reverseFlag = a2;
-        ov80_02233F1C(ctx, work, a1);
+        BattleArcade_AddParticleEmitter(ctx, work, a1);
         break;
     case 40:
         ov80_0222A474(&work->partner[0], work->trainerIndex[work->round], HEAP_ID_FIELDMAP, 204);
@@ -466,18 +465,18 @@ BOOL ov80_02233A58(FRONTIER_CONTEXT *ctx) {
     return FALSE;
 }
 
-static void ov80_02233F40(ParticleSystemEmitter *emit);
+static void BattleArcade_ParticleCB(ParticleSystemEmitter *emit);
 
-static void ov80_02233F1C(FRONTIER_CONTEXT *ctx, BattleArcadeWork *work, u16 emit) {
+static void BattleArcade_AddParticleEmitter(FRONTIER_CONTEXT *ctx, BattleArcadeWork *work, u16 emit) {
     FrontierSystem *frsys = ctx->frsys;
     UnkStruct_80_0222A84C *map = ov80_0222AB34(ctx->frsys);
     ParticleSystemEmitter *particleSys = ov80_02239A60(map->unk10, 0);
-    sub_02015494(particleSys, emit, ov80_02233F40, work);
+    sub_02015494(particleSys, emit, BattleArcade_ParticleCB, work);
 }
 
 extern VecFx32 ov80_0223BE6C[1];
 
-static void ov80_02233F40(ParticleSystemEmitter *emit) {
+static void BattleArcade_ParticleCB(ParticleSystemEmitter *emit) {
     VecFx32 vec;
     VecFx16 axis;
     BattleArcadeWork *work = sub_02015504();
@@ -492,7 +491,7 @@ static void ov80_02233F40(ParticleSystemEmitter *emit) {
     }
 }
 
-BOOL ov80_02233FBC(FRONTIER_CONTEXT *ctx) {
+BOOL FrontierCmd_BattleArcadeCheckLoss(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work;
     u16 *ret = FrontierScript_GetVarPointer(ctx);
     work = Frontier_GetWork(ctx->frsys->unk0);
@@ -500,7 +499,7 @@ BOOL ov80_02233FBC(FRONTIER_CONTEXT *ctx) {
     return FALSE;
 }
 
-BOOL ov80_02233FD8(FRONTIER_CONTEXT *ctx) {
+BOOL FrontierCmd_BattleArcadeSendBuffer(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work;
     u32 type = FrontierScript_ReadWord(ctx);
     u32 param = FrontierScript_ReadWord(ctx);
@@ -510,15 +509,15 @@ BOOL ov80_02233FD8(FRONTIER_CONTEXT *ctx) {
     return TRUE;
 }
 
-static BOOL ov80_02234028(FRONTIER_CONTEXT *ctx);
+static BOOL FrontierCmd_BattleArcadeWaitForRecvBuffer(FRONTIER_CONTEXT *ctx);
 
-BOOL ov80_02234008(FRONTIER_CONTEXT *ctx) {
+BOOL FrontierCmd_BattleArcadeRecvBuffer(FRONTIER_CONTEXT *ctx) {
     ctx->unk64[0] = ov80_0222AC58(ctx);
-    ov80_0222AB84(ctx, ov80_02234028);
+    ov80_0222AB84(ctx, FrontierCmd_BattleArcadeWaitForRecvBuffer);
     return TRUE;
 }
 
-static BOOL ov80_02234028(FRONTIER_CONTEXT *ctx) {
+static BOOL FrontierCmd_BattleArcadeWaitForRecvBuffer(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work;
     u16 type = ov80_0222BE9C(ctx, ctx->unk64[0]);
     work = Frontier_GetWork(ctx->frsys->unk0);
@@ -530,7 +529,7 @@ static BOOL ov80_02234028(FRONTIER_CONTEXT *ctx) {
     return FALSE;
 }
 
-BOOL ov80_02234058(FRONTIER_CONTEXT *ctx) {
+BOOL FrontierCmd_BattleArcadeDisplayMessage(FRONTIER_CONTEXT *ctx) {
     u16 *msg;
     BattleArcadeWork *work;
     FrontierExternalData *ptr = Frontier_GetExternalData(ctx->frsys->unk0);
@@ -547,19 +546,19 @@ BOOL ov80_02234058(FRONTIER_CONTEXT *ctx) {
     return TRUE;
 }
 
-BOOL ov80_02234094(FRONTIER_CONTEXT *ctx) {
+BOOL FrontierCmd_BattleArcadeDecideEvent(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work = Frontier_GetWork(ctx->frsys->unk0);
-    ov80_02234E98(work, work->decide);
+    BattleArcade_EventSet(work, work->decide);
     return TRUE;
 }
 
-BOOL ov80_022340A8(FRONTIER_CONTEXT *ctx) {
+BOOL FrontierCmd_BattleArcadeToggleHeldItemIcons(FRONTIER_CONTEXT *ctx) {
     BattleArcadeWork *work;
     UnkStruct_80_0222A84C *map = ov80_0222AB34(ctx->frsys);
-    u32 a1 = FrontierScript_ReadWord(ctx);
-    u32 a2 = FrontierScript_ReadWord(ctx);
-    u32 a3 = FrontierScript_ReadWord(ctx);
+    u32 icon1Toggle = FrontierScript_ReadWord(ctx);
+    u32 icon2Toggle = FrontierScript_ReadWord(ctx);
+    u32 icon3Toggle = FrontierScript_ReadWord(ctx);
     work = Frontier_GetWork(ctx->frsys->unk0);
-    ov80_02234D04(work, map, a1, a2, a3);
+    BattleArcade_ToggleHeldItemIcons(work, map, icon1Toggle, icon2Toggle, icon3Toggle);
     return FALSE;
 }

@@ -7648,16 +7648,16 @@ ov80_0223BA04: ; 0x0223BA04
 	.word FrontierCmd_BattleArcadeFree
 	.word FrontierCmd_BattleArcadeGetResult
 	.word FrontierCmd_BattleArcadeStartBattle
-	.word ov80_02233A30
-	.word ov80_02233A44
-	.word ov80_02233A58
-	.word ov80_02233FBC
-	.word ov80_02233FD8
-	.word ov80_02234008
+	.word FrontierCmd_BattleArcadeSetPartyPreBattle
+	.word FrontierCmd_BattleArcadeSetPartyPostBattle
+	.word FrontierCmd_BattleArcadeScript
+	.word FrontierCmd_BattleArcadeCheckLoss
+	.word FrontierCmd_BattleArcadeSendBuffer
+	.word FrontierCmd_BattleArcadeRecvBuffer
 	.word FrontierCmd_BattleArcadeRankUp
-	.word ov80_02234058
-	.word ov80_02234094
-	.word ov80_022340A8
+	.word FrontierCmd_BattleArcadeDisplayMessage
+	.word FrontierCmd_BattleArcadeDecideEvent
+	.word FrontierCmd_BattleArcadeToggleHeldItemIcons
 	.word ov80_022310C0
 	.word ov80_0222E144
 	.word ov80_0222E160

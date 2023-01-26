@@ -879,16 +879,16 @@ _022347D6:
 _022347E0: .word ov80_02234588
 	thumb_func_end ov80_022347C4
 
-	thumb_func_start ov80_022347E4
-ov80_022347E4: ; 0x022347E4
+	thumb_func_start BattleArcade_SetPartyPreBattle
+BattleArcade_SetPartyPreBattle: ; 0x022347E4
 	ldr r3, _022347E8 ; =ov80_022383C0
 	bx r3
 	.balign 4, 0
 _022347E8: .word ov80_022383C0
-	thumb_func_end ov80_022347E4
+	thumb_func_end BattleArcade_SetPartyPreBattle
 
-	thumb_func_start ov80_022347EC
-ov80_022347EC: ; 0x022347EC
+	thumb_func_start BattleArcade_SetPartyPostBattle
+BattleArcade_SetPartyPostBattle: ; 0x022347EC
 	push {r4, r5, r6, lr}
 	sub sp, #0x10
 	add r5, r0, #0
@@ -931,7 +931,7 @@ ov80_022347EC: ; 0x022347EC
 	bl ov80_022383C0
 	add sp, #0x10
 	pop {r4, r5, r6, pc}
-	thumb_func_end ov80_022347EC
+	thumb_func_end BattleArcade_SetPartyPostBattle
 
 	thumb_func_start ov80_02234848
 ov80_02234848: ; 0x02234848
@@ -1544,8 +1544,8 @@ _02234D02:
 	pop {r3, r4, r5, r6, r7, pc}
 	thumb_func_end ov80_02234CB0
 
-	thumb_func_start ov80_02234D04
-ov80_02234D04: ; 0x02234D04
+	thumb_func_start BattleArcade_ToggleHeldItemIcons
+BattleArcade_ToggleHeldItemIcons: ; 0x02234D04
 	push {r3, r4, r5, r6, r7, lr}
 	add r5, r0, #0
 	ldrb r0, [r5, #0x10]
@@ -1636,7 +1636,7 @@ _02234DB2:
 _02234DC0:
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
-	thumb_func_end ov80_02234D04
+	thumb_func_end BattleArcade_ToggleHeldItemIcons
 
 	thumb_func_start ov80_02234DC4
 ov80_02234DC4: ; 0x02234DC4
@@ -1744,8 +1744,8 @@ _02234E94:
 	.balign 4, 0
 	thumb_func_end ov80_02234E50
 
-	thumb_func_start ov80_02234E98
-ov80_02234E98: ; 0x02234E98
+	thumb_func_start BattleArcade_EventSet
+BattleArcade_EventSet: ; 0x02234E98
 	push {r4, r5, r6, lr}
 	add r6, r1, #0
 	add r5, r0, #0
@@ -1772,7 +1772,7 @@ _02234EB8:
 	pop {r4, r5, r6, pc}
 	.balign 4, 0
 _02234EC8: .word ov80_0223DCB8
-	thumb_func_end ov80_02234E98
+	thumb_func_end BattleArcade_EventSet
 
 	thumb_func_start ov80_02234ECC
 ov80_02234ECC: ; 0x02234ECC

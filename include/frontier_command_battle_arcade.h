@@ -74,14 +74,14 @@ BOOL FrontierCmd_BattleArcadeAlloc(FRONTIER_CONTEXT *ctx);
 BOOL FrontierCmd_BattleArcadeInit(FRONTIER_CONTEXT *ctx);
 BOOL FrontierCmd_BattleArcadeGetResult(FRONTIER_CONTEXT *ctx);
 BOOL FrontierCmd_BattleArcadeStartBattle(FRONTIER_CONTEXT *ctx);
-BOOL ov80_02233A30(FRONTIER_CONTEXT *ctx);
-BOOL ov80_02233A44(FRONTIER_CONTEXT *ctx);
-BOOL ov80_02233A58(FRONTIER_CONTEXT *ctx);
-BOOL ov80_02233FBC(FRONTIER_CONTEXT *ctx);
-BOOL ov80_02233FD8(FRONTIER_CONTEXT *ctx);
-BOOL ov80_02234008(FRONTIER_CONTEXT *ctx);
-BOOL ov80_02234058(FRONTIER_CONTEXT *ctx);
-BOOL ov80_02234094(FRONTIER_CONTEXT *ctx);
+BOOL FrontierCmd_BattleArcadeSetPartyPreBattle(FRONTIER_CONTEXT *ctx);
+BOOL FrontierCmd_BattleArcadeSetPartyPostBattle(FRONTIER_CONTEXT *ctx);
+BOOL FrontierCmd_BattleArcadeScript(FRONTIER_CONTEXT *ctx);
+BOOL FrontierCmd_BattleArcadeCheckLoss(FRONTIER_CONTEXT *ctx);
+BOOL FrontierCmd_BattleArcadeSendBuffer(FRONTIER_CONTEXT *ctx);
+BOOL FrontierCmd_BattleArcadeRecvBuffer(FRONTIER_CONTEXT *ctx);
+BOOL FrontierCmd_BattleArcadeDisplayMessage(FRONTIER_CONTEXT *ctx);
+BOOL FrontierCmd_BattleArcadeDecideEvent(FRONTIER_CONTEXT *ctx);
 
 //Sub
 BattleArcadeWork *BattleArcade_Alloc(SAVEDATA *, u32, u8, u32, u32, u32, u16 *);
