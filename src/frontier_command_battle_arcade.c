@@ -238,36 +238,36 @@ BOOL FrontierCmd_BattleArcadeScript(FRONTIER_CONTEXT *ctx) {
     map = ov80_0222AB34(ctx->frsys);
     
     switch (var) {
-    case 2:
+    case FRONTIER_CODE_SET_TYPE:
         work->type = a1;
         break;
-    case 3:
+    case FRONTIER_CODE_GET_RETURN_DATA:
         *ret = work->returnData[a1];
         break;
-    case 4:
+    case FRONTIER_CODE_GET_WINSTREAK:
         *ret = work->winstreak;
         break;
-    case 5:
+    case FRONTIER_CODE_INCREASE_WINSTREAK:
         if (work->winstreak < 9999) {
             work->winstreak++;
         }
         break;
-    case 7:
+    case FRONTIER_CODE_SYSTEM_RESET:
         OS_ResetSystem(FALSE);
         break;
-    case 9:
+    case FRONTIER_CODE_IS_SAVE_DATA_ENABLED:
         *ret = sub_02030E98(work->unk8);
         break;
-    case 10:
+    case FRONTIER_CODE_REST_SAVE:
         ov80_02234588(work, 2);
         break;
-    case 12:
+    case FRONTIER_CODE_GET_PANEL_BP:
         *ret = ov80_02238430(work, work->decide);
         break;
-    case 14:    
+    case FRONTIER_CODE_INCREASE_ROUND:    
         *ret = ov80_02234764(work);
         break;
-    case 15:
+    case FRONITER_CODE_GET_HELD_ITEM:
         if (a1 == 0) {
             mon = GetPartyMonByIndex(work->playerParty, 0);
         } else {
@@ -275,35 +275,35 @@ BOOL FrontierCmd_BattleArcadeScript(FRONTIER_CONTEXT *ctx) {
         }
         *ret = GetMonData(mon, 6, NULL);
         break;
-    case 16:
+    case FRONTIER_CODE_GET_PANEL_DECISION:
         *ret = work->decide;
         break;
-    case 18:
+    case FRONITER_CODE_SET_TEMP_HELD_ITEM:
         party = SavArray_PlayerParty_get(ptr->savedata);
         for (i = 0; i < 3; i++) {
             mon = GetPartyMonByIndex(party, work->entryMonPos[i]);
             SetMonData(mon, 6, &work->heldItems[i]);
         }
         break;
-    case 19:
+    case UNK_FRONTIER_CODE_19:
         *ret = ov80_02238498(work);
         break;
-    case 20:
+    case UNK_FRONTIER_CODE_20:
         *ret = ov80_02234774(work, a1);
         break;
-    case 21:
+    case FRONTIER_CODE_SET_LOSS:
         ov80_022347B8(work);
         break;
-    case 22:
+    case UNK_FRONTIER_CODE_22:
         ov80_022347C4(work);
         break;
-    case 23:
+    case FRONTIER_CODE_GET_ROUND:
         *ret = ov80_02234770(work);
         break;
-    case 24:
+    case FRONTIER_CODE_GET_MULTI_RETIRE_FLAG:
         *ret = work->multiRetire;
         break;
-    case 25:
+    case FRONTIER_CODE_CHANGE_MON_ICONS:
         if (work->decide == 27) {
             playerMonCount = BattleArcade_GetMonCount(work->type, 1);
             opponentMonCount = BattleArcade_GetOpponentMonCount(work->type, 1);
@@ -334,22 +334,22 @@ BOOL FrontierCmd_BattleArcadeScript(FRONTIER_CONTEXT *ctx) {
             }
         }
         break;
-    case 6:
+    case UNK_FRONTIER_CODE_6:
         sub_02096910(work);
         break;
-    case 28:
+    case UNK_FRONTIER_CODE_28:
         *ret = BattleArcade_IsMultiplayer(work->type);
         break;
-    case 17:
+    case FRONTIER_CODE_GET_TYPE:
         *ret = work->type;
         break;
-    case 29:
+    case UNK_FRONTIER_CODE_29:
         ov80_0222F210(map);
         break;
-    case 30:
+    case UNK_FRONTIER_CODE_30:
         ov80_0222F278(map);
         break;
-    case 31:
+    case UNK_FRONTIER_CODE_31:
         ov80_02234A74(work, map, a1);
         
         playerMonCount = BattleArcade_GetMonCount(work->type, 1);
@@ -365,30 +365,30 @@ BOOL FrontierCmd_BattleArcadeScript(FRONTIER_CONTEXT *ctx) {
             }
         }
         break;
-    case 32:
+    case UNK_FRONTIER_CODE_32:
         ov80_02234B24(work, map, a1);
         break;
-    case 33:
+    case UNK_FRONTIER_CODE_33:
         ov80_0222F33C(map);
         break;
-    case 34:
+    case UNK_FRONTIER_CODE_34:
         ov80_0222F3CC(map);
         break;
-    case 35:
+    case UNK_FRONTIER_CODE_35:
         ov80_02234BEC(work, map, a1);
         break;
-    case 36:
+    case UNK_FRONTIER_CODE_36:
         ov80_02234CB0(work, map, a1);
         break;
-    case 11:
+    case UNK_FRONTIER_CODE_11:
         ov80_02234968(work, map);
         break;
-    case 37:
+    case UNK_FRONTIER_CODE_37:
         if (BattleArcade_IsMultiplayer(work->type) == TRUE) {
             ov80_02234A38(work, map);
         }
         break;
-    case 38:
+    case UNK_FRONTIER_CODE_38:
         colour = BattleArcade_GetPanelColor(work->decide);
         
         if (colour == 0) {
@@ -402,24 +402,24 @@ BOOL FrontierCmd_BattleArcadeScript(FRONTIER_CONTEXT *ctx) {
             BufferPlayersName(ctx->frsys->msgfmt, a1, profile);
         }
         break;
-    case 39:
+    case FRONTIER_CODE_ADD_PARTICLE_EMITTER:
         work->reverseFlag = a2;
         BattleArcade_AddParticleEmitter(ctx, work, a1);
         break;
-    case 40:
+    case UNK_FRONTIER_CODE_40:
         ov80_0222A474(&work->partner[0], work->trainerIndex[work->round], HEAP_ID_FIELDMAP, 204);
         ov80_0222A474(&work->partner[1], work->trainerIndex[work->round + 7], HEAP_ID_FIELDMAP, 204);
         break;
-    case 41:
+    case UNK_FRONTIER_CODE_41:
         ov80_02234B7C(work, map, a1, a2);
         break;
-    case 42:
+    case UNK_FRONTIER_CODE_42:
         ov80_02234BB4(work, map, a1, a2);
         break;
-    case 43:
+    case UNK_FRONTIER_CODE_43:
         ov80_02234DC4(a1, a2);
         break;
-    case 44:
+    case UNK_FRONTIER_CODE_44:
         if (a1 == 0) {
             sub_02003E5C(map->unk4, 2, 0, 256, a1, 0);
         } else {
@@ -429,16 +429,16 @@ BOOL FrontierCmd_BattleArcadeScript(FRONTIER_CONTEXT *ctx) {
             sub_02003E5C(map->unk4, 2, paletteIndex*16, 16, a1, 0);
         }
         break;
-    case 45:
+    case UNK_FRONTIER_CODE_45:
         *ret = ov80_02235324(work);
         break;
-    case 46:
+    case UNK_FRONTIER_CODE_46:
         GX_EngineAToggleLayers(4, 0);
         break;
-    case 47:
+    case UNK_FRONTIER_CODE_47:
         *ret = work->unkFlag;
         break;
-    case 48:
+    case FRONTIER_CODE_CHECK_BRAIN:
         *ret = 0;
         if (work->type == 0) {
             if (work->winstreak + 1 == 21) {
@@ -448,17 +448,17 @@ BOOL FrontierCmd_BattleArcadeScript(FRONTIER_CONTEXT *ctx) {
             }
         }
         break;
-    case 49:
+    case FRONTIER_CODE_CREATE_OPPONENT_MONS:
         ov80_0222A52C(work->opponentPokemon, work->opponentMonIndex, work->opponentAtkIvs, work->opponentPersonalityValues, NULL, 4, HEAP_ID_FIELDMAP, 205);
         break;
-    case 50:
+    case FRONTIER_CODE_SET_OPPONENT_PARTY:
         ov80_022383C0(work);
         break;
-    case 51:
+    case FRONTIER_CODE_CHECK_BRAIN_MESSAGE:
         *ret = work->dahliaApproachFlag;
         work->dahliaApproachFlag = TRUE;
         break;
-    case 52:
+    case FRONTIER_CODE_CLEAR_RECV_CNT:
         work->recvCnt = 0;
         break;
     }
