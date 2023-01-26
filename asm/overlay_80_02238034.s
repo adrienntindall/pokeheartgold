@@ -483,8 +483,8 @@ ov80_022383A8: ; 0x022383A8
 	.balign 4, 0
 	thumb_func_end ov80_022383A8
 
-	thumb_func_start ov80_022383C0
-ov80_022383C0: ; 0x022383C0
+	thumb_func_start BattleArcade_SetOpponentParty
+BattleArcade_SetOpponentParty: ; 0x022383C0
 	push {r3, r4, r5, r6, r7, lr}
 	sub sp, #8
 	add r5, r0, #0
@@ -534,10 +534,10 @@ _02238424:
 	add sp, #8
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
-	thumb_func_end ov80_022383C0
+	thumb_func_end BattleArcade_SetOpponentParty
 
-	thumb_func_start ov80_02238430
-ov80_02238430: ; 0x02238430
+	thumb_func_start BattleArcade_GetPanelBattlePoints
+BattleArcade_GetPanelBattlePoints: ; 0x02238430
 	push {r4, lr}
 	add r4, r1, #0
 	bl ov80_02238498
@@ -548,7 +548,7 @@ ov80_02238430: ; 0x02238430
 _02238440:
 	mov r0, #3
 	pop {r4, pc}
-	thumb_func_end ov80_02238430
+	thumb_func_end BattleArcade_GetPanelBattlePoints
 
 	thumb_func_start ov80_02238444
 ov80_02238444: ; 0x02238444

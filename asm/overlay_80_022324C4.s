@@ -552,7 +552,7 @@ _02232938:
 	add r1, sp, #0x30
 	add r2, sp, #0x10
 	mov r3, #0
-	bl ov80_0222A52C
+	bl Frontier_CreateOpponentMons
 	mov r0, #0xb
 	bl AllocMonZeroed
 	add r6, r0, #0

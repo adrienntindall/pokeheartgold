@@ -443,7 +443,7 @@ _02236E70:
 	add r0, r4, #0
 	add r1, r5, #0
 	mov r3, #0
-	bl ov80_0222A52C
+	bl Frontier_CreateOpponentMons
 	add sp, #0x14
 	pop {r4, r5, pc}
 	thumb_func_end ov80_02236E24
@@ -521,7 +521,7 @@ _02236EE4:
 	str r0, [sp, #0xc]
 	ldr r0, [sp, #0x9c]
 	mov r3, #0
-	bl ov80_0222A52C
+	bl Frontier_CreateOpponentMons
 	add sp, #0x84
 	pop {r4, r5, r6, r7, pc}
 	thumb_func_end ov80_02236E90
@@ -799,7 +799,7 @@ ov80_02237130: ; 0x02237130
 	add r1, r5, r1
 	add r2, r5, r2
 	add r3, r5, r3
-	bl ov80_0222A52C
+	bl Frontier_CreateOpponentMons
 	ldr r0, _022371A8 ; =0x000004D4
 	ldr r0, [r5, r0]
 	bl SavArray_Party_init
@@ -872,7 +872,7 @@ _022371D4:
 	add r0, sp, #0x14
 	add r2, r5, r2
 	add r3, r5, r3
-	bl ov80_0222A52C
+	bl Frontier_CreateOpponentMons
 	mov r0, #0xb
 	bl AllocMonZeroed
 	add r7, r0, #0

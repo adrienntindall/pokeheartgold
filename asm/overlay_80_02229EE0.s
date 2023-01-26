@@ -808,8 +808,8 @@ ov80_0222A4EC: ; 0x0222A4EC
 	.balign 4, 0
 	thumb_func_end ov80_0222A4EC
 
-	thumb_func_start ov80_0222A52C
-ov80_0222A52C: ; 0x0222A52C
+	thumb_func_start Frontier_CreateOpponentMons
+Frontier_CreateOpponentMons: ; 0x0222A52C
 	push {r3, r4, r5, r6, r7, lr}
 	sub sp, #0x18
 	str r0, [sp, #0xc]
@@ -876,7 +876,7 @@ _0222A58C:
 _0222A5A0:
 	add sp, #0x18
 	pop {r3, r4, r5, r6, r7, pc}
-	thumb_func_end ov80_0222A52C
+	thumb_func_end Frontier_CreateOpponentMons
 
 	thumb_func_start ov80_0222A5A4
 ov80_0222A5A4: ; 0x0222A5A4
@@ -1170,7 +1170,7 @@ _0222A7A6:
 	str r0, [sp, #0xc]
 	ldr r0, [sp, #0x88]
 	mov r3, #0
-	bl ov80_0222A52C
+	bl Frontier_CreateOpponentMons
 	add sp, #0x74
 	pop {r4, r5, r6, r7, pc}
 	thumb_func_end ov80_0222A6B8

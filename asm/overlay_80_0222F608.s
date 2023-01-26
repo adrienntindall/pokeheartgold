@@ -754,7 +754,7 @@ _0222FBA8:
 	add r1, r4, r1
 	add r2, r4, r2
 	add r3, r4, r3
-	bl ov80_0222A52C
+	bl Frontier_CreateOpponentMons
 	b _0222FBE6
 _0222FBD4:
 	add r0, r4, #0

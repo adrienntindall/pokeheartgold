@@ -747,7 +747,7 @@ _022302A6:
 	add r1, sp, #0x40
 	add r2, sp, #0x20
 	add r3, sp, #0x28
-	bl ov80_0222A52C
+	bl Frontier_CreateOpponentMons
 	mov r0, #0xb
 	bl AllocMonZeroed
 	add r6, r0, #0
@@ -831,7 +831,7 @@ _0223035C:
 	add r1, sp, #0x40
 	add r2, sp, #0x20
 	add r3, sp, #0x28
-	bl ov80_0222A52C
+	bl Frontier_CreateOpponentMons
 	mov r0, #0xb
 	bl AllocMonZeroed
 	add r6, r0, #0
@@ -1569,7 +1569,7 @@ _0223098A:
 	add r1, r5, r1
 	add r2, r5, r2
 	mov r3, #0
-	bl ov80_0222A52C
+	bl Frontier_CreateOpponentMons
 	add sp, #0x4c
 	pop {r4, r5, r6, r7, pc}
 	.balign 4, 0

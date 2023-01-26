@@ -259,13 +259,13 @@ BOOL FrontierCmd_BattleArcadeScript(FRONTIER_CONTEXT *ctx) {
         *ret = sub_02030E98(work->unk8);
         break;
     case FRONTIER_CODE_REST_SAVE:
-        ov80_02234588(work, 2);
+        BattleArcade_RestSave(work, 2);
         break;
     case FRONTIER_CODE_GET_PANEL_BP:
-        *ret = ov80_02238430(work, work->decide);
+        *ret = BattleArcade_GetPanelBattlePoints(work, work->decide);
         break;
     case FRONTIER_CODE_INCREASE_ROUND:    
-        *ret = ov80_02234764(work);
+        *ret = BattleArcade_IncreaseRound(work);
         break;
     case FRONITER_CODE_GET_HELD_ITEM:
         if (a1 == 0) {
@@ -292,13 +292,13 @@ BOOL FrontierCmd_BattleArcadeScript(FRONTIER_CONTEXT *ctx) {
         *ret = ov80_02234774(work, a1);
         break;
     case FRONTIER_CODE_SET_LOSS:
-        ov80_022347B8(work);
+        BattleArcade_SetLoss(work);
         break;
     case UNK_FRONTIER_CODE_22:
         ov80_022347C4(work);
         break;
     case FRONTIER_CODE_GET_ROUND:
-        *ret = ov80_02234770(work);
+        *ret = BattleArcade_GetRound(work);
         break;
     case FRONTIER_CODE_GET_MULTI_RETIRE_FLAG:
         *ret = work->multiRetire;
@@ -449,10 +449,10 @@ BOOL FrontierCmd_BattleArcadeScript(FRONTIER_CONTEXT *ctx) {
         }
         break;
     case FRONTIER_CODE_CREATE_OPPONENT_MONS:
-        ov80_0222A52C(work->opponentPokemon, work->opponentMonIndex, work->opponentAtkIvs, work->opponentPersonalityValues, NULL, 4, HEAP_ID_FIELDMAP, 205);
+        Frontier_CreateOpponentMons(work->opponentPokemon, work->opponentMonIndex, work->opponentAtkIvs, work->opponentPersonalityValues, NULL, 4, HEAP_ID_FIELDMAP, 205);
         break;
     case FRONTIER_CODE_SET_OPPONENT_PARTY:
-        ov80_022383C0(work);
+        BattleArcade_SetOpponentParty(work);
         break;
     case FRONTIER_CODE_CHECK_BRAIN_MESSAGE:
         *ret = work->dahliaApproachFlag;

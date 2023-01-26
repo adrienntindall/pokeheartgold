@@ -447,7 +447,7 @@ _02234458:
 	add r1, sp, #0x30
 	add r2, sp, #0x10
 	mov r3, #0
-	bl ov80_0222A52C
+	bl Frontier_CreateOpponentMons
 	mov r0, #0xb
 	bl AllocMonZeroed
 	add r6, r0, #0
@@ -578,8 +578,8 @@ _02234582:
 	.balign 4, 0
 	thumb_func_end ov80_02234574
 
-	thumb_func_start ov80_02234588
-ov80_02234588: ; 0x02234588
+	thumb_func_start BattleArcade_RestSave
+BattleArcade_RestSave: ; 0x02234588
 	push {r4, r5, r6, r7, lr}
 	sub sp, #0x14
 	add r5, r0, #0
@@ -794,23 +794,23 @@ _0223475A:
 	pop {r4, r5, r6, r7, pc}
 	nop
 _02234760: .word 0x00000000
-	thumb_func_end ov80_02234588
+	thumb_func_end BattleArcade_RestSave
 
-	thumb_func_start ov80_02234764
-ov80_02234764: ; 0x02234764
+	thumb_func_start BattleArcade_IncreaseRound
+BattleArcade_IncreaseRound: ; 0x02234764
 	ldrb r1, [r0, #0x11]
 	add r1, r1, #1
 	strb r1, [r0, #0x11]
 	ldrb r0, [r0, #0x11]
 	bx lr
 	.balign 4, 0
-	thumb_func_end ov80_02234764
+	thumb_func_end BattleArcade_IncreaseRound
 
-	thumb_func_start ov80_02234770
-ov80_02234770: ; 0x02234770
+	thumb_func_start BattleArcade_GetRound
+BattleArcade_GetRound: ; 0x02234770
 	ldrb r0, [r0, #0x11]
 	bx lr
-	thumb_func_end ov80_02234770
+	thumb_func_end BattleArcade_GetRound
 
 	thumb_func_start ov80_02234774
 ov80_02234774: ; 0x02234774
@@ -850,14 +850,14 @@ ov80_022347A8: ; 0x022347A8
 	.balign 4, 0
 	thumb_func_end ov80_022347A8
 
-	thumb_func_start ov80_022347B8
-ov80_022347B8: ; 0x022347B8
-	ldr r3, _022347C0 ; =ov80_02234588
+	thumb_func_start BattleArcade_SetLoss
+BattleArcade_SetLoss: ; 0x022347B8
+	ldr r3, _022347C0 ; =BattleArcade_RestSave
 	mov r1, #1
 	bx r3
 	nop
-_022347C0: .word ov80_02234588
-	thumb_func_end ov80_022347B8
+_022347C0: .word BattleArcade_RestSave
+	thumb_func_end BattleArcade_SetLoss
 
 	thumb_func_start ov80_022347C4
 ov80_022347C4: ; 0x022347C4
@@ -871,20 +871,20 @@ ov80_022347C4: ; 0x022347C4
 	add r1, r1, #1
 	strh r1, [r0, #0x1a]
 _022347D6:
-	ldr r3, _022347E0 ; =ov80_02234588
+	ldr r3, _022347E0 ; =BattleArcade_RestSave
 	mov r1, #0
 	strb r1, [r0, #0x11]
 	bx r3
 	nop
-_022347E0: .word ov80_02234588
+_022347E0: .word BattleArcade_RestSave
 	thumb_func_end ov80_022347C4
 
 	thumb_func_start BattleArcade_SetPartyPreBattle
 BattleArcade_SetPartyPreBattle: ; 0x022347E4
-	ldr r3, _022347E8 ; =ov80_022383C0
+	ldr r3, _022347E8 ; =BattleArcade_SetOpponentParty
 	bx r3
 	.balign 4, 0
-_022347E8: .word ov80_022383C0
+_022347E8: .word BattleArcade_SetOpponentParty
 	thumb_func_end BattleArcade_SetPartyPreBattle
 
 	thumb_func_start BattleArcade_SetPartyPostBattle
@@ -928,7 +928,7 @@ BattleArcade_SetPartyPostBattle: ; 0x022347EC
 	add r3, r5, r3
 	bl ov80_0222A6B8
 	add r0, r5, #0
-	bl ov80_022383C0
+	bl BattleArcade_SetOpponentParty
 	add sp, #0x10
 	pop {r4, r5, r6, pc}
 	thumb_func_end BattleArcade_SetPartyPostBattle

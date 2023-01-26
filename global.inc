@@ -7999,7 +7999,7 @@
 .public ov80_0222A474
 .public ov80_0222A480
 .public ov80_0222A4EC
-.public ov80_0222A52C
+.public Frontier_CreateOpponentMons
 .public ov80_0222A6B8
 .public ov80_0222A7CC
 .public ov80_0222A7EC
@@ -8216,12 +8216,12 @@
 .public BattleArcade_Init
 .public BattleArcade_Free
 .public ov80_02234550
-.public ov80_02234588
-.public ov80_02234764
-.public ov80_02234770
+.public BattleArcade_RestSave
+.public BattleArcade_IncreaseRound
+.public BattleArcade_GetRound
 .public ov80_02234774
 .public ov80_022347A8
-.public ov80_022347B8
+.public BattleArcade_SetLoss
 .public ov80_022347C4
 .public BattleArcade_SetPartyPreBattle
 .public BattleArcade_SetPartyPostBattle
@@ -8347,8 +8347,8 @@
 .public ov80_02238370
 .public BattleArcade_IsMultiplayer
 .public ov80_022383A8
-.public ov80_022383C0
-.public ov80_02238430
+.public BattleArcade_SetOpponentParty
+.public BattleArcade_GetPanelBattlePoints
 .public ov80_02238498
 .public BattleArcade_GetPanelColor
 .public ov80_022384D8
