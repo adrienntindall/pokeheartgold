@@ -18,8 +18,8 @@ _02055256:
 	.balign 4, 0
 	thumb_func_end sub_02055244
 
-	thumb_func_start sub_0205525C
-sub_0205525C: ; 0x0205525C
+	thumb_func_start FieldMap_Stop
+FieldMap_Stop: ; 0x0205525C
 	push {r3, r4, r5, lr}
 	add r5, r0, #0
 	bl TaskManager_GetSys
@@ -39,7 +39,7 @@ _02055274:
 	pop {r3, r4, r5, pc}
 	nop
 _02055288: .word sub_02055244
-	thumb_func_end sub_0205525C
+	thumb_func_end FieldMap_Stop
 
 	thumb_func_start sub_0205528C
 sub_0205528C: ; 0x0205528C
@@ -56,8 +56,8 @@ _0205529E:
 	.balign 4, 0
 	thumb_func_end sub_0205528C
 
-	thumb_func_start sub_020552A4
-sub_020552A4: ; 0x020552A4
+	thumb_func_start FieldMap_Start
+FieldMap_Start: ; 0x020552A4
 	push {r3, r4, r5, lr}
 	add r5, r0, #0
 	bl TaskManager_GetSys
@@ -77,7 +77,7 @@ _020552BC:
 	pop {r3, r4, r5, pc}
 	nop
 _020552D0: .word sub_0205528C
-	thumb_func_end sub_020552A4
+	thumb_func_end FieldMap_Start
 
 	thumb_func_start sub_020552D4
 sub_020552D4: ; 0x020552D4
@@ -127,8 +127,8 @@ _02055302:
 _02055328: .word sub_020552D4
 	thumb_func_end PalleteFadeUntilFinished
 
-	thumb_func_start sub_0205532C
-sub_0205532C: ; 0x0205532C
+	thumb_func_start FieldMap_FadeIn
+FieldMap_FadeIn: ; 0x0205532C
 	push {r3, r4, lr}
 	sub sp, #0xc
 	add r4, r0, #0
@@ -158,7 +158,7 @@ _02055346:
 	pop {r3, r4, pc}
 	nop
 _0205536C: .word sub_020552D4
-	thumb_func_end sub_0205532C
+	thumb_func_end FieldMap_FadeIn
 
 	thumb_func_start sub_02055370
 sub_02055370: ; 0x02055370
@@ -183,7 +183,7 @@ _0205538A:
 	b _020553AA
 _02055398:
 	add r0, r5, #0
-	bl sub_0205525C
+	bl FieldMap_Stop
 	ldr r0, [r4]
 	add r0, r0, #1
 	str r0, [r4]
@@ -226,7 +226,7 @@ sub_020553C0: ; 0x020553C0
 	b _02055404
 _020553E0:
 	add r0, r5, #0
-	bl sub_020552A4
+	bl FieldMap_Start
 	ldr r0, [r4]
 	add r0, r0, #1
 	str r0, [r4]
@@ -234,7 +234,7 @@ _020553E0:
 _020553EE:
 	bl ov01_021EFAF8
 	add r0, r5, #0
-	bl sub_0205532C
+	bl FieldMap_FadeIn
 	ldr r0, [r4]
 	add r0, r0, #1
 	str r0, [r4]

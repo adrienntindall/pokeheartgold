@@ -85,7 +85,7 @@ _020679B8:
 	b _02067A16
 _020679C6:
 	add r0, r5, #0
-	bl sub_0205525C
+	bl FieldMap_Stop
 	ldr r0, [r4, #4]
 	add r0, r0, #1
 	str r0, [r4, #4]
@@ -99,14 +99,14 @@ _020679D4:
 	b _02067A16
 _020679E2:
 	add r0, r5, #0
-	bl sub_020552A4
+	bl FieldMap_Start
 	ldr r0, [r4, #4]
 	add r0, r0, #1
 	str r0, [r4, #4]
 	b _02067A16
 _020679F0:
 	add r0, r5, #0
-	bl sub_0205532C
+	bl FieldMap_FadeIn
 	ldr r0, [r4, #4]
 	add r0, r0, #1
 	str r0, [r4, #4]

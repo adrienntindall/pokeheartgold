@@ -112,7 +112,7 @@ BOOL sub_0205298C(TaskManager *taskman) {
         }
         break;
     case 3:
-        sub_020552A4(taskman);
+        FieldMap_Start(taskman);
         *state += 1;
         break;
     case 4:

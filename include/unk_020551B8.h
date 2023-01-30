@@ -3,6 +3,6 @@
 
 #include "task.h"
 
-void sub_02055218(TaskManager *man, int effect, int bgm);
+void FieldMap_StartEncounterAnimation(TaskManager *man, int effect, int bgm);
 
 #endif

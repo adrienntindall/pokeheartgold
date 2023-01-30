@@ -67,6 +67,6 @@ BOOL IsBattleResultWin(u32 a0);
 int sub_02052564(u32 a0);
 int sub_02052574(u32 a0);
 void BattleSetup_Delete(BATTLE_SETUP *setup);
-BATTLE_SETUP *sub_02051AAC(HeapID heapId, FieldSystem *fsys);
+BATTLE_SETUP *BattleSetup_CreateTutorialBattle(HeapID heapId, FieldSystem *fsys);
 
 #endif //POKEHEARTGOLD_BATTLE_SETUP_H

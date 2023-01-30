@@ -1778,12 +1778,12 @@ BOOL ScrNative_WaitApplication(SCRIPTCONTEXT *ctx) {
 }
 
 BOOL ScrCmd_150(SCRIPTCONTEXT *ctx) {
-    sub_020552A4(ctx->fsys->taskman);
+    FieldMap_Start(ctx->fsys->taskman);
     return TRUE;
 }
 
 BOOL ScrCmd_436(SCRIPTCONTEXT *ctx) {
-    sub_0205525C(ctx->fsys->taskman);
+    FieldMap_Stop(ctx->fsys->taskman);
     return TRUE;
 }
 

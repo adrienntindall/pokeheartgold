@@ -4596,8 +4596,8 @@ _02247F08:
 	pop {r3, r4, r5, r6, pc}
 	thumb_func_end ov02_02247ED8
 
-	thumb_func_start ov02_02247F30
-ov02_02247F30: ; 0x02247F30
+	thumb_func_start SetWildMonData
+SetWildMonData: ; 0x02247F30
 	push {r4, r5, r6, r7, lr}
 	sub sp, #0x2c
 	add r5, r0, #0
@@ -4646,7 +4646,7 @@ _02247F80:
 	add sp, #0x2c
 	pop {r4, r5, r6, r7, pc}
 	.balign 4, 0
-	thumb_func_end ov02_02247F30
+	thumb_func_end SetWildMonData
 
 	thumb_func_start ov02_02247F9C
 ov02_02247F9C: ; 0x02247F9C

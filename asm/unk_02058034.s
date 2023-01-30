@@ -1007,11 +1007,11 @@ _020587A8:
 	bne _020587C4
 	add r1, sp, #0
 	add r2, r4, #0
-	bl sub_02051598
+	bl SetupAndStartLocalBattle1
 	b _020587DC
 _020587C4:
 	add r2, r4, #0
-	bl sub_020515FC
+	bl SetupAndStartLocalBattle2
 	ldr r0, _020587E4 ; =_021D41C8
 	ldr r0, [r0]
 	ldr r0, [r0, #0x40]

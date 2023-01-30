@@ -29,7 +29,7 @@ BOOL sub_02097754(TaskManager *taskManager) {
         }
         break;
     case 2:
-        sub_020552A4(taskManager);
+        FieldMap_Start(taskManager);
         env->unknown_0++;
         break;
     case 3:

@@ -129,8 +129,8 @@ _020558B4: .word sub_02055AF4
 _020558B8: .word _021D4178
 	thumb_func_end sub_020558AC
 
-	thumb_func_start sub_020558BC
-sub_020558BC: ; 0x020558BC
+	thumb_func_start PalPark_GetBallCount
+PalPark_GetBallCount: ; 0x020558BC
 	push {r3, lr}
 	ldr r0, _020558CC ; =_021D4178
 	bl sub_020559B4
@@ -139,7 +139,7 @@ sub_020558BC: ; 0x020558BC
 	pop {r3, pc}
 	nop
 _020558CC: .word _021D4178
-	thumb_func_end sub_020558BC
+	thumb_func_end PalPark_GetBallCount
 
 	thumb_func_start sub_020558D0
 sub_020558D0: ; 0x020558D0
@@ -490,7 +490,7 @@ sub_02055B1C: ; 0x02055B1C
 	bl sub_020270F8
 	str r0, [sp]
 	add r0, r5, #0
-	bl sub_020558BC
+	bl PalPark_GetBallCount
 	add r1, r0, #0
 	mov r0, #0xb
 	bl sub_02051A98

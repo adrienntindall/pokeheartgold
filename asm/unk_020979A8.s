@@ -198,7 +198,7 @@ _02097B0E:
 	mov r1, #0
 	bl StopBGM
 	add r0, r5, #0
-	bl sub_0205525C
+	bl FieldMap_Stop
 	mov r0, #2
 	strb r0, [r4]
 	b _02097B72

@@ -3,9 +3,9 @@
 
 #include "task.h"
 
-void sub_0205525C(TaskManager *taskManager);
+void FieldMap_Stop(TaskManager *taskManager);
 void PalleteFadeUntilFinished(TaskManager *taskManager);
-void sub_0205532C(TaskManager *taskManager);
+void FieldMap_FadeIn(TaskManager *taskManager);
 void sub_020553B0(TaskManager *taskManager);
 void sub_02055408(TaskManager *taskManager);
 

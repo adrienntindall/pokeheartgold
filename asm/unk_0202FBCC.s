@@ -40,8 +40,8 @@ sub_0202FBD4: ; 0x0202FBD4
 _0202FBEC: .word 0x00001D50
 	thumb_func_end sub_0202FBD4
 
-	thumb_func_start sub_0202FBF0
-sub_0202FBF0: ; 0x0202FBF0
+	thumb_func_start BattleRecord_Init
+BattleRecord_Init: ; 0x0202FBF0
 	push {r4, r5, r6, lr}
 	add r5, r0, #0
 	ldr r0, _0202FC20 ; =_021D2AF8
@@ -66,7 +66,7 @@ _0202FC0A:
 	pop {r4, r5, r6, pc}
 	.balign 4, 0
 _0202FC20: .word _021D2AF8
-	thumb_func_end sub_0202FBF0
+	thumb_func_end BattleRecord_Init
 
 	thumb_func_start sub_0202FC24
 sub_0202FC24: ; 0x0202FC24

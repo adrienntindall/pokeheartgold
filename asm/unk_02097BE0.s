@@ -95,7 +95,7 @@ _02097C74: ; jump table
 	.short _02097CA8 - _02097C74 - 2 ; case 3
 _02097C7C:
 	add r0, r5, #0
-	bl sub_0205525C
+	bl FieldMap_Stop
 	ldr r0, [r4, #0x50]
 	add r0, r0, #1
 	str r0, [r4, #0x50]
@@ -110,7 +110,7 @@ _02097C8A:
 	b _02097CB0
 _02097C9A:
 	add r0, r5, #0
-	bl sub_020552A4
+	bl FieldMap_Start
 	ldr r0, [r4, #0x50]
 	add r0, r0, #1
 	str r0, [r4, #0x50]

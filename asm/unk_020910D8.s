@@ -42,7 +42,7 @@ _02091106:
 	mov r1, #0xb
 	bl sub_0206D328
 	add r0, r5, #0
-	bl sub_0205525C
+	bl FieldMap_Stop
 	ldr r0, [r4]
 	add r0, r0, #1
 	str r0, [r4]
@@ -161,7 +161,7 @@ _0209120C:
 	b _02091232
 _0209121A:
 	add r0, r5, #0
-	bl sub_020552A4
+	bl FieldMap_Start
 	ldr r0, [r4]
 	add r0, r0, #1
 	str r0, [r4]

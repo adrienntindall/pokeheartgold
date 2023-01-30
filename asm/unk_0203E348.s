@@ -2198,7 +2198,7 @@ _0203F300:
 	cmp r0, #0
 	bne _0203F30E
 	add r0, r6, #0
-	bl sub_0205525C
+	bl FieldMap_Stop
 _0203F30E:
 	ldr r0, [r4]
 	add r0, r0, #1
@@ -2533,7 +2533,7 @@ _0203F5A4: ; jump table
 	.short _0203F5DA - _0203F5A4 - 2 ; case 3
 _0203F5AC:
 	add r0, r5, #0
-	bl sub_0205525C
+	bl FieldMap_Stop
 	ldr r0, [r4]
 	add r0, r0, #1
 	str r0, [r4]
@@ -2549,7 +2549,7 @@ _0203F5BA:
 	b _0203F648
 _0203F5CC:
 	add r0, r5, #0
-	bl sub_020552A4
+	bl FieldMap_Start
 	ldr r0, [r4]
 	add r0, r0, #1
 	str r0, [r4]

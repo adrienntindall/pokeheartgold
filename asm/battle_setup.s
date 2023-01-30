@@ -262,8 +262,8 @@ sub_02051A98: ; 0x02051A98
 	pop {r4, pc}
 	thumb_func_end sub_02051A98
 
-	thumb_func_start sub_02051AAC
-sub_02051AAC: ; 0x02051AAC
+	thumb_func_start BattleSetup_CreateTutorialBattle
+BattleSetup_CreateTutorialBattle: ; 0x02051AAC
 	push {r4, r5, r6, r7, lr}
 	sub sp, #0x1c
 	add r5, r1, #0
@@ -404,7 +404,7 @@ sub_02051AAC: ; 0x02051AAC
 	add sp, #0x1c
 	pop {r4, r5, r6, r7, pc}
 	.balign 4, 0
-	thumb_func_end sub_02051AAC
+	thumb_func_end BattleSetup_CreateTutorialBattle
 
 	thumb_func_start BattleSetup_Delete
 BattleSetup_Delete: ; 0x02051BF8
@@ -971,8 +971,8 @@ _02052004:
 	pop {r4, r5, r6, r7, pc}
 	thumb_func_end sub_02051F2C
 
-	thumb_func_start sub_020520B0
-sub_020520B0: ; 0x020520B0
+	thumb_func_start BattleSetup_SetMultiplayerBattle
+BattleSetup_SetMultiplayerBattle: ; 0x020520B0
 	push {r3, r4, r5, r6, r7, lr}
 	sub sp, #0x30
 	add r5, r0, #0
@@ -1234,7 +1234,7 @@ _020522E4:
 	add sp, #0x30
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
-	thumb_func_end sub_020520B0
+	thumb_func_end BattleSetup_SetMultiplayerBattle
 
 	thumb_func_start sub_020522F0
 sub_020522F0: ; 0x020522F0
@@ -1248,7 +1248,7 @@ sub_020522F0: ; 0x020522F0
 	add r0, r5, #0
 	add r1, r4, #0
 	add r3, r6, #0
-	bl sub_020520B0
+	bl BattleSetup_SetMultiplayerBattle
 	pop {r4, r5, r6, pc}
 	thumb_func_end sub_020522F0
 

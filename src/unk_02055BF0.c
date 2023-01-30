@@ -151,7 +151,7 @@ BOOL sub_02055DBC(TaskManager *man) {
         env->state++;
         break;
     case 3:
-        sub_0205525C(man); 
+        FieldMap_Stop(man); 
         env->state++;
         break;
     case 4:
@@ -159,7 +159,7 @@ BOOL sub_02055DBC(TaskManager *man) {
         env->state++;
         break;
     case 5:
-        sub_020552A4(man);
+        FieldMap_Start(man);
         env->state++;
         break;
     case 6:

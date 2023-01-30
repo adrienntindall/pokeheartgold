@@ -417,7 +417,7 @@ static BOOL sub_02053550(TaskManager *taskManager) {
     case 2:
         fsys->unk80 = sub_02059DB0(fsys);
         fsys->unk84 = sub_0205AC88(fsys->unk80);
-        sub_020552A4(taskManager);
+        FieldMap_Start(taskManager);
         (*state_p)++;
         break;
     case 3:
@@ -551,7 +551,7 @@ static BOOL Task_ScriptWarp(TaskManager *taskManager) {
     switch (env->state) {
     case 0:
         Fsys_BeginFadeOutMusic(fsys, env->location.mapId);
-        sub_0205525C(taskManager);
+        FieldMap_Stop(taskManager);
         env->state++;
         break;
     case 1:
@@ -563,7 +563,7 @@ static BOOL Task_ScriptWarp(TaskManager *taskManager) {
             break;
         }
         sub_02055110(fsys, env->location.mapId, 0);
-        sub_020552A4(taskManager);
+        FieldMap_Start(taskManager);
         env->state++;
         break;
     case 3:
@@ -651,7 +651,7 @@ static BOOL sub_020539E8(TaskManager *taskManager) {
 
     switch (*state_p) {
     case 0:
-        sub_0205525C(taskManager);
+        FieldMap_Stop(taskManager);
         (*state_p)++;
         break;
     case 1:
@@ -670,7 +670,7 @@ static BOOL sub_02053A2C(TaskManager *taskManager) {
     FieldSystem *fsys = TaskManager_GetSys(taskManager);
     switch (*state_p) {
     case 0:
-        sub_020552A4(taskManager);
+        FieldMap_Start(taskManager);
         (*state_p)++;
         break;
     case 1:
@@ -767,7 +767,7 @@ static BOOL sub_02053BF8(TaskManager *taskManager) {
 
     switch (*state_p) {
     case 0:
-        sub_0205525C(taskManager);
+        FieldMap_Stop(taskManager);
         (*state_p)++;
         break;
     case 1:
@@ -789,7 +789,7 @@ static BOOL sub_02053C3C(TaskManager *taskManager) {
 
     switch (*state_p) {
     case 0:
-        sub_020552A4(taskManager);
+        FieldMap_Start(taskManager);
         (*state_p)++;
         break;
     case 1:
@@ -840,7 +840,7 @@ static BOOL sub_02053CCC(TaskManager *taskManager) {
     case 2:
         if (env->unk4) {
             Fsys_BeginFadeOutMusic(fsys, location->mapId);
-            sub_0205525C(taskManager);
+            FieldMap_Stop(taskManager);
             env->unk0++;
         }
         break;
@@ -853,7 +853,7 @@ static BOOL sub_02053CCC(TaskManager *taskManager) {
             break;
         }
         sub_02055110(fsys, location->mapId, 0);
-        sub_020552A4(taskManager);
+        FieldMap_Start(taskManager);
         env->unk0++;
         break;
     case 5:
@@ -908,7 +908,7 @@ static BOOL sub_02053E5C(TaskManager *taskManager) {
         break;
     case 1:
         if (env->unk4) {
-            sub_0205525C(taskManager);
+            FieldMap_Stop(taskManager);
             (*state_p)++;
         }
         break;
@@ -921,11 +921,11 @@ static BOOL sub_02053E5C(TaskManager *taskManager) {
             break;
         }
         sub_02055110(fsys, location->mapId, 0);
-        sub_020552A4(taskManager);
+        FieldMap_Start(taskManager);
         (*state_p)++;
         break;
     case 4:
-        sub_0205532C(taskManager);
+        FieldMap_FadeIn(taskManager);
         (*state_p)++;
         break;
     case 5:
@@ -961,7 +961,7 @@ static BOOL sub_02053F70(TaskManager *taskManager) {
         (*state_p)++;
         break;
     case 1:
-        sub_0205525C(taskManager);
+        FieldMap_Stop(taskManager);
         (*state_p)++;
         break;
     case 2:
@@ -973,7 +973,7 @@ static BOOL sub_02053F70(TaskManager *taskManager) {
             break;
         }
         sub_02055110(fsys, location->mapId, 0);
-        sub_020552A4(taskManager);
+        FieldMap_Start(taskManager);
         (*state_p)++;
         break;
     case 4:
@@ -1027,7 +1027,7 @@ static BOOL sub_020540A4(TaskManager *taskManager) {
             break;
         }
         sub_02055110(fsys, env->location.mapId, 0);
-        sub_020552A4(taskManager);
+        FieldMap_Start(taskManager);
         env->unk0++;
         break;
     case 3:

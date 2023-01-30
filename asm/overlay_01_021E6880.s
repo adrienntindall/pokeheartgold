@@ -1121,7 +1121,7 @@ _021E7132:
 	bl sub_0205589C
 	add r1, r0, #0
 	add r0, r4, #0
-	bl sub_020511F8
+	bl SetupAndStartPalParkBattle
 	add sp, #8
 	mov r0, #1
 	pop {r4, pc}

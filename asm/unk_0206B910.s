@@ -96,7 +96,7 @@ _0206B9AE: ; jump table
 	.short _0206BB04 - _0206B9AE - 2 ; case 6
 _0206B9BC:
 	ldr r0, [sp]
-	bl sub_0205525C
+	bl FieldMap_Stop
 	ldr r0, [r7, #0xc]
 	bl Sav2_SealCase_get
 	str r0, [r6, #0x20]
@@ -248,7 +248,7 @@ _0206BAF2:
 	b _0206BB1C
 _0206BAF8:
 	ldr r0, [sp]
-	bl sub_020552A4
+	bl FieldMap_Start
 	mov r0, #6
 	str r0, [r7, #0x10]
 	b _0206BB1C

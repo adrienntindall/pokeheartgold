@@ -51,8 +51,8 @@ _02055212:
 	.balign 4, 0
 	thumb_func_end sub_020551B8
 
-	thumb_func_start sub_02055218
-sub_02055218: ; 0x02055218
+	thumb_func_start FieldMap_StartEncounterAnimation
+FieldMap_StartEncounterAnimation: ; 0x02055218
 	push {r4, r5, r6, lr}
 	add r6, r0, #0
 	add r5, r1, #0
@@ -72,4 +72,4 @@ sub_02055218: ; 0x02055218
 	pop {r4, r5, r6, pc}
 	nop
 _02055240: .word sub_020551B8
-	thumb_func_end sub_02055218
+	thumb_func_end FieldMap_StartEncounterAnimation

@@ -1859,7 +1859,7 @@ ov80_0222CB9C: ; 0x0222CB9C
 	ldr r0, [r0, #8]
 	mov r1, #0xb
 	add r2, sp, #0
-	bl sub_0202FBF0
+	bl BattleRecord_Init
 	mov r0, #0
 	pop {r3, pc}
 	thumb_func_end ov80_0222CB9C

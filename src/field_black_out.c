@@ -199,7 +199,7 @@ BOOL Task_BlackOut(TaskManager *taskManager) {
         (*state)++;
         break;
     case 4:
-        sub_020552A4(taskManager);
+        FieldMap_Start(taskManager);
         (*state)++;
         break;
     case 5:

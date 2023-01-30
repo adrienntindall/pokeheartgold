@@ -401,7 +401,7 @@ _0206AA82:
 	blt _0206AA6E
 _0206AA8C:
 	ldr r0, [sp]
-	bl sub_0205525C
+	bl FieldMap_Stop
 	ldr r0, [r5, #4]
 	add r0, r0, #1
 	str r0, [r5, #4]
@@ -634,7 +634,7 @@ _0206ABF2:
 	b _0206AEA2
 _0206AC28:
 	add r0, r7, #0
-	bl sub_020552A4
+	bl FieldMap_Start
 	ldr r0, [r4]
 	add r0, r0, #1
 	str r0, [r4]
@@ -1456,7 +1456,7 @@ _0206B2C8:
 	mov r1, #3
 	bl sub_0203E33C
 	add r0, r6, #0
-	bl sub_0205525C
+	bl FieldMap_Stop
 	mov r0, #2
 	strb r0, [r4, #0x14]
 	b _0206B824
@@ -1484,7 +1484,7 @@ _0206B2DC:
 	b _0206B824
 _0206B30A:
 	add r0, r6, #0
-	bl sub_020552A4
+	bl FieldMap_Start
 	mov r0, #4
 	strb r0, [r4, #0x14]
 	b _0206B824
@@ -1805,7 +1805,7 @@ _0206B5A0:
 	mov r1, #4
 	bl sub_0206B8AC
 	add r0, r6, #0
-	bl sub_0205532C
+	bl FieldMap_FadeIn
 	add r0, r4, #0
 	mov r1, #0
 	add r0, #0xca
@@ -2015,7 +2015,7 @@ _0206B74A:
 	mov r1, #0
 	bl sub_0203E33C
 	add r0, r6, #0
-	bl sub_0205525C
+	bl FieldMap_Stop
 	mov r0, #0x11
 	strb r0, [r4, #0x14]
 	b _0206B824
@@ -2042,7 +2042,7 @@ _0206B768:
 	b _0206B824
 _0206B794:
 	add r0, r6, #0
-	bl sub_020552A4
+	bl FieldMap_Start
 	mov r0, #0x13
 	strb r0, [r4, #0x14]
 	b _0206B824
