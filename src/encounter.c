@@ -616,7 +616,7 @@ void sub_02051228(TaskManager *man, u16 species, u8 level) {
     sub_0205085C(man, setup, sub_020517E8(setup), sub_020517FC(setup), NULL);
 }
 
-static BOOL sub_020517E8(TaskManager *man) {
+static BOOL Task_TutorialBattle(TaskManager *man) {
     ENCOUNTER *encounter = TaskManager_GetEnv(man);
     FieldSystem *fsys = TaskManager_GetSys(man);
     int *state = TaskManager_GetStatePtr(man);
@@ -663,7 +663,7 @@ void SetupAndStartTutorialBattle(TaskManager *man) {
     setup = BattleSetup_CreateTutorialBattle(HEAP_ID_FIELDMAP, fsys);
     encounter = Encounter_New(setup, sub_020517E8(setup), sub_020517FC(setup), NULL);
     
-    TaskManager_Call(man, sub_020517E8, encounter);
+    TaskManager_Call(man, Task_TutorialBattle, encounter);
 }
 
 void SetupAndStartTrainerBattle(TaskManager *man, u32 opponentTrainer1, u32 opponentTrainer2, u32 followerTrainerNum, u32 a4, u32 a5, HeapID heapId, int *winFlag) {
