@@ -20,7 +20,7 @@
 
 static void sub_02051660(FieldSystem *fsys, BATTLE_SETUP *setup);
 
-static BOOL sub_02050660(TaskManager *man) {
+static BOOL Task_StartBattle(TaskManager *man) {
     FieldSystem *fsys = TaskManager_GetSys(man);
     BATTLE_SETUP *battleSetup = TaskManager_GetEnv(man);
     int *state = TaskManager_GetStatePtr(man);
@@ -40,8 +40,8 @@ static BOOL sub_02050660(TaskManager *man) {
     return FALSE;
 }
 
-static void sub_020506AC(TaskManager *man, BATTLE_SETUP *setup) {
-    TaskManager_Call(man, sub_02050660, setup);
+static void StartBattle(TaskManager *man, BATTLE_SETUP *setup) {
+    TaskManager_Call(man, Task_StartBattle, setup);
 }
 
 static ENCOUNTER *Encounter_New(BATTLE_SETUP *setup, int effect, int bgm, int *flag) {
@@ -92,7 +92,7 @@ static BOOL Task_StartStandardBattle(TaskManager *man) {
             (*state)++;
             break;
         case 2:
-            sub_020506AC(man, encounter->setup);
+            StartBattle(man, encounter->setup);
             (*state)++;
             break;
         case 3:
@@ -169,7 +169,7 @@ static BOOL sub_020508B8(TaskManager *man) {
         (*state)++;
         break;
     case 2:
-        sub_020506AC(man, encounter->setup);
+        StartBattle(man, encounter->setup);
         (*state)++;
         break;
     case 3:
@@ -197,7 +197,7 @@ static BOOL Task_WifiBattle(TaskManager *man) {
     case 0:
         sub_02004AD8(0);
         sub_02004EC4(5, encounter->bgm, 1);
-        sub_020506AC(man, encounter->setup);
+        StartBattle(man, encounter->setup);
         (*state)++;
         break;
     case 1:
@@ -230,7 +230,7 @@ static BOOL sub_020509F0(TaskManager *man) {
         (*state)++;
         break;
     case 2:
-        sub_020506AC(man, encounter->setup);
+        StartBattle(man, encounter->setup);
         (*state)++;
         break;
     case 3:
@@ -333,7 +333,7 @@ static BOOL Task_WildEncounter(TaskManager *man) {
         encounter->state++;
         break;
     case 2:
-        sub_020506AC(man, encounter->setup);
+        StartBattle(man, encounter->setup);
         encounter->state++;
         break;
     case 3:
@@ -388,7 +388,7 @@ static BOOL Task_SafariEncounter(TaskManager *man) {
         (*state)++;
         break;
     case 2:
-        sub_020506AC(man, encounter->setup);
+        StartBattle(man, encounter->setup);
         (*state)++;
         break;
     case 3:
@@ -465,7 +465,7 @@ static BOOL Task_BugContestEncounter(TaskManager *man) {
         (*state)++;
         break;
     case 2:
-        sub_020506AC(man, encounter->setup);
+        StartBattle(man, encounter->setup);
         (*state)++;
         break;
     case 3:
@@ -568,7 +568,7 @@ static BOOL Task_PalParkEncounter(TaskManager *man) {
         (*state)++;
         break;
     case 2:
-        sub_020506AC(man, encounter->setup);
+        StartBattle(man, encounter->setup);
         (*state)++;
         break;
     case 3:
@@ -632,7 +632,7 @@ static BOOL Task_TutorialBattle(TaskManager *man) {
         (*state)++;
         break;
     case 2:
-        sub_020506AC(man, encounter->setup);
+        StartBattle(man, encounter->setup);
         (*state)++;
         break;
     case 3:
