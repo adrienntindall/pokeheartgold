@@ -1,124 +1,150 @@
 #include "encryptor.h"
 
 #include "bss.h"
-#include "encoding_constants.h"
 #include "rc4.h"
+#include "encoding_constants.h"
 
-#define ROTL(x, a) ((a) == 0 ? (x) : (((x) << (a)) | ((x) >> (32 - (a)))))
+static void clearDataAndInstructionCache(void* start_addr, u32 num_bytes);
 
-static void clearDataAndInstructionCache(void *startAddr, u32 numBytes);
 
-static void clearDataAndInstructionCache(void *startAddr, u32 numBytes) {
-    DC_FlushRange(startAddr, numBytes);
-    IC_InvalidateRange(startAddr, numBytes);
+static void clearDataAndInstructionCache(void* start_addr, u32 num_bytes) {
+    DC_FlushRange(start_addr, num_bytes);
+    IC_InvalidateRange(start_addr, num_bytes);
 }
 
-InsType Encryptor_CategorizeInstruction(u32 instruction) {
-    u8 opcode = instruction >> INS_OPCODE_SHIFT;
 
-    // Branch instruction
-    if ((opcode & 0x0E) == 0x0A) {
-        // BLX immediate type
-        if ((opcode & 0xF0) == 0xF0) {
-            return INS_TYPE_BLXIMM;
+u32 Encryptor_CategorizeInstruction(u32 instruction) {
+    u8 upper_byte;
+
+    upper_byte = (instruction >> 24) & 0xFF;
+
+    if ((upper_byte & 0x0E) == 0x0A) {
+        if ((upper_byte & 0xF0) == 0xF0) {
+            return 1;
         }
 
-        // Link bit
-        if (opcode & INS_OPCODE_LINKBIT) {
-            return INS_TYPE_BL;
+        if (upper_byte & 0x01) {
+            return 2;
         } else {
-            return INS_TYPE_B;
+            return 3;
         }
     }
 
-    return INS_TYPE_OTHER;
+    return 0;
 }
 
-void Encryptor_DecodeFunctionTable(FuncInfo *functions) {
+
+void Encryptor_DecodeFunctionTable(FuncInfo* functions) {
+    u32  size;
+    u32  addr;
+    u32  end_addr;
+    u32  a, b, c, d;
+
     if (functions == NULL) {
         return;
     }
 
-    for (; functions->obfsAddr != 0; functions++) {
-        u32 *addr = (u32 *)functions->obfsAddr;
-        u32 size = functions->obfsSize - (u32)&DSProt_BSS - ENC_VAL_1;
+    for (; functions->start_addr != NULL; functions++) {
+        size = functions->size - (u32)&BSS - ENC_VAL_1;
 
-        if (addr == NULL) {
+        addr = (u32)functions->start_addr;
+        if (addr == 0) {
             break;
         }
 
-        addr = (void *)addr - ENC_VAL_1;
-        u32 *endAddr = addr + (size / 4);
+        // Cast required to match. Likely a macro here to remove the obfuscation
+        addr = (u32)addr - ENC_VAL_1;
 
-        for (; addr < endAddr; addr++) {
-            switch (Encryptor_CategorizeInstruction(*addr)) {
-            case INS_TYPE_BLXIMM:
-            case INS_TYPE_BL: {
-                u32 opcode = (*addr & INS_OPCODE_MASK) ^ (INS_OPCODE_LINKBIT << INS_OPCODE_SHIFT);
-                u32 operands = ((*addr & INS_OPERANDS_MASK) - ENC_VAL_1) & INS_OPERANDS_MASK;
+        end_addr = addr + (size & ~3);
+        for (; addr < end_addr; addr += 4) {
+            switch (Encryptor_CategorizeInstruction(*(u32*)addr)) {
+                case 1:
+                case 2:
+                    *(u32*)addr = ((*(u32*)addr & 0xFF000000) ^ (ENC_OPCODE_1 << 24)) |
+                                  (((*(u32*)addr & 0x00FFFFFF) - ENC_VAL_1) & 0x00FFFFFF);
+                    break;
 
-                *addr = opcode | operands;
-            } break;
+                case 3:
+                    *(u32*)addr = ((*(u32*)addr & 0xFF000000) ^ (ENC_OPCODE_1 << 24)) |
+                                  (((*(u32*)addr & 0x00FFFFFF) - ENC_VAL_2) & 0x00FFFFFF);
+                    break;
 
-            case INS_TYPE_B: {
-                u32 opcode = (*addr & INS_OPCODE_MASK) ^ (INS_OPCODE_LINKBIT << INS_OPCODE_SHIFT);
-                u32 operands = ((*addr & INS_OPERANDS_MASK) - ENC_VAL_2) & INS_OPERANDS_MASK;
-
-                *addr = opcode | operands;
-            } break;
-
-            default: {
-                u8 *addrBytes = (u8 *)addr;
-                *addr = (addrBytes[0] ^ ENC_BYTE_A) | ((addrBytes[1] ^ ENC_BYTE_B) << 8) | ((addrBytes[2] ^ ENC_BYTE_C) << 16) | ((addrBytes[3] ^ ENC_BYTE_D) << 24);
-            } break;
+                default:
+                    a = ((u8*)addr)[0] ^ ENC_BYTE_A;
+                    b = ((u8*)addr)[1] ^ ENC_BYTE_B;
+                    c = ((u8*)addr)[2] ^ ENC_BYTE_C;
+                    d = ((u8*)addr)[3] ^ ENC_OPCODE_2;
+                    *(u32*)addr = a | (b << 8) | (c << 16) | (d << 24);
+                    break;
             }
         }
 
-        clearDataAndInstructionCache((void *)(functions->obfsAddr - ENC_VAL_1), size);
+        clearDataAndInstructionCache(functions->start_addr - ENC_VAL_1, size);
     }
 }
 
-static inline void expandRC4Key(u32 seedKey, u32 size, u32 *expandedKey) {
-    expandedKey[0] = ROTL(seedKey, 0) ^ size;
-    expandedKey[1] = ROTL(seedKey, 8) ^ size;
-    expandedKey[2] = ROTL(seedKey, 16) ^ size;
-    expandedKey[3] = ROTL(seedKey, 24) ^ size;
+
+void* Encryptor_DecryptFunction(u32 obfs_key, void* obfs_func_addr, u32 obfs_size) {
+    u32    expanded_key[4];
+    u32    literal_obfs_offset;
+    u32    key;
+    u32    size;
+    void*  func_addr;
+
+    literal_obfs_offset = (u32)&BSS + ENC_VAL_1;
+
+    key = obfs_key;
+    key -= literal_obfs_offset;
+
+    size = obfs_size;
+    size -= literal_obfs_offset;
+
+    expanded_key[0] = key ^ size;
+    expanded_key[1] = ((key <<  8) | (key >> 24)) ^ size;
+    expanded_key[2] = ((key << 16) | (key >> 16)) ^ size;
+    expanded_key[3] = ((key << 24) | (key >>  8)) ^ size;
+
+    func_addr = obfs_func_addr;
+    func_addr -= ENC_VAL_1;
+
+    RC4_InitAndDecryptInstructions(&expanded_key[0], func_addr, func_addr, size);
+    clearDataAndInstructionCache(func_addr, size);
+
+    return func_addr;
 }
 
-void *Encryptor_DecryptFunction(u32 key, u32 funcAddr, u32 size) {
-    // Deobfuscate arguments
-    size -= (u32)&DSProt_BSS + ENC_VAL_1;
 
-    key -= (u32)&DSProt_BSS + ENC_VAL_1;
+u32 Encryptor_EncryptFunction(u32 obfs_key, void* obfs_func_addr, u32 obfs_size) {
+    u32    expanded_key[4];
+    u32    literal_obfs_offset;
+    u32    new_key;
+    u32    size;
+    void*  func_addr;
 
-    void *funcPtr = (void *)funcAddr;
-    funcPtr -= ENC_VAL_1;
+    literal_obfs_offset = (u32)&BSS + ENC_VAL_1;
 
-    u32 expandedKey[4];
-    expandRC4Key(key, size, &expandedKey[0]);
-    RC4_InitAndDecryptInstructions(&expandedKey[0], funcPtr, funcPtr, size);
-    clearDataAndInstructionCache(funcPtr, size);
+    func_addr = obfs_func_addr;
 
-    return funcPtr;
-}
+    obfs_size = obfs_size - literal_obfs_offset;
+    size = obfs_size;
 
-u32 Encryptor_EncryptFunction(u32 key, u32 funcAddr, u32 size) {
-    // Deobfuscate arguments and change key
-    size -= (u32)&DSProt_BSS + ENC_VAL_1;
+    obfs_key = obfs_key - literal_obfs_offset + ((u32)func_addr >> 20);
+    new_key = obfs_key;
 
-    key -= (u32)&DSProt_BSS + ENC_VAL_1;
-    key += funcAddr >> 20;
+    expanded_key[0] = new_key;
+    expanded_key[1] = new_key;
+    expanded_key[2] = new_key;
+    expanded_key[3] = new_key;
 
-    void *funcPtr = (void *)funcAddr;
-    funcPtr -= ENC_VAL_1;
+    expanded_key[0] = ((expanded_key[0] <<  0) | (expanded_key[1] >> 32)) ^ size;
+    expanded_key[1] = ((expanded_key[1] <<  8) | (expanded_key[1] >> 24)) ^ size;
+    expanded_key[2] = ((expanded_key[2] << 16) | (expanded_key[2] >> 16)) ^ size;
+    expanded_key[3] = ((expanded_key[3] << 24) | (expanded_key[3] >>  8)) ^ size;
 
-    u32 expandedKey[4];
-    expandRC4Key(key, size, &expandedKey[0]);
-    RC4_InitAndEncryptInstructions(&expandedKey[0], funcPtr, funcPtr, size);
-    clearDataAndInstructionCache(funcPtr, size);
+    func_addr -= ENC_VAL_1;
 
-    // Re-obfuscate key
-    key += (u32)&DSProt_BSS + ENC_VAL_1;
+    RC4_InitAndEncryptInstructions(&expanded_key[0], func_addr, func_addr, size);
+    clearDataAndInstructionCache(func_addr, size);
 
-    return key;
+    return new_key + literal_obfs_offset;
 }

@@ -1,18 +1,30 @@
-#ifndef DSPROT_MAC_OWNER_H
-#define DSPROT_MAC_OWNER_H
+#ifndef MAC_OWNER_H
+#define MAC_OWNER_H
 
-#include "sdk.h"
+#include "types.h"
 
-// Functions to be encrypted (cannot be called directly)
-u32 MACOwner_IsBad(void);
-u32 MACOwner_IsGood(void);
+// Copy of Nitro struct
+// <nitro/os.h>
+typedef struct {
+    u8   language;
+    u8   favoriteColor;
+    struct {
+        u8  month;
+        u8  day;
+    }  birthday;
+    u16  nickName[11];
+    u16  nickNameLength;
+    u16  comment[27];
+    u16  commentLength;
+} OSOwnerInfo;
+
+// Nitro functions
+// <nitro/os.h>
+extern void OS_GetMacAddress(u8* mac_addr);
+extern void OS_GetOwnerInfo(OSOwnerInfo* info);
 
 // Assembly decryption wrappers
 extern u32 RunEncrypted_MACOwner_IsBad(void);
 extern u32 RunEncrypted_MACOwner_IsGood(void);
 
-#define MAC_ADDR_SIZE (6)
-
-#define ENC_MAC_ADDR_BYTE (0xFF)
-
-#endif // DSPROT_MAC_OWNER_H
+#endif

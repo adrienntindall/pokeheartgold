@@ -218,7 +218,7 @@ void ov30_0225D64C(BgConfig *bgConfig, SysTask *task) {
     FS_LoadOverlay(MI_PROCESSOR_ARM9, FS_OVERLAY_ID(ds_protect));
 
     if (!DSProt_DetectNotFlashcart(ov30_0225DC28)) {
-        Heap_AllocAtEnd(HEAP_ID_3, 1000);
+        AllocFromHeapAtEnd(HEAP_ID_3, 1000);
     }
 
     ov01_021F434C(data->unk40);
@@ -227,7 +227,7 @@ void ov30_0225D64C(BgConfig *bgConfig, SysTask *task) {
     TextFlags_SetCanTouchSpeedUpPrint(FALSE);
 
     if (DSProt_DetectEmulator(ov30_0225DC08)) {
-        Heap_AllocAtEnd(HEAP_ID_3, 1000);
+        AllocFromHeapAtEnd(HEAP_ID_3, 1000);
     }
 
     TouchSaveApp_DestroyWindow(data);
@@ -242,7 +242,7 @@ void ov30_0225D64C(BgConfig *bgConfig, SysTask *task) {
     Heap_Destroy(HEAP_ID_8);
 
     if (DSProt_DetectDummy(ov30_0225DC18)) {
-        Heap_AllocAtEnd(HEAP_ID_3, 1000);
+        AllocFromHeapAtEnd(HEAP_ID_3, 1000);
     }
 
     FS_UnloadOverlay(MI_PROCESSOR_ARM9, FS_OVERLAY_ID(ds_protect));

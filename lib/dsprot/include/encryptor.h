@@ -1,23 +1,21 @@
-#ifndef DSPROT_ENCRYPTOR_H
-#define DSPROT_ENCRYPTOR_H
+#ifndef ENCRYPTOR_H
+#define ENCRYPTOR_H
 
-#include "sdk.h"
+#include "types.h"
 
-typedef struct FuncInfo {
-    u32 obfsAddr;
-    u32 obfsSize;
+typedef struct {
+    void*  start_addr;
+    u32    size;
 } FuncInfo;
 
-typedef enum InsType {
-    INS_TYPE_OTHER = 0,
-    INS_TYPE_BLXIMM,
-    INS_TYPE_BL,
-    INS_TYPE_B
-} InsType;
+// Nitro functions
+// <nitro/os.h>
+extern void DC_FlushRange(const void* start_addr, u32 num_bytes);
+extern void IC_InvalidateRange(void* start_addr, u32 num_bytes);
 
-InsType Encryptor_CategorizeInstruction(u32 instruction);
-void Encryptor_DecodeFunctionTable(FuncInfo *functions);
-void *Encryptor_DecryptFunction(u32 key, u32 funcAddr, u32 size);
-u32 Encryptor_EncryptFunction(u32 key, u32 funcAddr, u32 size);
+u32 Encryptor_CategorizeInstruction(u32 instruction);
+void Encryptor_DecodeFunctionTable(FuncInfo* functions);
+void* Encryptor_DecryptFunction(u32 obfs_key, void* obfs_func_addr, u32 obfs_size);
+u32 Encryptor_EncryptFunction(u32 obfs_key, void* obfs_func_addr, u32 obfs_size);
 
-#endif // DSPROT_ENCRYPTOR_H
+#endif

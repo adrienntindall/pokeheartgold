@@ -22,7 +22,9 @@ This is likely simply to obscure the actual value of the reference.
 
 ## Function encoding and encrypting
 
-Used extensively by the library is the following function encoding scheme. There are two types of function encoding: unkeyed and keyed (encryption).
+Used extensively by the library is the following function encoding scheme. It is designed to not fully scramble the instructions into apparent random noise, but rather to distort them into other, valid instructions such that a reverse engineer may not even realize they were encoded.
+
+There are two types of function encoding: unkeyed and keyed (encryption).
 
 Unkeyed encoding is decoded using a static initializer, which is run automatically as soon as the overlay is loaded. Therefore, for almost all of the time the library is loaded into RAM, the unkeyed encoding is already removed.
 
@@ -32,7 +34,7 @@ The included tool `elfcoder` is capable of both encoding and decoding, keyed and
 
 ### Background
 
-ARM instructions are 32 bits wide. The library will not work if compiled in Thumb.
+ARM instructions are 32 bits wide. This version of the library does not support Thumb.
 
 When encoding and decoding, the most significant byte is treated separately from the three least-significant bytes, which are treated together as a single 24-bit unsigned integer.
 
@@ -46,7 +48,7 @@ Would have a most significant byte of `0xE0`, and three least-significant bytes 
 
 The following instruction classification system, shared by both keyed and unkeyed encoding, will determine the exact nature of encoding the instruction will receive. The classification is based on the most significant byte of the instruction:
 
-- If the most significant byte is `0xFA` or `0xFB`, it is a **type-1 instruction**. This will match `blx` immediate instructions, of which there are none, but the linker may convert some `bl` instructions at link time.
+- If the most significant byte is `0xFA` or `0xFB`, it is a **type-1 instruction**. No valid instructions will match this.
 
 - If the least significant nybble of the most significant byte is `0xB`, it is a **type-2 instruction**. This will match all branch and link (`bl`) instructions.
 
@@ -54,7 +56,7 @@ The following instruction classification system, shared by both keyed and unkeye
 
 - If none of the other conditions matched, it is a **type-0 instruction**. This will match all instructions which are not branches, and therefore the majority of instructions.
 
-The size of the function body as reported by the ELF symbol table is not the size used for encoding. Data at the foot of the instructions is left plain. To do this, the mapping symbols `$a` and `$d` are used to find the first contiguous region of ARM instructions from the start of the function, and this range is what receives encoding. The length of the function that was encoded is then written into the decryption wrappers or decoding initializer (with obfuscation as discussed previously).
+The size of the function body as reported by the ELF symbol table is not the size used for encoding. Data at the foot of the instructions is left plain. To do this, the end of the function is scanned backwards for instructions that resemble `pop` or `bx`, and the first instance of this is demarcated as the end of the function. This is done during the original encoding processing stage, and the length of the function that was encoded is written into the decryption wrappers or decoding initializer (with obfuscation as discussed previously).
 
 ### Unkeyed encoding
 
@@ -84,7 +86,7 @@ For a **type-3** instruction:
 
 Note that, after encoding, a type-2 instruction becomes a type-3 instruction, and vice versa. This is due to flipping the branch link bit, which will change the instruction from a `b` to a `bl` and vice versa.
 
-Type-0 and type-1 instructions will both remain so after encoding. This is fine for type-0 instructions, as their encoding procedure is its own inverse. However, type-1 instructions will not decode properly; this may be intentional or an oversight.
+Type-0 and type-1 instructions will both remain so after encoding. This is fine for type-0 instructions, as their encoding procedure is its own inverse. However, type-1 instructions will not decode properly; and this may be intentional or an oversight as the upper byte of `0xFA` / `0xFB` would never appear in typical ARM instructions, nor appear as a result of encoding any typical ARM instructions.
 
 Decoding applies the reverse procedure based on the new instruction type:
 
@@ -135,6 +137,8 @@ Therefore, if the encoding procedure added `0x1300` to the *relocation*, the dec
 
 Meanwhile, if the encoding procedure added `0x1300` to the *instruction*, the decoding procedure needs to (obviously) subtract `0x1300` from the instruction.
 
+*(In my opinion the smarter way to do this would have been to encode the relocation by incrementing it by `(0x1300 - 2) * 4 = 0x4BF8`, such that the resulting instruction would be incremented by `0x1300` and could then be decoded normally)*
+
 ### Encoding and linking
 
 The encoding process has been specifically designed such that most instructions are encoded via exclusive-or, but branches are encoded using addition of a constant. The purpose of this is so the encoding can persist through linking.
@@ -150,17 +154,15 @@ void foo(void) {
 Might generate:
 
 ```
-E92D4008    push    {r3, lr}
-EB000000    bl      8 <bar+0x8>     4: R_ARM_PC24   bar-0x8
-E8BD8008    pop     {r3, pc}
+EB000000    bl  8     R_ARM_PC24:  bar-0x8
+E12FFF1E    bx  lr
 ```
 
 The resulting encoded instructions would then be:
 
 ```
-197B255E    ldmdbne fp!, {r1, r2, r3, r4, r6, r8, sl, sp}^
-EA0004C2    b       1310 <bar+0x1310>       4: R_ARM_PC24   bar+0x1300
-18EBE55E    stmiane fp!, {r1, r2, r3, r4, r6, r8, sl, sp, lr, pc}^
+EA0004C2    b   4880    R_ARM_PC24:  bar+0x1300
+11799A48    cmnne sb, r8, asr #20
 ```
 
 Where, as discussed in the previous section, incrementing the relocation by `0x1300` will increment the instruction by `0x4C2`.

@@ -1,8 +1,8 @@
-#ifndef DSPROT_BSS_H
-#define DSPROT_BSS_H
+#ifndef BSS_H
+#define BSS_H
 
-#include "sdk.h"
+#include "types.h"
 
-extern u8 DSProt_BSS[4];
+extern u8 BSS[32];
 
-#endif // DSPROT_BSS_H
+#endif

@@ -20,7 +20,7 @@ static void ov124_02260D58(void);
 
 void FieldSystem_Init(OverlayManager *man, FieldSystem *fieldSystem) {
     u32 key = 2441 * 4073; // these are both prime
-    FS_LoadOverlay(MI_PROCESSOR_ARM9, FS_OVERLAY_ID(ds_protect));
+    FS_LoadOverlay(MI_PROCESSOR_ARM9, FS_OVERLAY_ID(OVY_123));
     key += 769 * (!DSProt_DetectNotFlashcart(ov124_02260D68)); // 769 is prime
     UnkStruct_02111868_sub *args = OverlayManager_GetArgs(man);
     fieldSystem->saveData = args->saveData;
@@ -29,9 +29,9 @@ void FieldSystem_Init(OverlayManager *man, FieldSystem *fieldSystem) {
     fieldSystem->location = LocalFieldData_GetCurrentPosition(Save_LocalFieldData_Get(fieldSystem->saveData));
     fieldSystem->mapMatrix = MapMatrix_New();
     u32 key2 = 929 * DSProt_DetectEmulator(ov124_02260D58); // 929 is prime
-    Field_AllocateMapEvents(fieldSystem, HEAP_ID_FIELD2);
-    fieldSystem->bagCursor = BagCursor_New(HEAP_ID_FIELD2);
-    FS_UnloadOverlay(MI_PROCESSOR_ARM9, FS_OVERLAY_ID(ds_protect));
+    Field_AllocateMapEvents(fieldSystem, HEAP_ID_FIELD);
+    fieldSystem->bagCursor = BagCursor_New(HEAP_ID_FIELD);
+    FS_UnloadOverlay(MI_PROCESSOR_ARM9, FS_OVERLAY_ID(OVY_123));
 
     // all combinations of the three prime multipliers above are coprime with 2441 and 4073
     if ((key + key2) % 2441) {
