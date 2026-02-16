@@ -1,0 +1,58 @@
+build_dir = meson.current_build_dir()
+
+############################################################
+###                  CAMERA_VIEWFINDER                   ###
+############################################################
+subdir('camera_viewfinder')
+
+camera_viewfinder_narc = custom_target('camera_viewfinder.narc',
+    command : [
+        narc_exe, 
+        '-p', build_dir + '/camera_viewfinder.narc',
+        '-d', build_dir + '/camera_viewfinder.narc.p',
+        '-i'
+    ],
+    input : [
+        camera_viewfinder_knarc_args,
+        camera_viewfinder_nclr,
+        camera_viewfinder_ncgr_lz,
+        camera_viewfinder_nscr_lz,
+    ],
+    output : [
+        'camera_viewfinder.narc',
+        'camera_viewfinder.naix',
+    ],
+    build_by_default:true,
+)
+
+############################################################
+###                         FONT                         ###
+############################################################
+
+# Skipped as it is not currently built by make
+
+############################################################
+###                      PLIST_GRA                       ###
+############################################################
+subdir('plist_gra')
+
+plist_gra_narc = custom_target('plist_gra.narc',
+    command : [
+        narc_exe,
+        '-p', build_dir + '/plist_gra.narc',
+        '-d', build_dir + '/plist_gra.narc.p',
+        '-i'
+    ],
+    input : [
+        plist_gra_nanr,
+        plist_gra_ncer,
+        plist_gra_ncgr,
+        plist_gra_nclr,
+        plist_gra_nscr
+    ],
+    output : [
+        'plist_gra.narc',
+        'plist_gra.naix'
+    ],
+    build_by_default:true
+)
