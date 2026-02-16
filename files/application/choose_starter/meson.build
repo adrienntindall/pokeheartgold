@@ -1,0 +1,54 @@
+build_dir = meson.current_build_dir()
+
+############################################################
+###                  CHOOSE_STARTER_MAIN                 ###
+############################################################
+subdir('choose_starter_main_res')
+
+puzzle_gra_narc = custom_target('choose_starter_main_res.narc',
+    command : [
+        narc_exe, 
+        '-p', build_dir + '/choose_starter_main_res.narc',
+        '-d', build_dir + '/choose_starter_main_res.narc.p',
+        '-i'
+    ],
+    input : [
+        choose_starter_main_res_nsbmd,
+        choose_starter_main_res_nsbca,
+        choose_starter_main_res_nsbta,
+        choose_starter_main_res_nclr,
+        choose_starter_main_res_ncgr,
+        choose_starter_main_res_nscr
+    ],
+    output : [
+        'choose_starter_main_res.narc',
+        'choose_starter_main_res.naix',
+    ],
+    build_by_default:true,
+)
+
+############################################################
+###                  CHOOSE_STARTER_SUB                  ###
+############################################################
+subdir('choose_starter_sub_res')
+
+puzzle_gra_narc = custom_target('choose_starter_sub_res.narc',
+    command : [
+        narc_exe, 
+        '-p', build_dir + '/choose_starter_sub_res.narc',
+        '-d', build_dir + '/choose_starter_sub_res.narc.p',
+        '-i'
+    ],
+    input : [
+        choose_starter_sub_res_ncgr,
+        choose_starter_sub_res_nscr,
+        choose_starter_sub_res_nclr,
+        choose_starter_sub_res_ncer,
+        choose_starter_sub_res_nanr
+    ],
+    output : [
+        'choose_starter_sub_res.narc',
+        'choose_starter_sub_res.naix',
+    ],
+    build_by_default:true,
+)
