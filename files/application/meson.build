@@ -23,8 +23,10 @@ puzzle_gra_narc = custom_target('guinness.narc',
         'guinness.narc',
         'guinness.naix',
     ],
-    build_by_default:true,
 )
+
+nitrofs_files += puzzle_gra_narc
+naix_headers += puzzle_gra_narc[1]
 
 #########################################################################
 ###                             VOLTORB_FLIP                          ###
@@ -84,9 +86,10 @@ puzzle_gra_narc = custom_target('voltorb_flip.narc',
         'voltorb_flip.narc',
         'voltorb_flip.naix',
     ],
-    build_by_default:true,
 )
 
+nitrofs_files += puzzle_gra_narc
+naix_headers += puzzle_gra_narc[1]
 
 # Subdirectories
 subdir('annon')

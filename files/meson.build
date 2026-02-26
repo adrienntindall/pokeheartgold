@@ -1,3 +1,6 @@
+nitrofs_files = []
+naix_headers = []
+
 # Generators
 ncgr_gen = generator(nitrogfx_exe,
     arguments: [ '@INPUT@', '@OUTPUT@', '@EXTRA_ARGS@', ],
