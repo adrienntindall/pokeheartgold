@@ -1,0 +1,22 @@
+subprojects/metroskrew/bin/skrewrap
+meson compile -C build
+ninja: Entering directory `/mnt/c/Users/aiden/Desktop/Decompilation/pokeheartgold/build'
+[  0% 0/1] Regenerating build files
+The Meson build system
+Version: 1.7.0
+Source dir: /mnt/c/Users/aiden/Desktop/Decompilation/pokeheartgold
+Build dir: /mnt/c/Users/aiden/Desktop/Decompilation/pokeheartgold/build
+Build type: cross build
+
+../meson.build:34:0: ERROR: Expecting rparen got rcurl.
+}
+^
+For a block that started at 29,25
+nitrosdk_dep = dependency('NitroSDK',
+                         ^
+
+A full log can be found at /mnt/c/Users/aiden/Desktop/Decompilation/pokeheartgold/build/meson-logs/meson-log.txt
+FAILED: build.ninja 
+/usr/bin/meson --internal regenerate /mnt/c/Users/aiden/Desktop/Decompilation/pokeheartgold .
+INFO: autodetecting backend as ninja
+INFO: calculating backend command to run: /usr/bin/ninja -C /mnt/c/Users/aiden/Desktop/Decompilation/pokeheartgold/build
