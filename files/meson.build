@@ -78,4 +78,6 @@ EXTFMT_LZ_FLAGS = ['-nopad', '-extfmt']
 
 # Subdirectories
 subdir('application')
+subdir('arc')
 subdir('graphic')
+subdir('msgdata')

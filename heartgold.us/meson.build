@@ -1,0 +1,8 @@
+# Collect ROM inputs and SHA-sums
+icon_png = files('icon.png')
+
+rom_header_template = files('rom_header_template.sbin')
+
+main_sha1 = files('main.sha1')
+filesystem_sha1 = files('filesystem.sha1')
+rom_sha1 = files('rom.sha1')
