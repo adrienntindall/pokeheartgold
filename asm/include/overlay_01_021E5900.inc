@@ -150,10 +150,10 @@
 .public ov01_021EB114
 .public ov01_021EB1BC
 .public ov01_021EB1DC
-.public ov01_021EB1F4
-.public ov01_021EB234
-.public ov01_021EB260
-.public FieldWeatherUpdate_UsedFlash
+.public WeatherManager_New
+.public WeatherManager_Delete
+.public WeatherManager_SetWeather
+.public WeatherManager_ChangeWeather
 .public FieldDrawMapNameInfo_Create
 .public FieldDrawMapNameInfo_Destroy
 .public FieldSystem_DrawMapNameAnimation

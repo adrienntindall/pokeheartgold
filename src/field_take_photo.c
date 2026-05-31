@@ -6,6 +6,8 @@
 
 #include "graphic/camera_viewfinder.naix"
 
+#include "field/weather_manager.h"
+
 #include "field_warp_tasks.h"
 #include "follow_mon.h"
 #include "gf_gfx_loader.h"
