@@ -4,17 +4,18 @@
 #include "constants/weather.h"
 #include "unk_02025C44.h"
 #include "unk_0200B150.h"
+#include "gf_gfx_loader.h"
 
 void ov01_021EB1E8(UnkStruct_ov01_021EB1E8 *a0) {
     a0->unk188 = 1;
 }
 
-WeatherManager *WeatherManager_New(u32 a0) {
+WeatherManager *WeatherManager_New(FieldSystem *fieldSystem) {
     WeatherManager *weatherManager = Heap_Alloc(HEAP_ID_FIELD1, sizeof(WeatherManager));
 
     memset(weatherManager, 0, sizeof(WeatherManager));
     
-    weatherManager->unk0 = ov01_021EB64C(a0);
+    weatherManager->unk0 = ov01_021EB64C(fieldSystem);
     weatherManager->weather = WEATHER_SUNNY;
     weatherManager->nextWeather = WEATHER_SUNNY;
     weatherManager->state = 6;
@@ -161,7 +162,7 @@ BOOL ov01_021EB4B4(u32 weather, u32 nextWeather) {
     return FALSE;
 }
 
-void ov01_021EB4B8(WeatherDraw* weatherDraw) {
+void WeatherDraw_Init(WeatherDraw* weatherDraw) {
     GF_InitG2dRenderer(&weatherDraw->instance, 0xFFFFF000);
     
     NNSG2dViewRect rect;
@@ -191,4 +192,66 @@ void ov01_021EB4B8(WeatherDraw* weatherDraw) {
     weatherDraw->spriteList = SpriteList_Create(&param);
 
     weatherDraw->task = SysTask_CreateOnMainQueue(ov01_021EB56C, weatherDraw, 10);
+}
+
+void ov01_021EB56C(SysTask *task, void *data) {
+    WeatherDraw *weatherDraw = data;
+    SpriteList_RenderAndAnimateSprites(weatherDraw->spriteList);
+}
+
+void ov01_021EB578(GF_2DGfxResHeader *headerList, u32 a1, u32 a2) {
+    GF_2DGfxResHeader *header = GF2DGfxResHeader_GetByIndex(headerList, a1);
+    GF_2DGfxResHeaderNarcList *headerNarcList = GfGfxLoader_LoadFromNarc(NARC_a_0_6_3, a2, 0, HEAP_ID_FIELD1, 1);
+    GF2DGfxResHeader_Init(headerNarcList, header, HEAP_ID_FIELD1);
+    Heap_Free(headerNarcList);
+}
+
+void WeatherDraw_Delete(WeatherDraw* weatherDraw) {
+    for (int i = 0; i < 4; i++) {
+        GF2DGfxResHeader_Reset(GF2DGfxResHeader_GetByIndex(weatherDraw->header, i));
+        Destroy2DGfxResObjMan(weatherDraw->resMan[i]);
+    }
+    
+    Heap_Free(weatherDraw->header);
+    weatherDraw->header = NULL;
+    
+    SpriteList_Delete(weatherDraw->spriteList);
+    weatherDraw->spriteList = NULL;
+    
+    SysTask_Destroy(weatherDraw->task);
+    weatherDraw->task = NULL;
+}
+
+void ov01_021EB5F4(Sprite *sprite, VecFx32* matrix) {
+    if (matrix->x > 0x13F000) {
+        matrix->x %= 0x13F000;
+    } else if (matrix->x < (int)0xFFFC0000) {
+        matrix->x += 0x13F000;
+    }
+
+    if (matrix->y > 0x100000) {
+        matrix->y %= 0x100000;
+    } else if (matrix->y < (int)0xFFFC0000) {
+        matrix->y += 0x100000;
+    }
+    
+    Sprite_SetMatrix(sprite, matrix);
+}
+
+extern u32 ov01_022098B0[];
+extern u32 ov01_0220675C[];
+
+UnkWeatherStruct_021EB64C* ov01_021EB64C(FieldSystem *fieldSystem) {
+    UnkWeatherStruct_021EB64C *v0 = Heap_Alloc(HEAP_ID_FIELD1, sizeof(UnkWeatherStruct_021EB64C));
+
+    v0->fieldSystem = fieldSystem;
+    
+    WeatherDraw_Init(&v0->weatherDraw);
+
+    v0->unk0 = ov01_022098B0;
+    v0->unk4 = ov01_0220675C;
+    
+    v0->narc = NARC_New(NARC_a_0_6_3, HEAP_ID_FIELD1);
+
+    return v0;
 }

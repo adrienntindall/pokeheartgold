@@ -13,158 +13,9 @@
 	.include "global.inc"
 
 	.text
-    .public ov01_021EB4B8
-    
-	thumb_func_start ov01_021EB56C
-ov01_021EB56C: ; 0x021EB56C
-	ldr r3, _021EB574 ; =SpriteList_RenderAndAnimateSprites
-	add r1, #0xf4
-	ldr r0, [r1]
-	bx r3
-	.balign 4, 0
-_021EB574: .word SpriteList_RenderAndAnimateSprites
-	thumb_func_end ov01_021EB56C
-
-	thumb_func_start ov01_021EB578
-ov01_021EB578: ; 0x021EB578
-	push {r3, r4, r5, lr}
-	add r5, r2, #0
-	bl GF2DGfxResHeader_GetByIndex
-	add r4, r0, #0
-	mov r0, #1
-	str r0, [sp]
-	mov r0, #0x3f
-	add r1, r5, #0
-	mov r2, #0
-	mov r3, #4
-	bl GfGfxLoader_LoadFromNarc
-	add r5, r0, #0
-	add r1, r4, #0
-	mov r2, #4
-	bl GF2DGfxResHeader_Init
-	add r0, r5, #0
-	bl Heap_Free
-	pop {r3, r4, r5, pc}
-	thumb_func_end ov01_021EB578
-
-	thumb_func_start ov01_021EB5A4
-ov01_021EB5A4: ; 0x021EB5A4
-	push {r4, r5, r6, lr}
-	add r6, r0, #0
-	mov r4, #0
-	add r5, r6, #0
-_021EB5AC:
-	ldr r0, [r6, #0x10]
-	add r1, r4, #0
-	bl GF2DGfxResHeader_GetByIndex
-	bl GF2DGfxResHeader_Reset
-	ldr r0, [r5]
-	bl Destroy2DGfxResObjMan
-	add r4, r4, #1
-	add r5, r5, #4
-	cmp r4, #4
-	blt _021EB5AC
-	ldr r0, [r6, #0x10]
-	bl Heap_Free
-	mov r0, #0
-	str r0, [r6, #0x10]
-	add r0, r6, #0
-	add r0, #0xf4
-	ldr r0, [r0]
-	bl SpriteList_Delete
-	add r0, r6, #0
-	mov r1, #0
-	add r0, #0xf4
-	str r1, [r0]
-	add r0, r6, #0
-	add r0, #0xf8
-	ldr r0, [r0]
-	bl SysTask_Destroy
-	mov r0, #0
-	add r6, #0xf8
-	str r0, [r6]
-	pop {r4, r5, r6, pc}
-	thumb_func_end ov01_021EB5A4
-
-	thumb_func_start ov01_021EB5F4
-ov01_021EB5F4: ; 0x021EB5F4
-	push {r3, r4, r5, lr}
-	add r4, r1, #0
-	add r5, r0, #0
-	ldr r0, [r4]
-	ldr r1, _021EB644 ; =0x0013F000
-	cmp r0, r1
-	ble _021EB60A
-	bl _s32_div_f
-	str r1, [r4]
-	b _021EB614
-_021EB60A:
-	ldr r2, _021EB648 ; =0xFFFC0000
-	cmp r0, r2
-	bge _021EB614
-	add r0, r0, r1
-	str r0, [r4]
-_021EB614:
-	mov r1, #1
-	ldr r3, [r4, #4]
-	lsl r1, r1, #0x14
-	cmp r3, r1
-	ble _021EB62E
-	lsr r2, r3, #0x1f
-	lsl r1, r3, #0xc
-	sub r1, r1, r2
-	mov r0, #0xc
-	ror r1, r0
-	add r0, r2, r1
-	str r0, [r4, #4]
-	b _021EB638
-_021EB62E:
-	ldr r0, _021EB648 ; =0xFFFC0000
-	cmp r3, r0
-	bge _021EB638
-	add r0, r3, r1
-	str r0, [r4, #4]
-_021EB638:
-	add r0, r5, #0
-	add r1, r4, #0
-	bl Sprite_SetMatrix
-	pop {r3, r4, r5, pc}
-	nop
-_021EB644: .word 0x0013F000
-_021EB648: .word 0xFFFC0000
-	thumb_func_end ov01_021EB5F4
-
-	thumb_func_start ov01_021EB64C
-ov01_021EB64C: ; 0x021EB64C
-	push {r3, r4, r5, lr}
-	mov r1, #0x43
-	add r5, r0, #0
-	mov r0, #4
-	lsl r1, r1, #2
-	bl Heap_Alloc
-	add r4, r0, #0
-	mov r0, #0x41
-	lsl r0, r0, #2
-	str r5, [r4, r0]
-	add r0, r4, #0
-	add r0, #8
-	bl ov01_021EB4B8
-	ldr r0, _021EB684 ; =ov01_022098B0
-	mov r1, #4
-	str r0, [r4]
-	ldr r0, _021EB688 ; =ov01_0220675C
-	str r0, [r4, #4]
-	mov r0, #0x3f ; NARC_a_0_6_3
-	bl NARC_New
-	mov r1, #0x42
-	lsl r1, r1, #2
-	str r0, [r4, r1]
-	add r0, r4, #0
-	pop {r3, r4, r5, pc}
-	.balign 4, 0
-_021EB684: .word ov01_022098B0
-_021EB688: .word ov01_0220675C
-	thumb_func_end ov01_021EB64C
+    .public WeatherDraw_Init
+    .public WeatherDraw_Delete
+    .public ov01_021EB5F4
 
 	thumb_func_start ov01_021EB68C
 ov01_021EB68C: ; 0x021EB68C
@@ -205,7 +56,7 @@ _021EB69A:
 	bl GfGfx_EngineATogglePlanes
 	ldr r0, [r4]
 	add r0, #8
-	bl ov01_021EB5A4
+	bl WeatherDraw_Delete
 	mov r0, #0x42
 	ldr r1, [r4]
 	lsl r0, r0, #2
@@ -5004,7 +4855,7 @@ ov01_0220673C: ; 0x0220673C
 
 ov01_0220674C: ; 0x0220674C
 	.word 2, 2, 2, 2
-
+.public ov01_0220675C
 ov01_0220675C: ; 0x0220675C
 	.byte 0x15, 0x00, 0x00, 0x00
 	.byte 0x24, 0x00, 0x00, 0x00, 0x26, 0x00, 0x00, 0x00, 0x25, 0x00, 0x00, 0x00, 0x24, 0x00, 0x00, 0x00
@@ -5016,6 +4867,7 @@ ov01_0220675C: ; 0x0220675C
 	.byte 0x30, 0x00, 0x00, 0x00, 0x32, 0x00, 0x00, 0x00
 
 	.data
+.public ov01_022098B0
 
 	.balign 4, 0
 ov01_022098B0:
