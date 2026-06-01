@@ -9,25 +9,43 @@
 #include "unk_02005D10.h"
 #include "unk_0200ACF0.h"
 
-struct WeatherSystem_Sub0_Sub8 {
+struct WeatherSystem_Sub0_Sub8_LinkedList {
     u32 unk0;
     u32 unk4;
     u32 unk8;
-    u32 unkC;
-    u8 unk10[0xF4C];
+    u32 unk10[10];
+    WeatherSystem_Sub0_Sub8_LinkedList *next;
+    WeatherSystem_Sub0_Sub8_LinkedList *prev;
+};
+
+struct WeatherSystem_Sub0_Sub8 {
+    u32 unk0;
+    u32 unk4;
+    UnkWeatherStruct_021EB968 *unk8;
+    WeatherSystem_Sub0_Sub8_LinkedList linkedListDummy;
+    WeatherSystem_Sub0_Sub8_LinkedList linkedList[64];
+    SysTask *unkF48;
+    VecFx32 cameraTarget;
+    void *unkF58;
     u32 unkF5C;
     u16 sndSeq;
+    u16 unkF62;
+    u16 unkF64;
+    u16 unkF66;
+    u32 unkF68;
+    SysTask *unkF6C;
 };
 
 struct WeatherSystem_Sub0 {
     u16 unk0;
     u16 unk2;
-    u32 unk4;
+    int unk4;
     WeatherSystem_Sub0_Sub8 *unk8;
-    u32 unkC;
+    UnkWeatherStruct_021EB968 *unkC;
     u16 unk10;
     u16 unk12;
-    u8 unk[0x8];
+    SysTask *task;
+    SysTaskFunc unk18;
 };
 
 struct WeatherSystem {
@@ -478,4 +496,141 @@ BOOL ov01_021EB9A8(WeatherSystem* weatherSystem, int weather) {
     }
 
     return TRUE;
+}
+
+BOOL ov01_021EBA08(WeatherSystem *weatherSystem, int weather) {
+    WeatherSystem_Sub0 *v0 = &weatherSystem->unk0[weather];
+    if (v0->unk8) {
+        return TRUE;
+    }
+
+    if (ov01_021EBE4C(weatherSystem, v0) == 0) {
+        return FALSE;
+    }
+
+    v0->task = SysTask_CreateOnMainQueue(ov01_021EBD70, v0, 1);
+    v0->unk10 = 1;
+    v0->unk12 = 0;
+
+    return TRUE;
+}
+
+BOOL ov01_021EBA44(WeatherSystem *weatherSystem, int weather, u32 a2, u32 a3) {
+    WeatherSystem_Sub0 *v0 = &weatherSystem->unk0[weather];
+
+    if (v0->unk0 != 0xFFFF && v0->unkC == 0) {
+        return FALSE;
+    }
+
+    if (v0->unk8 == NULL) {
+        return FALSE;
+    }
+
+    if (v0->unk10 != 2) {
+        return FALSE;
+    }
+    
+    v0->unk8->unkF48 = SysTask_CreateOnMainQueue(v0->unk18, v0->unk8, 4);
+
+    if (v0->unk8->unkF48 == NULL) {
+        return FALSE;
+    }
+
+    v0->unk10 = 3;
+    v0->unk8->unkF62 = a2;
+    v0->unk8->unkF66 = 0;
+    v0->unk8->linkedListDummy.next = &v0->unk8->linkedListDummy;
+    v0->unk8->linkedListDummy.prev = &v0->unk8->linkedListDummy;
+    v0->unk8->unkF64 = a3;
+    v0->unk8->unkF5C = 0;
+    
+    v0->unk8->cameraTarget = NNS_G3dGlb.camTarget;
+    
+    if (v0->unk4 > 0) {
+        v0->unk8->unkF58 = Heap_Alloc(HEAP_ID_FIELD1, v0->unk4);
+        memset(v0->unk8->unkF58, 0, v0->unk4);
+    } else {
+        v0->unk8->unkF58 = NULL;
+    }
+    
+    if (v0->unk2 != 0xFFFF) {
+        GfGfx_EngineATogglePlanes(4, 0);
+        G2_SetBG2Priority(1);
+        G2_SetBG0Priority(2);
+    }
+    
+    return TRUE;
+}
+
+void ov01_021EBB40(WeatherSystem *weatherSystem, int weather, u16 a2) {
+    WeatherSystem_Sub0 *v0 = &weatherSystem->unk0[weather];
+    if (v0->unk10 == 3) {
+        v0->unk8->unkF66 = 5;
+        v0->unk8->unkF64 = a2;
+    }
+}
+
+void ov01_021EBB68(WeatherSystem *weatherSystem, int weather) {
+    WeatherSystem_Sub0 *v0 = &weatherSystem->unk0[weather];
+    if (ov01_021EB804(weatherSystem, weather) == 3) {
+        v0->unk8->unkF62 = 5;
+        v0->unk18(NULL, v0->unk8);
+    }
+}
+
+
+void ov01_021EBB90(WeatherSystem *weatherSystem, u32 weather) {
+    WeatherSystem_Sub0 *v0 = &weatherSystem->unk0[weather];
+
+    if (v0->unk2 != 0xFFFF) {
+        GfGfx_EngineATogglePlanes(4, 0);
+        
+        G2_SetBG2Priority(3);
+		G2_SetBG0Priority(1);
+        G2_BlendNone();
+    }
+    
+    if (v0->unkC) {
+        ov01_021EB968(weatherSystem, v0->unk0, v0->unkC);
+        Heap_FreeExplicit(HEAP_ID_FIELD1, v0->unkC);
+        v0->unkC = NULL;
+        if (v0->task) {
+            SysTask_Destroy(v0->task);
+            v0->task = NULL;
+        }
+    }
+    
+    if (v0->unk8) {
+        ov01_021EC2CC(&v0->unk8->linkedListDummy);
+
+        if (v0->unk0 != 0xFFFF) {
+            ov01_021EC058(v0->unk8);
+        }
+
+        if (v0->unk8->unkF5C == 1) {
+            ov01_021EDAE0(v0->unk8);
+        }
+
+        if (v0->unk8->unkF58) {
+            Heap_FreeExplicit(HEAP_ID_FIELD1, v0->unk8->unkF58);
+            v0->unk8->unkF58 = NULL;
+        }
+
+        if (v0->unk10 == 1) {
+            if (v0->task) {
+                SysTask_Destroy(v0->task);
+            }
+        } else if (v0->unk10 == 3) {
+            SysTask_Destroy(v0->unk8->unkF48);
+        }
+
+        if (v0->unk8->unkF6C) {
+            SysTask_Destroy(v0->unk8->unkF6C);
+        }
+
+        Heap_FreeExplicit(HEAP_ID_FIELD1, v0->unk8);
+        v0->unk8 = NULL;
+    }
+
+    ov01_021EA864(weatherSystem->fieldSystem->unk_4C, 1, 0, 0, 0, 0);
 }

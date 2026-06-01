@@ -20,6 +20,7 @@ typedef struct WeatherDraw {
 typedef struct WeatherSystem WeatherSystem;
 typedef struct WeatherSystem_Sub0 WeatherSystem_Sub0;
 typedef struct WeatherSystem_Sub0_Sub8 WeatherSystem_Sub0_Sub8;
+typedef struct WeatherSystem_Sub0_Sub8_LinkedList WeatherSystem_Sub0_Sub8_LinkedList;
 
 typedef struct UnkStruct_ov01_021EB1E8 {
     u8 unk0[0x188];
@@ -70,16 +71,16 @@ void ov01_021EB86C(s32 arg0, s32 arg1, s32 arg2);
 SpriteResource *ov01_021EB898(GF_2DGfxResHeader *headerList, s32 resIndex, s32 headerIndex, GF_2DGfxResMan *resMan, NARC *narc, BOOL atEnd);
 void ov01_021EB968(WeatherSystem* weatherSystem, s32 a1, UnkWeatherStruct_021EB968* a2);
 BOOL ov01_021EB9A8(WeatherSystem* weatherSystem, int weather);
+BOOL ov01_021EBA08(WeatherSystem *weatherSystem, int weather);
+void ov01_021EBB40(WeatherSystem *weatherSystem, int weather, u16 a2);
+void ov01_021EBB68(WeatherSystem *weatherSystem, int weather);
+void ov01_021EBB90(WeatherSystem *weatherSystem, u32 weather);
 
 // Not yet decompiled
 void ov01_021EB3F0(SysTask *task, void *data);
 void ov01_021EB56C(SysTask *task, void *data);
 void ov01_021EB578(GF_2DGfxResHeader *header, u32 a1, u32 a2);
-void ov01_021EBB90(WeatherSystem *weatherSystem, u32 a1);
 void ov01_021EA864(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5);
-BOOL ov01_021EBA08(WeatherSystem *weatherSystem, int weather);
-BOOL ov01_021EBB68(WeatherSystem *weatherSystem, int weather);
-BOOL ov01_021EBB40(WeatherSystem *weatherSystem, int weather, u32 a2);
 BOOL ov01_021EBA44(WeatherSystem *weatherSystem, int weather, u32 a2, u32 a3);
 BOOL ov01_021EA854(u32 a0);
 void ov01_021EBEF0(u32 a0, u32 a1, u32 a2);
@@ -90,5 +91,9 @@ BOOL ov01_021EBE4C(WeatherSystem *weatherSystem, WeatherSystem_Sub0 *a1);
 BOOL ov01_021EBD34(WeatherSystem *weatherSystem, WeatherSystem_Sub0 *a1);
 void ov01_021EC028(WeatherSystem_Sub0_Sub8 *a0);
 void ov01_021EBD18(WeatherSystem *weatherSystem, u16 a1);
+void ov01_021EBD70(SysTask *task, void *data);
+void ov01_021EC2CC(WeatherSystem_Sub0_Sub8_LinkedList *linkedList);
+void ov01_021EC058(WeatherSystem_Sub0_Sub8 *a0);
+void ov01_021EDAE0(WeatherSystem_Sub0_Sub8 *a0);
 
 #endif // POKEHEARTGOLD_FIELD_WEATHER_MANAGER_H
