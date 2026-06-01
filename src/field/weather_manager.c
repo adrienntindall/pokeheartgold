@@ -7,22 +7,28 @@
 #include "gf_gfx_loader.h"
 #include "field_system.h"
 #include "unk_02005D10.h"
+#include "unk_0200ACF0.h"
 
-typedef struct WeatherSystem_Sub0_Sub8 {
-    u8 unk0[0xF5C];
+struct WeatherSystem_Sub0_Sub8 {
+    u32 unk0;
+    u32 unk4;
+    u32 unk8;
+    u32 unkC;
+    u8 unk10[0xF4C];
     u32 unkF5C;
     u16 sndSeq;
-} WeatherSystem_Sub0_Sub8;
+};
 
-typedef struct WeatherSystem_Sub0 {
-    u32 unk0;
+struct WeatherSystem_Sub0 {
+    u16 unk0;
+    u16 unk2;
     u32 unk4;
     WeatherSystem_Sub0_Sub8 *unk8;
     u32 unkC;
     u16 unk10;
     u16 unk12;
     u8 unk[0x8];
-} WeatherSystem_Sub0;
+};
 
 struct WeatherSystem {
     WeatherSystem_Sub0 *unk0;
@@ -380,4 +386,96 @@ void ov01_021EB830(UnkWeatherStruct_021EB830* arg0, s32 arg1, s32 arg2, s32 arg3
     arg0->unk8 = arg2 - arg1;
     arg0->unk10 = arg3;
     arg0->unkC = 0;
+}
+
+BOOL ov01_021EB840(UnkWeatherStruct_021EB830* a0) {
+    int v0 = a0->unk8 * a0->unkC;
+    v0 /= a0->unk10;
+
+    a0->unk0 = v0 + a0->unk4;
+
+    if (a0->unkC + 1 <= a0->unk10) {
+        a0->unkC++;
+        return FALSE;
+    }
+
+    a0->unkC = a0->unk10;
+    return TRUE;
+}
+
+void ov01_021EB86C(s32 arg0, s32 arg1, s32 arg2) {
+    ov01_021EBEF0(arg0, arg1, arg2);
+    ov01_021EBF24(arg0, arg1, arg2);
+    ov01_021EBF58(arg0, arg1, arg2);
+    ov01_021EBF94(arg0, arg1, arg2);
+}
+
+SpriteResource *ov01_021EB898(GF_2DGfxResHeader *headerList, s32 resourceType, s32 headerIndex, GF_2DGfxResMan *resMan, NARC *narc, BOOL atEnd) {
+    GF_2DGfxResHeader *header = GF2DGfxResHeader_GetByIndex(headerList, resourceType);
+    u32 member = GF2DGfxResHeader_GetNarcMemberIdByIndex(header, headerIndex);
+    u32 compressFlag = GF2DGfxResHeader_GetCompressFlagByIndex(header, headerIndex);
+    u32 exDat0 = GF2DGfxResHeader_GetExDat0ByIndex(header, headerIndex);
+    u32 exDat1 = GF2DGfxResHeader_GetExDat1ByIndex(header, headerIndex);
+    u32 objID = GF2dGfxResHeader_GetObjIdByIndex(header, headerIndex);
+
+    SpriteResource *ret;
+    switch (resourceType) {
+    case GF_GFX_RES_TYPE_CHAR:
+        ret = AddCharResObjFromOpenNarcWithAtEndFlag(resMan, narc, member, compressFlag, objID, exDat0, HEAP_ID_FIELD1, atEnd);
+        break;
+    case GF_GFX_RES_TYPE_PLTT:
+        ret = AddPlttResObjFromOpenNarcWithAtEndFlag(resMan, narc, member, compressFlag, objID, exDat0, exDat1, HEAP_ID_FIELD1, atEnd);
+        break;
+    case GF_GFX_RES_TYPE_CELL:
+        ret = AddCellOrAnimResObjFromOpenNarc(resMan, narc, member, compressFlag, objID, GF_GFX_RES_TYPE_CELL, HEAP_ID_FIELD1);
+        break;
+    case GF_GFX_RES_TYPE_ANIM:
+        ret = AddCellOrAnimResObjFromOpenNarc(resMan, narc, member, compressFlag, objID, GF_GFX_RES_TYPE_ANIM, HEAP_ID_FIELD1);
+        break;
+    }
+
+    return ret;
+}
+
+void ov01_021EB968(WeatherSystem* weatherSystem, s32 a1, UnkWeatherStruct_021EB968* a2) {
+    if (a1 != 0xFFFF) {
+        if (a2->charResObj[0] != 0) {
+            sub_0200AEB0(a2->charResObj[0]);
+        }
+        if (a2->charResObj[1] != 0) {
+            sub_0200B0A8(a2->charResObj[1]);
+        }
+
+        for (int i = 0; i < 4; i++) {
+            if (a2->charResObj[i] != 0) {
+                DestroySingle2DGfxResObj(weatherSystem->weatherDraw.resMan[i], a2->charResObj[i]);
+            }
+        }
+    }
+}
+
+BOOL ov01_021EB9A8(WeatherSystem* weatherSystem, int weather) {
+    WeatherSystem_Sub0 *v0 = &weatherSystem->unk0[weather];
+    if (v0->unk8 == 0) {
+        if (ov01_021EBE4C(weatherSystem, v0) == FALSE) {
+            return FALSE;
+        }
+
+        if (ov01_021EBD34(weatherSystem, v0) == FALSE) {
+            Heap_Free(v0->unk8);
+            v0->unk8 = NULL;
+            return FALSE;
+        }
+
+        v0->unk8->unk8 = v0->unkC;
+        
+        if (v0->unk0 != 0xFFFF) {
+            ov01_021EC028(v0->unk8);
+        }
+
+        ov01_021EBD18(weatherSystem, v0->unk2);
+        v0->unk10 = 2;
+    }
+
+    return TRUE;
 }
