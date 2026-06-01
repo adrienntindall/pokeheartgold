@@ -127,7 +127,9 @@ struct FieldSystem {
     MapObjectManager *mapObjectManager;
     PlayerAvatar *playerAvatar;
     void *unk_44;
-    u8 filler48[0xC];
+    u32 unk_48;
+    u32 unk_4C;
+    u32 unk_50;
     void *unk54;
     u32 unk58;
     TerrainAttributes *terrainAttributes;

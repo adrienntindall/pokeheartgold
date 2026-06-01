@@ -5,6 +5,33 @@
 #include "unk_02025C44.h"
 #include "unk_0200B150.h"
 #include "gf_gfx_loader.h"
+#include "field_system.h"
+#include "unk_02005D10.h"
+
+typedef struct WeatherSystem_Sub0_Sub8 {
+    u8 unk0[0xF5C];
+    u32 unkF5C;
+    u16 sndSeq;
+} WeatherSystem_Sub0_Sub8;
+
+typedef struct WeatherSystem_Sub0 {
+    u32 unk0;
+    u32 unk4;
+    WeatherSystem_Sub0_Sub8 *unk8;
+    u32 unkC;
+    u16 unk10;
+    u16 unk12;
+    u8 unk[0x8];
+} WeatherSystem_Sub0;
+
+struct WeatherSystem {
+    WeatherSystem_Sub0 *unk0;
+    u32 *unk4;
+    WeatherDraw weatherDraw;
+    FieldSystem *fieldSystem;
+    NARC *narc;
+};
+
 
 void ov01_021EB1E8(UnkStruct_ov01_021EB1E8 *a0) {
     a0->unk188 = 1;
@@ -15,7 +42,7 @@ WeatherManager *WeatherManager_New(FieldSystem *fieldSystem) {
 
     memset(weatherManager, 0, sizeof(WeatherManager));
     
-    weatherManager->unk0 = ov01_021EB64C(fieldSystem);
+    weatherManager->unk0 = WeatherSystem_New(fieldSystem);
     weatherManager->weather = WEATHER_SUNNY;
     weatherManager->nextWeather = WEATHER_SUNNY;
     weatherManager->state = 6;
@@ -32,7 +59,7 @@ void WeatherManager_Delete(WeatherManager* weatherManager) {
         SysTask_Destroy(weatherManager->task);
     }
     
-    ov01_021EB68C(weatherManager);
+    ov01_021EB68C(&weatherManager->unk0);
 
     memset(weatherManager, 0, sizeof(WeatherManager));
     
@@ -238,11 +265,11 @@ void ov01_021EB5F4(Sprite *sprite, VecFx32* matrix) {
     Sprite_SetMatrix(sprite, matrix);
 }
 
-extern u32 ov01_022098B0[];
+extern WeatherSystem_Sub0 ov01_022098B0[];
 extern u32 ov01_0220675C[];
 
-UnkWeatherStruct_021EB64C* ov01_021EB64C(FieldSystem *fieldSystem) {
-    UnkWeatherStruct_021EB64C *v0 = Heap_Alloc(HEAP_ID_FIELD1, sizeof(UnkWeatherStruct_021EB64C));
+WeatherSystem* WeatherSystem_New(FieldSystem *fieldSystem) {
+    WeatherSystem *v0 = Heap_Alloc(HEAP_ID_FIELD1, sizeof(WeatherSystem));
 
     v0->fieldSystem = fieldSystem;
     
@@ -254,4 +281,103 @@ UnkWeatherStruct_021EB64C* ov01_021EB64C(FieldSystem *fieldSystem) {
     v0->narc = NARC_New(NARC_a_0_6_3, HEAP_ID_FIELD1);
 
     return v0;
+}
+
+void ov01_021EB68C(WeatherSystem** pWeatherSystem) {
+    if (*pWeatherSystem != NULL) {
+        for (int i = 0; i < 14; i++) {
+            ov01_021EBB90(*pWeatherSystem, i);
+        }
+
+        ov01_021EA864((*pWeatherSystem)->fieldSystem->unk_4C, 1, 0, 0, 0, 0);
+
+        reg_G2_BG0CNT = (reg_G2_BG0CNT & ~3) | 1;
+
+        GfGfx_EngineATogglePlanes(4, 0);
+
+        WeatherDraw_Delete(&(*pWeatherSystem)->weatherDraw);
+
+        NARC_Delete((*pWeatherSystem)->narc);
+        Heap_FreeExplicit(HEAP_ID_FIELD1, *pWeatherSystem);
+
+        *pWeatherSystem = NULL;
+    }
+}
+
+BOOL ov01_021EB700(WeatherSystem *weatherSystem, int state, int weather) {
+   BOOL ret = TRUE;
+    
+    if (weather > 14) {
+        return FALSE;
+    }
+
+    switch (state) {
+    case 0:
+        ret = ov01_021EB9A8(weatherSystem, weather);
+        break;
+    case 1:
+        ret = ov01_021EBA08(weatherSystem, weather);
+        break;
+    case 2:
+        ret = ov01_021EBA44(weatherSystem, weather, 0, 1);
+        break;
+    case 3:
+        ret = ov01_021EBA44(weatherSystem, weather, 2, 1);
+        break;
+    case 4:
+        if (ov01_021EA854(weatherSystem->fieldSystem->unk_4C) == 1) {
+            ret = ov01_021EBA44(weatherSystem, weather, 0, 2);
+        } else {
+            ret = ov01_021EBA44(weatherSystem, weather, 0, 1);
+        }
+        break;
+    case 5:
+        ov01_021EBB40(weatherSystem, weather, 1);
+        break;
+    case 6:
+        ov01_021EBB68(weatherSystem, weather);
+        break;
+    case 7:
+        ov01_021EBB40(weatherSystem, weather, 0);
+        break;
+    case 8:
+        ov01_021EBB90(weatherSystem, weather);
+        break;
+    case 9:
+        WeatherSystem_Sub0 *v1 = &weatherSystem->unk0[weather];
+        if (v1->unk8 && v1->unk8->unkF5C == TRUE) {
+            PlaySE(v1->unk8->sndSeq);
+        }
+        break;
+    case 10:
+        WeatherSystem_Sub0 *v2 = &weatherSystem->unk0[weather];
+        if (v2->unk8 && v2->unk8->unkF5C == TRUE) {
+            StopSE(v2->unk8->sndSeq, 0);
+        }
+        break;
+    default:
+        break;
+    }
+    
+    return ret;
+}
+
+u16 ov01_021EB804(WeatherSystem* weatherSystem, int weather) {
+    if (weather >= 14) {
+        return 0;
+    }
+    WeatherSystem_Sub0 *v0 = &weatherSystem->unk0[weather];
+    return v0->unk10;
+}
+
+void ov01_021EB818(u32 arg0, u32 arg1) {
+    G2x_SetBlendAlpha_(0x04000050, 4, 0x21, arg0, arg1);
+}
+
+void ov01_021EB830(UnkWeatherStruct_021EB830* arg0, s32 arg1, s32 arg2, s32 arg3) {
+    arg0->unk0 = arg1;
+    arg0->unk4 = arg1;
+    arg0->unk8 = arg2 - arg1;
+    arg0->unk10 = arg3;
+    arg0->unkC = 0;
 }
