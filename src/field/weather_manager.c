@@ -19,8 +19,8 @@ struct WeatherSystem_Sub0_Sub8_LinkedList {
 };
 
 struct WeatherSystem_Sub0_Sub8 {
-    u32 unk0;
-    u32 unk4;
+    WeatherSystem *weatherSystem;
+    WeatherSystem_Sub0 *unk4;
     UnkWeatherStruct_021EB968 *unk8;
     WeatherSystem_Sub0_Sub8_LinkedList linkedListDummy;
     WeatherSystem_Sub0_Sub8_LinkedList linkedList[64];
@@ -421,11 +421,11 @@ BOOL ov01_021EB840(UnkWeatherStruct_021EB830* a0) {
     return TRUE;
 }
 
-void ov01_021EB86C(s32 arg0, s32 arg1, s32 arg2) {
-    ov01_021EBEF0(arg0, arg1, arg2);
-    ov01_021EBF24(arg0, arg1, arg2);
-    ov01_021EBF58(arg0, arg1, arg2);
-    ov01_021EBF94(arg0, arg1, arg2);
+void ov01_021EB86C(WeatherSystem *weatherSystem, s32 arg1, UnkWeatherStruct_021EB968 *arg2) {
+    ov01_021EBEF0(weatherSystem, arg1, arg2);
+    ov01_021EBF24(weatherSystem, arg1, arg2);
+    ov01_021EBF58(weatherSystem, arg1, arg2);
+    ov01_021EBF94(weatherSystem, arg1, arg2);
 }
 
 SpriteResource *ov01_021EB898(GF_2DGfxResHeader *headerList, s32 resourceType, s32 headerIndex, GF_2DGfxResMan *resMan, NARC *narc, BOOL atEnd) {
@@ -633,4 +633,115 @@ void ov01_021EBB90(WeatherSystem *weatherSystem, u32 weather) {
     }
 
     ov01_021EA864(weatherSystem->fieldSystem->unk_4C, 1, 0, 0, 0, 0);
+}
+
+void ov01_021EBCA4(WeatherSystem_Sub0* a0) {
+    if (a0->unk2 != 0xFFFF) {
+        GfGfx_EngineATogglePlanes(4, 0);
+        G2_SetBG2Priority(3);
+		G2_SetBG0Priority(1);
+		G2_BlendNone();
+    }
+
+    if (a0->unk8 != NULL) {
+        ov01_021EC2CC(&a0->unk8->linkedListDummy);
+
+        if (a0->unk8->unkF5C == 1) {
+            ov01_021EDAE0(a0->unk8);
+        }
+
+        if (a0->unk10 == 3) {
+            SysTask_Destroy(a0->unk8->unkF48);
+            a0->unk10 = 2;
+        }
+    }
+}
+
+void ov01_021EBD18(WeatherSystem *weatherSystem, u16 a1) {
+    ov01_021EC078(weatherSystem, a1);
+    ov01_021EC0C0(weatherSystem, a1);
+    ov01_021EC114(weatherSystem, a1);
+}
+
+BOOL ov01_021EBD34(WeatherSystem *weatherSystem, WeatherSystem_Sub0 *a1) {
+    if (a1->unk0 != 0xFFFF && a1->unkC == NULL) {
+        if (ov01_021EBEB8(a1) == FALSE) {
+            return FALSE;
+        }
+        ov01_021EB86C(weatherSystem, a1->unk0, a1->unkC);
+        ov01_021EBFD0(weatherSystem, a1);
+    }
+    return TRUE;
+}
+
+void ov01_021EBD70(SysTask *task, void *data) {
+    WeatherSystem_Sub0 *v0 = data;
+    WeatherSystem *weatherSystem = v0->unk8->weatherSystem;
+    switch (v0->unk12) {
+    case 0:
+        GF_ASSERT(ov01_021EBEB8(v0));
+        v0->unk12++;
+        break;
+    case 1:
+        ov01_021EBEF0(weatherSystem, v0->unk0, v0->unkC);
+        v0->unk12++;
+        break;
+    case 2:
+        ov01_021EC078(weatherSystem, v0->unk2);
+        v0->unk12++;
+        break;
+    case 3:
+        ov01_021EBF24(weatherSystem, v0->unk0, v0->unkC);
+        v0->unk12++;
+        break;
+    case 4:
+        ov01_021EC0C0(weatherSystem, v0->unk2);
+        v0->unk12++;
+        break;
+    case 5:
+        ov01_021EBF58(weatherSystem, v0->unk0, v0->unkC);
+        v0->unk12++;
+        break;
+    case 6:
+        ov01_021EC114(weatherSystem, v0->unk2);
+        v0->unk12++;
+        break;
+    case 7:
+        ov01_021EBF94(weatherSystem, v0->unk0, v0->unkC);
+        v0->unk12++;
+        break;
+    case 8:
+        ov01_021EBFD0(weatherSystem, v0);
+        v0->unk8->unk8 = v0->unkC;
+        if (v0->unk0 != 0xFFFF) {
+            ov01_021EC028(v0->unk8);
+        }
+        v0->unk10 = 2;
+        v0->unk12 = 0;
+        v0->task = 0;
+        SysTask_Destroy(task);
+    }
+}
+
+BOOL ov01_021EBE4C(WeatherSystem *weatherSystem, WeatherSystem_Sub0 *a1) {
+    if (a1->unk8) {
+        return TRUE;
+    }
+
+    a1->unk8 = Heap_Alloc(HEAP_ID_FIELD1, sizeof(WeatherSystem_Sub0_Sub8));
+    if (a1->unk8 == NULL) {
+        return FALSE;
+    }
+    memset(a1->unk8, 0, sizeof(WeatherSystem_Sub0_Sub8));
+
+    a1->unk8->weatherSystem = weatherSystem;
+    a1->unk8->unkF62 = 0;
+    a1->unk8->unkF66 = 0;
+    a1->unk8->linkedListDummy.next = &a1->unk8->linkedListDummy;
+    a1->unk8->linkedListDummy.prev = &a1->unk8->linkedListDummy;
+    a1->unk8->unkF58 = NULL;
+    a1->unk8->unk4 = a1;
+    a1->unk8->unkF6C = NULL;
+
+    return TRUE;
 }
