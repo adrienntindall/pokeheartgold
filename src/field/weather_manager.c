@@ -745,3 +745,45 @@ BOOL ov01_021EBE4C(WeatherSystem *weatherSystem, WeatherSystem_Sub0 *a1) {
 
     return TRUE;
 }
+
+BOOL ov01_021EBEB8(WeatherSystem_Sub0 *a0) {
+    if (a0->unk0 != 0xFFFF) {
+        if (a0->unkC != NULL) {
+            return TRUE;
+        }
+        a0->unkC = Heap_Alloc(HEAP_ID_FIELD1, sizeof(UnkWeatherStruct_021EB968));
+        if (a0->unkC == NULL) {
+            return FALSE;
+        }
+        memset(a0->unkC, 0, sizeof(UnkWeatherStruct_021EB968));
+    }
+    return TRUE;
+}
+
+void ov01_021EBEF0(WeatherSystem *weatherSystem, u32 a1, UnkWeatherStruct_021EB968 *a2) {
+    if (a1 != 0xFFFF) {
+        a2->charResObj[2] = ov01_021EB898(weatherSystem->weatherDraw.header, 2, a1, weatherSystem->weatherDraw.resMan[2], weatherSystem->narc, 0);
+    }
+}
+
+void ov01_021EBF24(WeatherSystem *weatherSystem, u32 a1, UnkWeatherStruct_021EB968 *a2) {
+    if (a1 != 0xFFFF) {
+        a2->charResObj[3] = ov01_021EB898(weatherSystem->weatherDraw.header, 3, a1, weatherSystem->weatherDraw.resMan[3], weatherSystem->narc, 0);
+    }
+}
+
+void ov01_021EBF58(WeatherSystem *weatherSystem, u32 a1, UnkWeatherStruct_021EB968 *a2) {
+    if (a1 != 0xFFFF) {
+        a2->charResObj[0] = ov01_021EB898(weatherSystem->weatherDraw.header, 0, a1, weatherSystem->weatherDraw.resMan[0], weatherSystem->narc, 1);
+        sub_0200ADA4(a2->charResObj[0]);
+        sub_0200A740(a2->charResObj[0]);
+    }
+}
+
+void ov01_021EBF94(WeatherSystem *weatherSystem, u32 a1, UnkWeatherStruct_021EB968 *a2) {
+    if (a1 != 0xFFFF) {
+        a2->charResObj[1] = ov01_021EB898(weatherSystem->weatherDraw.header, 1, a1, weatherSystem->weatherDraw.resMan[1], weatherSystem->narc, 1);
+        sub_0200B00C(a2->charResObj[1]);
+        sub_0200A740(a2->charResObj[1]);
+    }
+}
