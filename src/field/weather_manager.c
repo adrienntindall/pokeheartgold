@@ -890,3 +890,46 @@ void ov01_021EC240(SpriteResourcesHeader *header, WeatherSystem *weatherSystem, 
 
     CreateSpriteResourcesHeader(header, resID[0], resID[1], resID[2], resID[3], -1, -1, a3, a4, weatherSystem->weatherDraw.resMan[0], weatherSystem->weatherDraw.resMan[1], weatherSystem->weatherDraw.resMan[2], weatherSystem->weatherDraw.resMan[3], NULL, NULL);
 }
+
+void ov01_021EC29C(WeatherSystem_Sub0_Sub8_LinkedList* a0) {
+    a0->prev->next = a0->next;
+    a0->next->prev = a0->prev;
+    
+    Sprite_SetDrawFlag(a0->unk4, 0);
+    ov01_021EC1E4(a0);
+
+    Sprite *temp = a0->unk4;
+    memset(a0, 0, sizeof(WeatherSystem_Sub0_Sub8_LinkedList));
+    a0->unk4 = temp;
+}
+
+void ov01_021EC2CC(WeatherSystem_Sub0_Sub8_LinkedList * a0) {
+    WeatherSystem_Sub0_Sub8_LinkedList *cur = a0->next;
+    WeatherSystem_Sub0_Sub8_LinkedList *next;
+
+    while (cur != a0) {
+        next = cur->next;
+        ov01_021EC29C(cur);
+        cur = next;
+    }
+}
+
+void ov01_021EC2E4(WeatherSystem_Sub0_Sub8_LinkedList *a0, UnkLinkedListFunc func) {
+    WeatherSystem_Sub0_Sub8_LinkedList *cur = a0->next;
+    WeatherSystem_Sub0_Sub8_LinkedList *next = cur->next;
+
+    while (cur != a0) {
+        func(cur);
+        cur = next;
+        next = cur->next;
+        
+    }
+}
+
+void ov01_021EC300(void *data) {
+    
+}
+
+VecFx32 ov01_021EC304(WeatherSystem_Sub0_Sub8_LinkedList *a0) {
+    return *Sprite_GetMatrixPtr(a0->unk4);
+}

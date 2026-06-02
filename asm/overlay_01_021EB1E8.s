@@ -29,91 +29,11 @@
     .public ov01_021EC1BC
     .public ov01_021EC1E4
     .public ov01_021EC1F4
-	
-
-	thumb_func_start ov01_021EC29C
-ov01_021EC29C: ; 0x021EC29C
-	push {r3, r4, r5, lr}
-	add r4, r0, #0
-	ldr r1, [r4, #0x34]
-	ldr r0, [r4, #0x38]
-	str r1, [r0, #0x34]
-	ldr r1, [r4, #0x38]
-	ldr r0, [r4, #0x34]
-	str r1, [r0, #0x38]
-	ldr r0, [r4, #4]
-	mov r1, #0
-	bl Sprite_SetDrawFlag
-	add r0, r4, #0
-	bl ov01_021EC1E4
-	add r0, r4, #0
-	mov r1, #0
-	mov r2, #0x3c
-	ldr r5, [r4, #4]
-	bl memset
-	str r5, [r4, #4]
-	pop {r3, r4, r5, pc}
-	.balign 4, 0
-	thumb_func_end ov01_021EC29C
-
-	thumb_func_start ov01_021EC2CC
-ov01_021EC2CC: ; 0x021EC2CC
-	push {r3, r4, r5, lr}
-	add r5, r0, #0
-	ldr r0, [r5, #0x34]
-	cmp r0, r5
-	beq _021EC2E2
-_021EC2D6:
-	ldr r4, [r0, #0x34]
-	bl ov01_021EC29C
-	add r0, r4, #0
-	cmp r4, r5
-	bne _021EC2D6
-_021EC2E2:
-	pop {r3, r4, r5, pc}
-	thumb_func_end ov01_021EC2CC
-
-	thumb_func_start ov01_021EC2E4
-ov01_021EC2E4: ; 0x021EC2E4
-	push {r4, r5, r6, lr}
-	add r5, r0, #0
-	ldr r0, [r5, #0x34]
-	add r6, r1, #0
-	ldr r4, [r0, #0x34]
-	cmp r0, r5
-	beq _021EC2FC
-_021EC2F2:
-	blx r6
-	add r0, r4, #0
-	ldr r4, [r4, #0x34]
-	cmp r0, r5
-	bne _021EC2F2
-_021EC2FC:
-	pop {r4, r5, r6, pc}
-	.balign 4, 0
-	thumb_func_end ov01_021EC2E4
-
-	thumb_func_start ov01_021EC300
-ov01_021EC300: ; 0x021EC300
-	bx lr
-	.balign 4, 0
-	thumb_func_end ov01_021EC300
-
-	thumb_func_start ov01_021EC304
-ov01_021EC304: ; 0x021EC304
-	push {r4, lr}
-	add r4, r0, #0
-	ldr r0, [r1, #4]
-	bl Sprite_GetMatrixPtr
-	add r2, r0, #0
-	ldmia r2!, {r0, r1}
-	stmia r4!, {r0, r1}
-	ldr r0, [r2]
-	str r0, [r4]
-	pop {r4, pc}
-	.balign 4, 0
-	thumb_func_end ov01_021EC304
-
+    .public ov01_021EC29C
+    .public ov01_021EC2E4
+    .public ov01_021EC300
+    .public ov01_021EC304
+    
 	thumb_func_start ov01_021EC31C
 ov01_021EC31C: ; 0x021EC31C
 	push {r4, r5, r6, r7, lr}

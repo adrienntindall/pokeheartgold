@@ -70,6 +70,8 @@ typedef struct UnkWeatherStruct_021EB830 {
     int unk10;
 } UnkWeatherStruct_021EB830;
 
+typedef void (*UnkLinkedListFunc)(WeatherSystem_Sub0_Sub8_LinkedList *);
+
 void ov01_021EB1E8(UnkStruct_ov01_021EB1E8 *a0);
 WeatherManager *WeatherManager_New(FieldSystem *fieldSystem);
 void WeatherManager_Delete(WeatherManager* weatherManager);
@@ -118,6 +120,11 @@ void ov01_021EC114(WeatherSystem* weatherSystem, u16 a1);
 void ov01_021EC1BC(WeatherSystem_Sub0_Sub8_LinkedList* a0, int a1);
 void ov01_021EC1E4(WeatherSystem_Sub0_Sub8_LinkedList* a0);
 void ov01_021EC240(SpriteResourcesHeader *spriteTemplate, WeatherSystem *weatherSystem, UnkWeatherStruct_021EB968 *a2, u32 a3, u32 a4);
+void ov01_021EC29C(WeatherSystem_Sub0_Sub8_LinkedList* a0);
+void ov01_021EC2CC(WeatherSystem_Sub0_Sub8_LinkedList * a0);
+void ov01_021EC2E4(WeatherSystem_Sub0_Sub8_LinkedList *a0, UnkLinkedListFunc func);
+void ov01_021EC300(void *data);
+VecFx32 ov01_021EC304(WeatherSystem_Sub0_Sub8_LinkedList *a0);
 
 // Not yet decompiled
 void ov01_021EB3F0(SysTask *task, void *data);
@@ -127,7 +134,6 @@ void ov01_021EA864(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5);
 BOOL ov01_021EBA44(WeatherSystem *weatherSystem, int weather, u32 a2, u32 a3);
 BOOL ov01_021EA854(u32 a0);
 void ov01_021EBD70(SysTask *task, void *data);
-void ov01_021EC2CC(WeatherSystem_Sub0_Sub8_LinkedList *linkedList);
 void ov01_021EC058(WeatherSystem_Sub0_Sub8 *a0);
 void ov01_021EDAE0(WeatherSystem_Sub0_Sub8 *a0);
 void* ov01_021EC1F4(WeatherSystem_Sub0_Sub8* a0, int a1);
