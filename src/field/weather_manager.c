@@ -9,15 +9,6 @@
 #include "unk_02005D10.h"
 #include "unk_0200ACF0.h"
 
-struct WeatherSystem_Sub0_Sub8_LinkedList {
-    u32 unk0;
-    Sprite *unk4;
-    u32 unk8;
-    u32 unk10[10];
-    WeatherSystem_Sub0_Sub8_LinkedList *next;
-    WeatherSystem_Sub0_Sub8_LinkedList *prev;
-};
-
 struct WeatherSystem_Sub0_Sub8 {
     WeatherSystem *weatherSystem;
     WeatherSystem_Sub0 *unk4;
@@ -838,4 +829,64 @@ void ov01_021EC0C0(WeatherSystem* weatherSystem, u16 a1) {
         Heap_Free(v0.unk4);
         v0.unk4 = NULL;
     }
+}
+
+void ov01_021EC114(WeatherSystem* weatherSystem, u16 a1) {
+    UnkWeatherStruct_021EC078 v0;
+    if (a1 != 0xFFFF) {
+        GfGfx_EngineATogglePlanes(4, 0);
+        v0.unk8 = NARC_AllocAndReadWholeMember(weatherSystem->narc, weatherSystem->unk4[a1].unk8, HEAP_ID_FIELD1);
+        GF_ASSERT(v0.unk8);
+        NNS_G2dGetUnpackedScreenData(v0.unk8, &v0.unkC);
+        BgCopyOrUncompressTilemapBufferRangeToVram(weatherSystem->fieldSystem->bgConfig, 2, v0.unkC->rawData, v0.unkC->szByte, 0);
+        BG_LoadScreenTilemapData(weatherSystem->fieldSystem->bgConfig, 2, v0.unkC->rawData, v0.unkC->szByte);
+        BgTilemapRectChangePalette(weatherSystem->fieldSystem->bgConfig, 2, 0, 0, 32, 32, 6);
+        BgCommitTilemapBufferToVram(weatherSystem->fieldSystem->bgConfig, 2);
+        Heap_Free(v0.unk8);
+        v0.unk8 = NULL;
+    }
+}
+
+void ov01_021EC1BC(WeatherSystem_Sub0_Sub8_LinkedList* a0, int a1) {
+    GF_ASSERT(a0->unk8 == 0);
+    GF_ASSERT(a1 > 0);
+    GF_ASSERT(a1 <= 0x28u);
+    a0->unk8 = a0->unk10;
+}
+
+void ov01_021EC1E4(WeatherSystem_Sub0_Sub8_LinkedList* a0) {
+    a0->unk8 = NULL;
+    memset(a0->unk10, 0, 10 * sizeof(u32));
+}
+
+void* ov01_021EC1F4(WeatherSystem_Sub0_Sub8* a0, int a1) {
+    WeatherSystem *weatherSystem = a0->weatherSystem;
+    WeatherSystem_Sub0_Sub8_LinkedList *v0 = ov01_021EC8D8(a0);
+    if (v0 == NULL) {
+        return NULL;
+    }
+    v0->weatherSystem = weatherSystem;
+    v0->next = &a0->linkedListDummy;
+    v0->prev = a0->linkedListDummy.prev;
+    a0->linkedListDummy.prev->next = v0;
+    a0->linkedListDummy.prev = v0;
+
+    ov01_021EC1BC(v0, a1);
+    if (v0->unk8 == NULL) {
+        return NULL;
+    }
+
+    GF_ASSERT(v0->unk4);
+    Sprite_SetDrawFlag(v0->unk4, 1);
+    return v0;
+}
+
+void ov01_021EC240(SpriteResourcesHeader *header, WeatherSystem *weatherSystem, UnkWeatherStruct_021EB968 *a2, u32 a3, u32 a4) {
+    int resID[4];
+
+    for (int i = 0; i < 4; i++) {
+        resID[i] = GF2DGfxResObj_GetResID(a2->charResObj[i]);
+    }
+
+    CreateSpriteResourcesHeader(header, resID[0], resID[1], resID[2], resID[3], -1, -1, a3, a4, weatherSystem->weatherDraw.resMan[0], weatherSystem->weatherDraw.resMan[1], weatherSystem->weatherDraw.resMan[2], weatherSystem->weatherDraw.resMan[3], NULL, NULL);
 }
