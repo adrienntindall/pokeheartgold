@@ -11,7 +11,7 @@
 
 struct WeatherSystem_Sub0_Sub8_LinkedList {
     u32 unk0;
-    u32 unk4;
+    Sprite *unk4;
     u32 unk8;
     u32 unk10[10];
     WeatherSystem_Sub0_Sub8_LinkedList *next;
@@ -50,7 +50,7 @@ struct WeatherSystem_Sub0 {
 
 struct WeatherSystem {
     WeatherSystem_Sub0 *unk0;
-    u32 *unk4;
+    WeatherSystem_Sub4 *unk4;
     WeatherDraw weatherDraw;
     FieldSystem *fieldSystem;
     NARC *narc;
@@ -290,7 +290,7 @@ void ov01_021EB5F4(Sprite *sprite, VecFx32* matrix) {
 }
 
 extern WeatherSystem_Sub0 ov01_022098B0[];
-extern u32 ov01_0220675C[];
+extern WeatherSystem_Sub4 ov01_0220675C[];
 
 WeatherSystem* WeatherSystem_New(FieldSystem *fieldSystem) {
     WeatherSystem *v0 = Heap_Alloc(HEAP_ID_FIELD1, sizeof(WeatherSystem));
@@ -785,5 +785,57 @@ void ov01_021EBF94(WeatherSystem *weatherSystem, u32 a1, UnkWeatherStruct_021EB9
         a2->charResObj[1] = ov01_021EB898(weatherSystem->weatherDraw.header, 1, a1, weatherSystem->weatherDraw.resMan[1], weatherSystem->narc, 1);
         sub_0200B00C(a2->charResObj[1]);
         sub_0200A740(a2->charResObj[1]);
+    }
+}
+
+void ov01_021EBFD0(WeatherSystem *weatherSystem, WeatherSystem_Sub0 *a1) {
+    if (a1->unk0 != 0xFFFF) {
+        ov01_021EC240(&a1->unkC->unk40, weatherSystem, a1->unkC, 0, 1);
+        memset(&a1->unkC->unk10, 0, sizeof(SpriteTemplate));
+        a1->unkC->unk10.spriteList = weatherSystem->weatherDraw.spriteList;
+        a1->unkC->unk10.header = &a1->unkC->unk40;
+        a1->unkC->unk10.scale.x = 1 << 12;
+        a1->unkC->unk10.scale.y = 1 << 12;
+        a1->unkC->unk10.scale.z = 1 << 12;
+        a1->unkC->unk10.whichScreen = NNS_G2D_VRAM_TYPE_2DMAIN;
+    }
+}
+
+void ov01_021EC028(WeatherSystem_Sub0_Sub8 *a0) {
+    for (int i = 0; i < 64; i++) {
+        a0->linkedList[i].unk4 = Sprite_CreateAffine(&a0->unk8->unk10);
+        Sprite_SetDrawFlag(a0->linkedList[i].unk4, 0);
+        GF_ASSERT(a0->linkedList[i].unk4);
+    }
+}
+
+void ov01_021EC058(WeatherSystem_Sub0_Sub8 *a0) {
+    for (int i = 0; i < 64; i++) {
+        if (a0->linkedList[i].unk4) {
+            Sprite_Delete(a0->linkedList[i].unk4);
+            a0->linkedList[i].unk4 = NULL;
+        }
+    }
+}
+
+void ov01_021EC078(WeatherSystem* weatherSystem, u16 a1) {
+    UnkWeatherStruct_021EC078 v0;
+    if (a1 != 0xFFFF) {
+        v0.unk0 = NARC_AllocAndReadWholeMember(weatherSystem->narc, weatherSystem->unk4[a1].unk0, HEAP_ID_FIELD1);
+        NNS_G2dGetUnpackedPaletteData(v0.unk0, &v0.unk14);
+        BG_LoadPlttData(2, v0.unk14->pRawData, 32, 0xc0);
+        Heap_Free(v0.unk0);
+        v0.unk0 = NULL;
+    }
+}
+
+void ov01_021EC0C0(WeatherSystem* weatherSystem, u16 a1) {
+    UnkWeatherStruct_021EC078 v0;
+    if (a1 != 0xFFFF) {
+        v0.unk4 = NARC_AllocAndReadWholeMember(weatherSystem->narc, weatherSystem->unk4[a1].unk4, HEAP_ID_FIELD1);
+        NNS_G2dGetUnpackedCharacterData(v0.unk4, &v0.unk10);
+        BG_LoadCharTilesData(weatherSystem->fieldSystem->bgConfig, 2, v0.unk10->pRawData, v0.unk10->szByte, 0);
+        Heap_Free(v0.unk4);
+        v0.unk4 = NULL;
     }
 }
