@@ -70,6 +70,20 @@ typedef struct UnkWeatherStruct_021EB830 {
     int unk10;
 } UnkWeatherStruct_021EB830;
 
+typedef struct UnkStruct_021EC504 {
+    s32 unk0;
+    s16 unk4;
+    s16 unk6;
+    s16 unk8;
+    s16 unkA;
+    s16 unkC;
+    s16 unkE;
+    s16 unk10;
+    s16 unk12;
+    s32 unk14;
+    s32 unk18;
+} UnkStruct_021EC504;
+
 typedef void (*UnkLinkedListFunc)(WeatherSystem_Sub0_Sub8_LinkedList *);
 
 void ov01_021EB1E8(UnkStruct_ov01_021EB1E8 *a0);
@@ -125,6 +139,11 @@ void ov01_021EC2CC(WeatherSystem_Sub0_Sub8_LinkedList * a0);
 void ov01_021EC2E4(WeatherSystem_Sub0_Sub8_LinkedList *a0, UnkLinkedListFunc func);
 void ov01_021EC300(void *data);
 VecFx32 ov01_021EC304(WeatherSystem_Sub0_Sub8_LinkedList *a0);
+void ov01_021EC31C(fx32* x, fx32* z, WeatherSystem_Sub0_Sub8* a0);
+void ov01_021EC470(WeatherSystem_Sub0_Sub8 *a0, int *xOut, int *zOut);
+void ov01_021EC4A8(WeatherSystem_Sub0_Sub8 *a0, fx32 *x, fx32 *y);
+void ov01_021EC504(UnkStruct_021EC504* arg0, s32 arg1, s16 arg2, s16 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8, s32 arg9);
+void ov01_021EC52C(UnkStruct_021EC504* arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4);
 
 // Not yet decompiled
 void ov01_021EB3F0(SysTask *task, void *data);

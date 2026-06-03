@@ -8,6 +8,7 @@
 #include "field_system.h"
 #include "unk_02005D10.h"
 #include "unk_0200ACF0.h"
+#include "unk_02020B8C.h"
 
 struct WeatherSystem_Sub0_Sub8 {
     WeatherSystem *weatherSystem;
@@ -932,4 +933,120 @@ void ov01_021EC300(void *data) {
 
 VecFx32 ov01_021EC304(WeatherSystem_Sub0_Sub8_LinkedList *a0) {
     return *Sprite_GetMatrixPtr(a0->unk4);
+}
+
+void ov01_021EC31C(fx32* x, fx32* z, WeatherSystem_Sub0_Sub8* a0) {
+    VecFx32 cameraTarget = NNS_G3dGlb.camTarget;
+    fx32 xScale, zScale;
+    fx32 dx, dz;
+    fx32 xDist, zDist;
+    int v7;
+    fx32 aspect;
+
+    xDist = (cameraTarget.x - a0->cameraTarget.x);
+    zDist = (cameraTarget.z - a0->cameraTarget.z);
+
+    aspect = FX_Div(FX32_CONST(4), FX32_CONST(3));
+    
+    sub_02020E10(Camera_GetPerspectiveAngle(a0->weatherSystem->fieldSystem->camera), Camera_GetDistance(a0->weatherSystem->fieldSystem->camera), aspect, &dx, &dz);
+
+    dx = FX_Div(dx, 256*FX32_ONE);
+
+    if (zDist <= 0) {
+        dz = FX_Div(dz, 0xbe8d0);
+    } else {
+        dz = FX_Div(dz, 0xbe811);
+    }
+    
+    v7 = FX32_ONE;
+    if (xDist < 0) {
+        v7 = -FX32_ONE;
+        xDist = FX_MUL(xDist, -FX32_ONE);
+    }
+    xScale = FX_Div(xDist, dx);
+    if (v7 < 0) {
+        xScale = FX_MUL(xScale, v7);
+    }
+
+    v7 = FX32_ONE;
+    if (zDist < 0) {
+        v7 = -FX32_ONE;
+        zDist = FX_MUL(zDist, -FX32_ONE);
+    }
+    zScale = FX_Div(zDist, dz);
+    if (v7 < 0) {
+        zScale = FX_MUL(zScale, v7);
+    }
+
+    if (xScale + zScale != 0) {
+        a0->cameraTarget = cameraTarget;
+    }
+
+    *x = xScale;
+    *z = zScale;
+}
+
+void ov01_021EC470(WeatherSystem_Sub0_Sub8 *a0, int *xOut, int *zOut) {
+    fx32 x, z;
+    ov01_021EC4A8(a0, &x, &z);
+
+    if (xOut) {
+        *xOut = x >> FX32_SHIFT;
+        if (*xOut < 0) {
+            *xOut += FX32_ONE;
+        }
+    }
+    if (zOut) {
+        *zOut = z >> FX32_SHIFT;
+        if (*zOut < 0) {
+            *zOut += 1;
+        }
+    }
+}
+
+void ov01_021EC4A8(WeatherSystem_Sub0_Sub8 *a0, fx32 *x, fx32 *y) {
+    WeatherSystem_Sub0_Sub8_LinkedList *cur;
+    fx32 xScale, yScale;
+    VecFx32 matrix;
+    ov01_021EC31C(&xScale, &yScale, a0);
+
+    cur = a0->linkedListDummy.next;
+    while (cur != &a0->linkedListDummy) {
+        matrix = ov01_021EC304(cur);
+
+        matrix.x -= xScale;
+        matrix.y -= yScale;
+
+        ov01_021EB5F4(cur->unk4, &matrix);
+
+        cur = cur->next;
+    }
+
+    if (x != NULL) {
+        *x = xScale;
+    }
+    if (y != NULL) {
+        *y = yScale;
+    }
+}
+
+void ov01_021EC504(UnkStruct_021EC504* arg0, s32 arg1, s16 arg2, s16 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8, s32 arg9) {
+    arg0->unk0 = arg1;
+    arg0->unk4 = arg2;
+    arg0->unk6 = 0;
+    arg0->unk8 = arg3;
+    arg0->unkA = 0;
+    arg0->unkC = (s16) arg4;
+    arg0->unkE = (s16) arg5;
+    arg0->unk10 = (s16) arg6;
+    arg0->unk12 = (s16) arg7;
+    arg0->unk14 = arg8;
+    arg0->unk18 = arg9;
+}
+
+void ov01_021EC52C(UnkStruct_021EC504* arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4) {
+    arg0->unkC = arg1;
+    arg0->unkE = arg2;
+    arg0->unk10 = arg3;
+    arg0->unk14 = arg4;
 }
