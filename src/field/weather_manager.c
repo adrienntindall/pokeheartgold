@@ -1113,8 +1113,8 @@ s32 ov01_021EC538(UnkStruct_021EC504* arg0) {
     return var_r4;
 }
 
-void ov01_021EC5FC(UnkStruct_021EC5FC *arg0, s32* arg1, s32 arg2, s32 arg3, s32 arg4, GXRgb rgb, s32 arg6, s32 arg7) {
-    *arg1 = arg2;
+void ov01_021EC5FC(UnkStruct_021EC5FC *arg0, UnkStruct_021EC774* arg1, s32 arg2, s32 arg3, s32 arg4, GXRgb rgb, s32 arg6, s32 arg7) {
+    arg1->unk0 = arg2;
     if (arg7 != 0) {
         if (arg7 == 1) {
             ov01_021EC678(arg2, arg3, arg4, rgb);
@@ -1126,7 +1126,7 @@ void ov01_021EC5FC(UnkStruct_021EC5FC *arg0, s32* arg1, s32 arg2, s32 arg3, s32 
     }
 }
 
-s32 ov01_021EC650(s32 arg0, s32 arg1, s32 arg2) {
+BOOL ov01_021EC650(UnkStruct_021EC5FC *arg0, UnkStruct_021EC774 *arg1, s32 arg2) {
     s32 var_r4;
 
     var_r4 = 1;
@@ -1159,4 +1159,52 @@ void ov01_021EC6A4(UnkStruct_021EC5FC* arg0, s32 a1, s32 arg2, s32 arg3, GXRgb r
     ov01_021EB830(&arg0->unk2C, (v2 >> GX_RGB_G_SHIFT) & 0x1F, (rgb >> GX_RGB_G_SHIFT) & 0x1F, arg5);
     ov01_021EB830(&arg0->unk40, (v2 >> GX_RGB_B_SHIFT) & 0x1F, (rgb >> GX_RGB_B_SHIFT) & 0x1F, arg5);
     ov01_021EB830(&arg0->unk54, v0, arg2, arg5);
+}
+
+BOOL ov01_021EC728(UnkStruct_021EC5FC *arg0) {
+    BOOL ret = ov01_021EB840(&arg0->unk4);
+    ov01_021EB840(&arg0->unk18);
+    ov01_021EB840(&arg0->unk2C);
+    ov01_021EB840(&arg0->unk40);
+    ov01_021EB840(&arg0->unk54);
+    ov01_021EC678(arg0->unk0, arg0->unk54.unk0, arg0->unk4.unk0, GX_RGB(arg0->unk18.unk0, arg0->unk2C.unk0, arg0->unk40.unk0));
+
+    return ret;
+}
+
+void ov01_021EC774(UnkStruct_021EC774* a0) {
+    for (int i = 0; i < 32; i++) {
+        a0->unk4[i] = 0;
+    }
+    ov01_021EA8C4(a0->unk0, a0->unk4);
+}
+
+void ov01_021EC790(UnkStruct_021EC774* arg0, s32 arg1, s32 arg2) {
+    arg0->unk24 = 0x7F;
+    arg0->unk28 = 0;
+    arg0->unk2C = arg1;
+    if (arg2 == 1) {
+        arg0->unk2E = 1;
+        return;
+    }
+    arg0->unk2E = -1;
+}
+
+s32 ov01_021EC7AC(UnkStruct_021EC774* arg0) {
+    s32 temp_r4;
+
+    temp_r4 = ov01_021EC7E8(arg0);
+    if (arg0->unk28 == 0) {
+        ov01_021EA8C4(arg0->unk0, arg0->unk4);
+    }
+    return temp_r4;
+}
+
+void ov01_021EC7C8(UnkStruct_021EC774* arg0) {
+    arg0->unk24 = 1;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->unk2E = 1;
+    ov01_021EC828(arg0);
+    ov01_021EA8C4(arg0->unk0, arg0->unk4);
 }

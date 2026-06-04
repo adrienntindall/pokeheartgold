@@ -41,115 +41,11 @@
     .public ov01_021EC5FC
 	.public ov01_021EC650
     .public ov01_021EC678
+    .public ov01_021EC790
+    .public ov01_021EC7AC
+    .public ov01_021EC7C8
 
-	thumb_func_start ov01_021EC728
-ov01_021EC728: ; 0x021EC728
-	push {r4, r5, r6, lr}
-	add r5, r0, #0
-	add r0, r5, #4
-	bl ov01_021EB840
-	add r4, r0, #0
-	add r0, r5, #0
-	add r0, #0x18
-	bl ov01_021EB840
-	add r0, r5, #0
-	add r0, #0x2c
-	bl ov01_021EB840
-	add r0, r5, #0
-	add r0, #0x40
-	bl ov01_021EB840
-	add r0, r5, #0
-	add r0, #0x54
-	bl ov01_021EB840
-	ldr r3, [r5, #0x40]
-	ldr r0, [r5]
-	lsl r6, r3, #0xa
-	ldr r1, [r5, #0x54]
-	ldr r2, [r5, #4]
-	ldr r3, [r5, #0x18]
-	ldr r5, [r5, #0x2c]
-	lsl r5, r5, #5
-	orr r3, r5
-	orr r3, r6
-	lsl r3, r3, #0x10
-	lsr r3, r3, #0x10
-	bl ov01_021EC678
-	add r0, r4, #0
-	pop {r4, r5, r6, pc}
-	thumb_func_end ov01_021EC728
-
-	thumb_func_start ov01_021EC774
-ov01_021EC774: ; 0x021EC774
-	mov r2, #0
-	add r3, r0, #0
-	add r1, r2, #0
-_021EC77A:
-	add r0, r3, r2
-	add r2, r2, #1
-	strb r1, [r0, #4]
-	cmp r2, #0x20
-	blt _021EC77A
-	ldr r0, [r3]
-	add r1, r3, #4
-	ldr r3, _021EC78C ; =ov01_021EA8C4
-	bx r3
-	.balign 4, 0
-_021EC78C: .word ov01_021EA8C4
-	thumb_func_end ov01_021EC774
-
-	thumb_func_start ov01_021EC790
-ov01_021EC790: ; 0x021EC790
-	mov r3, #0x7f
-	str r3, [r0, #0x24]
-	mov r3, #0
-	str r3, [r0, #0x28]
-	strh r1, [r0, #0x2c]
-	cmp r2, #1
-	bne _021EC7A4
-	mov r1, #1
-	strh r1, [r0, #0x2e]
-	bx lr
-_021EC7A4:
-	sub r1, r3, #1
-	strh r1, [r0, #0x2e]
-	bx lr
-	.balign 4, 0
-	thumb_func_end ov01_021EC790
-
-	thumb_func_start ov01_021EC7AC
-ov01_021EC7AC: ; 0x021EC7AC
-	push {r3, r4, r5, lr}
-	add r5, r0, #0
-	bl ov01_021EC7E8
-	add r4, r0, #0
-	ldr r0, [r5, #0x28]
-	cmp r0, #0
-	bne _021EC7C4
-	ldr r0, [r5]
-	add r1, r5, #4
-	bl ov01_021EA8C4
-_021EC7C4:
-	add r0, r4, #0
-	pop {r3, r4, r5, pc}
-	thumb_func_end ov01_021EC7AC
-
-	thumb_func_start ov01_021EC7C8
-ov01_021EC7C8: ; 0x021EC7C8
-	push {r4, lr}
-	add r4, r0, #0
-	mov r2, #1
-	str r2, [r4, #0x24]
-	mov r1, #0
-	str r1, [r4, #0x28]
-	strh r1, [r4, #0x2c]
-	strh r2, [r4, #0x2e]
-	bl ov01_021EC828
-	ldr r0, [r4]
-	add r1, r4, #4
-	bl ov01_021EA8C4
-	pop {r4, pc}
-	.balign 4, 0
-	thumb_func_end ov01_021EC7C8
+	
 
 	thumb_func_start ov01_021EC7E8
 ov01_021EC7E8: ; 0x021EC7E8
