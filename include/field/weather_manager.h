@@ -85,6 +85,7 @@ typedef struct UnkStruct_021EC504 {
 } UnkStruct_021EC504;
 
 typedef void (*UnkLinkedListFunc)(WeatherSystem_Sub0_Sub8_LinkedList *);
+typedef void (*UnkWeatherSystemSub0Sub8Func)(WeatherSystem_Sub0_Sub8 *, int);
 
 typedef struct UnkStruct_021EC5FC {
     s32 unk0;
@@ -172,6 +173,11 @@ void ov01_021EC774(UnkStruct_021EC774* a0);
 void ov01_021EC790(UnkStruct_021EC774* arg0, s32 arg1, s32 arg2);
 s32 ov01_021EC7AC(UnkStruct_021EC774* arg0);
 void ov01_021EC7C8(UnkStruct_021EC774* arg0);
+s32 ov01_021EC7E8(UnkStruct_021EC774 *arg0);
+void ov01_021EC828(UnkStruct_021EC774 *arg0);
+void ov01_021EC85C(WeatherSystem_Sub0_Sub8 *a0, UnkWeatherSystemSub0Sub8Func a1, int a2, int a3, int a4, UnkLinkedListFunc a5);
+WeatherSystem_Sub0_Sub8_LinkedList *ov01_021EC8D8(WeatherSystem_Sub0_Sub8 *a0);
+void ov01_021EC8F8(SysTask *task, void* data);
 
 // Not yet decompiled
 void ov01_021EB3F0(SysTask *task, void *data);
@@ -184,13 +190,10 @@ void ov01_021EBD70(SysTask *task, void *data);
 void ov01_021EC058(WeatherSystem_Sub0_Sub8 *a0);
 void ov01_021EDAE0(WeatherSystem_Sub0_Sub8 *a0);
 void* ov01_021EC1F4(WeatherSystem_Sub0_Sub8* a0, int a1);
-WeatherSystem_Sub0_Sub8_LinkedList *ov01_021EC8D8(WeatherSystem_Sub0_Sub8 *a0);
 int ov01_021EA858(s32 a0);
 int ov01_021EA85C(s32 a0);
 GXRgb ov01_021EA860(s32 a0);
 void ov01_021EA89C(s32 a0, s32 a1, GXRgb rgb, s32 a2);
 void ov01_021EA8C4(u32 unk0, u8 *unk4);
-s32 ov01_021EC7E8(UnkStruct_021EC774 *arg0);
-void ov01_021EC828(UnkStruct_021EC774 *arg0);
 
 #endif // POKEHEARTGOLD_FIELD_WEATHER_MANAGER_H

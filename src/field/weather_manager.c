@@ -923,7 +923,6 @@ void ov01_021EC2E4(WeatherSystem_Sub0_Sub8_LinkedList *a0, UnkLinkedListFunc fun
         func(cur);
         cur = next;
         next = cur->next;
-        
     }
 }
 
@@ -1207,4 +1206,113 @@ void ov01_021EC7C8(UnkStruct_021EC774* arg0) {
     arg0->unk2E = 1;
     ov01_021EC828(arg0);
     ov01_021EA8C4(arg0->unk0, arg0->unk4);
+}
+
+s32 ov01_021EC7E8(UnkStruct_021EC774* arg0) {
+    s32 temp_r0;
+    s32 temp_r2;
+    s32 var_r4;
+
+    var_r4 = 0;
+    if (arg0->unk2E == 0) {
+        var_r4 = 1;
+    } else if ((s32) arg0->unk24 <= 0) {
+        var_r4 = 1;
+    } else {
+        temp_r2 = arg0->unk28 + 1;
+        arg0->unk28 = temp_r2;
+        if (temp_r2 >= (s32) arg0->unk2C) {
+            arg0->unk28 = 0;
+            ov01_021EC828(arg0);
+            temp_r0 = arg0->unk24 - 1;
+            arg0->unk24 = temp_r0;
+            if (temp_r0 <= 0) {
+                var_r4 = 1;
+            }
+        }
+    }
+    return var_r4;
+}
+
+void ov01_021EC828(UnkStruct_021EC774 *arg0) {
+    int i;
+    int v0;
+    int v1;
+    
+    if (arg0->unk2E < 0) {
+        v1 = 0x7F - arg0->unk24;
+    } else {
+        v1 = arg0->unk24;
+    }
+
+    v0 = v1/4;
+    for (i = 31; i > v0; i--) {
+        arg0->unk4[i] = (i - v0)*4;
+    }
+}
+
+void ov01_021EC85C(WeatherSystem_Sub0_Sub8 *a0, UnkWeatherSystemSub0Sub8Func a1, int a2, int a3, int a4, UnkLinkedListFunc a5) {
+    a1(a0, a2);
+    
+    int i, j;
+    int v0 = 0;
+    WeatherSystem_Sub0_Sub8_LinkedList *cur = a0->linkedListDummy.next;
+    WeatherSystem_Sub0_Sub8_LinkedList *next = cur->next;
+
+    for (i = 0; i < a2; i++) {
+        if (cur == &a0->linkedListDummy) {
+            break;
+        }
+
+        for (j = 0; j < v0; j++) {
+            a5(cur);
+
+            if (cur->unk8 == NULL) {
+                break;
+            }
+        }
+
+        cur = next;
+        next = cur->next;
+
+        if (i >= a3 && (i % a3) == 0) {
+            v0 += a4;
+        }
+    }
+}
+
+WeatherSystem_Sub0_Sub8_LinkedList *ov01_021EC8D8(WeatherSystem_Sub0_Sub8 * a0) {
+    for (int i = 0; i < 64; i++) {
+        if (a0->linkedList[i].weatherSystem == NULL) {
+            return &a0->linkedList[i];
+        }
+    }
+    return NULL;
+}
+
+void ov01_021EC8F8(SysTask *task, void* data) {
+    WeatherSystem_Sub0_Sub8 *arg1 = data;
+    u16 temp_r2 = arg1->unkF62;
+    switch (temp_r2) {
+    case 0:
+        arg1->unkF62 = 1;
+        break;
+    case 1:
+        arg1->unkF62 = 3;
+        break;
+    case 2:
+        arg1->unkF62 = 3;
+        break;
+    case 3:
+        if (arg1->unkF66 == 5) {
+            arg1->unkF62 = 4;
+        }
+        break;
+    case 4:
+        arg1->unkF62 = 5;
+        break;
+    case 5:
+        ov01_021EBCA4(arg1->unk4);
+        break;
+    }
 }
