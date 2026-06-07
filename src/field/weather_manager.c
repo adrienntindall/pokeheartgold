@@ -9,6 +9,7 @@
 #include "unk_02005D10.h"
 #include "unk_0200ACF0.h"
 #include "unk_02020B8C.h"
+#include "math_util.h"
 
 struct WeatherSystem_Sub0_Sub8 {
     WeatherSystem *weatherSystem;
@@ -1029,7 +1030,7 @@ void ov01_021EC4A8(WeatherSystem_Sub0_Sub8 *a0, fx32 *x, fx32 *y) {
     }
 }
 
-void ov01_021EC504(UnkStruct_021EC504* arg0, s32 arg1, s16 arg2, s16 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8, UnkFunc_021EC504 arg9) {
+void ov01_021EC504(UnkStruct_021EC504* arg0, WeatherSystem_Sub0_Sub8 *arg1, s16 arg2, s16 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8, UnkWeatherSystemSub0Sub8Func arg9) {
     arg0->unk0 = arg1;
     arg0->unk4 = arg2;
     arg0->unk6 = 0;
@@ -1314,5 +1315,312 @@ void ov01_021EC8F8(SysTask *task, void* data) {
     case 5:
         ov01_021EBCA4(arg1->unk4);
         break;
+    }
+}
+
+void ov01_021EC94C(SysTask *task, void *data) {
+    WeatherSystem_Sub0_Sub8 *v0 = data;
+
+    UnkStruct_021EC94C *v1 = v0->unkF58;
+    
+    switch (v0->unkF62) {
+    case 0:
+        ov01_021EC504(&v1->unk0, v0, 1, 8, 20, 1, -1, 1, 2, ov01_021ECBB4);
+        ov01_021EC5FC(&v1->unk50, &v1->unk1C, v0->weatherSystem->fieldSystem->unk_4C, 3, 0x726F, 0x6b5a, 1, v0->unkF64);
+        
+        v1->data[0] = 0;
+        v0->unkF6C = SysTask_CreateOnMainQueue(ov01_021EDA7C, v0, 100);
+        v0->unkF68 = 30;
+        v0->unkF62 = 1;
+        break;
+    case 1:
+        int v2 = ov01_021EC538(&v1->unk0);
+        if (v1->data[0] > 0) {
+            v1->data[0]--;
+        } else {
+            int v3 = ov01_021EC650(&v1->unk50, &v1->unk1C, v0->unkF64);
+            if (v3 == 1 && v2 == 3) {
+                v0->unkF62 = 3;
+            }
+        }
+        break;
+    case 2:
+        ov01_021EC504(&v1->unk0, v0, 20, 1, 20, 1, -1, 1, 2, ov01_021ECBB4);
+
+        if (v0->unkF64) {
+            v1->unk1C.unk0 = v0->weatherSystem->fieldSystem->unk_4C;
+            ov01_021EC678(v1->unk1C.unk0, 3, 0x726f, GX_RGB(26,26,26));
+            ov01_021EC7C8(&v1->unk1C);
+        }
+        
+        ov01_021EC85C(v0, ov01_021ECBB4, 20, 10, 1, ov01_021ECC70);
+        
+        v0->unkF6C = SysTask_CreateOnMainQueue(ov01_021EDA7C, v0, 100);
+        v0->unkF68 = 30;
+        v0->unkF62 = 3;
+        break;
+    case 3:
+        if (v1->unk0.unk6-- <= 0) {
+            ov01_021ECBB4(v0, v1->unk0.unk4);
+            v1->unk0.unk6 = v1->unk0.unk8;
+        }
+
+        if (v0->unkF66 == 5) {
+            ov01_021EC52C(&v1->unk0, 0, 8, 1, -2);
+            
+            
+            if (v0->unkF64) {
+                ov01_021EC790(&v1->unk1C, 1, 0);
+            }
+            v1->data[0] = 0;
+            v0->unkF62 = 4;
+            ov01_021EDAE0(v0);
+        }
+        break;
+    case 4:
+        int ret = ov01_021EC538(&v1->unk0);
+        if (v1->data[0] > 0) {
+            v1->data[0]--;
+        } else {
+            int vUnk;
+            if (v0->unkF64) {
+                vUnk = ov01_021EC7AC(&v1->unk1C);
+            } else {
+                vUnk = 1;
+            }
+
+            if (vUnk == 1 && ret == 3) {
+                if (v0->linkedListDummy.next == &v0->linkedListDummy) {
+                    v0->unkF62 = 5;
+                }
+            }
+            
+        }
+        break;
+    case 5:
+        if (v0->unkF64) {
+            ov01_021EA864(v1->unk1C.unk0, 1, 0, 0, 0, 0);
+        }
+        ov01_021EBCA4(v0->unk4);
+        break;
+    }
+
+    if (v0->unkF62 != 5 && v0->unkF62 != 0) {
+        ov01_021EC2E4(&v0->linkedListDummy, ov01_021ECC70);
+        ov01_021EC470(v0, NULL, NULL);
+        ov01_021EC300(v0);
+    }
+}
+
+void ov01_021ECBB4(WeatherSystem_Sub0_Sub8 *a0, int arg1) {
+    for (int i = 0; i < arg1; i++) {
+        WeatherSystem_Sub0_Sub8_LinkedList *v0 = ov01_021EC1F4(a0, 32);
+        if (v0 == NULL) {
+            break;
+        }
+        
+        u32 *data = v0->unk8;
+        u32 rand = MTRandom();
+
+        data[0] = 0;
+        int frame = rand % 3;
+        Sprite_SetAnimationFrame(v0->unk4, frame);
+
+        int v1 = rand % 20;
+        data[2] = 10 * (frame + 1) + v1;
+        if (frame == 2) {
+            data[2] += 10;
+        }
+
+        v1 /= -5;
+        data[4] = -5 * (frame + 1) + v1;
+        if (frame == 2) {
+            data[4] -= 5;
+        }
+        data[3] = 0;
+        data[1] = 1 + (rand % 3);
+
+        VecFx32 vec;
+        
+        vec.x = (15 * frame + (rand % 270)) << FX32_SHIFT;
+        vec.y = 0xFFFA0 << FX32_SHIFT;
+        vec.z = 0;
+        ov01_021EB5F4(v0->unk4, &vec);
+    }
+}
+
+void ov01_021ECC70(WeatherSystem_Sub0_Sub8_LinkedList *a0) {
+    int i;
+    s32 *data = a0->unk8;
+    VecFx32 vec;
+    vec = ov01_021EC304(a0);
+    switch (data[3]) {
+    case 0:
+        for (i = 0; i < 2; i++) {
+            vec.x += data[4] << FX32_SHIFT;
+            vec.y += data[2] << FX32_SHIFT;
+
+            if (data[0]++ > data[1]) {
+                if (((u32)MTRandom() % 10) < 7) {
+                    data[3] = 2;
+                } else {
+                    data[3] = 1;
+                    data[0] = 4;
+                    Sprite_SetAnimationFrame(a0->unk4, 3);
+                }
+            }
+        }
+        ov01_021EB5F4(a0->unk4, &vec);
+        break;
+    case 1:
+        if (data[0]-- <= 0) {
+            data[3] = 2;
+        }
+        break;
+    case 2:
+        ov01_021EC29C(a0);
+        break;
+    }
+}
+
+void ov01_021ECD08(SysTask *task, void* data) {
+    WeatherSystem_Sub0_Sub8 *v0 = data;
+
+    UnkStruct_021EC94C *v1 = v0->unkF58;
+    
+    switch (v0->unkF62) {
+    case 0:
+        ov01_021EC504(&v1->unk0, v0, 1, 30, 6, 3, -5, 2, 1, ov01_021ECF4C);
+
+        
+        ov01_021EC5FC(&v1->unk50, &v1->unk1C, v0->weatherSystem->fieldSystem->unk_4C, 3, 0x726F, GX_RGB(24,24,24), 2, v0->unkF64);
+        
+        v1->data[0] = 8;
+        v1->data[1] = 0;
+        v0->unkF62 = 1;
+        break;
+    case 1:
+        int v2 = ov01_021EC538(&v1->unk0);
+        if (v1->data[0] > 0) {
+            v1->data[0]--;
+        } else {
+            int v3 = ov01_021EC650(&v1->unk50, &v1->unk1C, v0->unkF64);
+            if (v3 == 1 && v2 == 3) {
+                v0->unkF62 = 3;
+            }
+        }
+        break;
+    case 2:
+        ov01_021EC504(&v1->unk0, v0, 6, 3, 6, 3, -5, 2, 1, ov01_021ECF4C);
+
+        if (v0->unkF64) {
+            v1->unk1C.unk0 = v0->weatherSystem->fieldSystem->unk_4C;
+            ov01_021EC678(v1->unk1C.unk0, 3, 0x726f, GX_RGB(24,24,24));
+            ov01_021EC7C8(&v1->unk1C);
+        }
+
+        v1->data[1] = 0;
+        
+        ov01_021EC85C(v0, ov01_021ECF4C, 20, 2, 3, ov01_021ED070);
+        
+        v0->unkF62 = 3;
+        break;
+    case 3:
+        if (v1->unk0.unk6-- <= 0) {
+            ov01_021ECF4C(v0, v1->unk0.unk4);
+            v1->unk0.unk6 = v1->unk0.unk8;
+        }
+
+        if (v0->unkF66 == 5) {
+            ov01_021EC52C(&v1->unk0, 0, 30, 5, -3);
+            
+            
+            if (v0->unkF64) {
+                ov01_021EC790(&v1->unk1C, 1, 0);
+            }
+            v1->data[0] = 0;
+            v0->unkF62 = 4;
+        }
+        break;
+    case 4:
+        int ret = ov01_021EC538(&v1->unk0);
+        if (v1->data[0] > 0) {
+            v1->data[0]--;
+        } else {
+            int vUnk;
+            if (v0->unkF64) {
+                vUnk = ov01_021EC7AC(&v1->unk1C);
+            } else {
+                vUnk = 1;
+            }
+
+            if (vUnk == 1 && ret == 3) {
+                if (v0->linkedListDummy.next == &v0->linkedListDummy) {
+                    v0->unkF62 = 5;
+                }
+            }
+            
+        }
+        break;
+    case 5:
+        if (v0->unkF64) {
+            ov01_021EA864(v1->unk1C.unk0, 1, 0, 0, 0, 0);
+        }
+        ov01_021EBCA4(v0->unk4);
+        break;
+    }
+
+    if (v0->unkF62 != 5 && v0->unkF62 != 0) {
+        ov01_021EC2E4(&v0->linkedListDummy, ov01_021ED070);
+        ov01_021EC470(v0, NULL, NULL);
+        ov01_021EC300(v0);
+    }
+}
+
+//NOTE: make these direct inlines rather than external data
+extern int ov01_0220673C[4];
+extern int ov01_0220674C[4];
+
+void ov01_021ECF4C(WeatherSystem_Sub0_Sub8* a0, int a1) {
+    int table0[4];
+    table0 = ov01_0220673C;
+    int table1[4];
+    table1 = ov01_0220674C;
+    UnkStruct_021EC94C *v0 = a0->unkF58;
+    
+    for (int i = 0; i < a1; i++) {
+        WeatherSystem_Sub0_Sub8_LinkedList *v1 = ov01_021EC1F4(a0, 32);
+        if (v1 == NULL) {
+            break;
+        }
+
+        s32 *data = v1->unk8;
+
+        v0->data[1]++;
+        if (v0->data[1] >= 800) {
+            v0->data[1] = 0;
+        }
+        int index = v0->data[1] / 200;
+        data[5] = table0[index];
+
+        data[0] = 0;
+        data[1] = 4 + (MTRandom() % 42);
+
+        int frame = (data[1] - 4) / 15;
+        Sprite_SetAnimationFrame(v1->unk4, frame);
+
+        data[4] = -(frame + 1);
+        data[2] = table1[index] * (frame + 1);
+        data[3] = 0;
+
+        VecFx32 vec = ov01_021EC304(v1);
+
+        vec.x = -20 + (frame * 20) + (MTRandom() % 420);
+        vec.y = -8;
+        vec.z = 0;
+        vec.x <<= FX32_SHIFT;
+        vec.y <<= FX32_SHIFT;
+        
+        ov01_021EB5F4(v1->unk4, &vec);
     }
 }
