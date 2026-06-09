@@ -25,6 +25,7 @@
 #include "sys_task_api.h"
 #include "terrain_attributes.h"
 #include "unk_02092BB8.h"
+#include "field/fog.h"
 
 typedef struct FollowMon {
     LocalMapObject *mapObject;
@@ -128,7 +129,7 @@ struct FieldSystem {
     PlayerAvatar *playerAvatar;
     void *unk_44;
     u32 unk_48;
-    u32 unk_4C;
+    FogData *fog;
     u32 unk_50;
     void *unk54;
     u32 unk58;

@@ -76,9 +76,9 @@
 .public _u32_div_f
 .public _ddiv
 .public NNS_G3dGlb
-.public ov01_021EA854
-.public ov01_021EA858
-.public ov01_021EA85C
+.public Fog_CheckActive
+.public Fog_GetSlope
+.public Fog_GetOffset
 .public ov01_021EA860
 .public ov01_021EA864
 .public ov01_021EA89C

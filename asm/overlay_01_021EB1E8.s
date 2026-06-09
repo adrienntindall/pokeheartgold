@@ -15,8 +15,8 @@
 	.text
     .public WeatherDraw_Init
     .public WeatherDraw_Delete
-    .public ov01_021EB5F4
-    .public ov01_021EB68C
+    .public WeatherDraw_SetSpriteMatrix
+    .public WeatherSystem_Delete
     .public ov01_021EB804
     .public ov01_021EB830
     .public ov01_021EB818
@@ -24,7 +24,7 @@
     .public ov01_021EB86C
     .public ov01_021EB898
     .public ov01_021EB968
-    .public ov01_021EB9A8
+    .public WeatherSystem_Init
     .public ov01_021EBCA4
     .public ov01_021EC1BC
     .public ov01_021EC1E4

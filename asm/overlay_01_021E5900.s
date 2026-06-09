@@ -1492,7 +1492,7 @@ ov01_021E6580: ; 0x021E6580
 	bl ov01_021EA8E0
 	str r0, [r4, #0x48]
 	bl ov01_021E61A4
-	bl ov01_021EA824
+	bl Fog_New
 	str r0, [r4, #0x4c]
 	ldr r0, [r4, #0xc]
 	bl Save_LocalFieldData_Get

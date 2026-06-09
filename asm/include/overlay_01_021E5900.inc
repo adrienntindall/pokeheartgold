@@ -129,7 +129,7 @@
 .public ov01_021EA220
 .public ov01_021EA284
 .public ov01_021EA2A4
-.public ov01_021EA824
+.public Fog_New
 .public ov01_021EA840
 .public ov01_021EA8E0
 .public ov01_021EA8FC
