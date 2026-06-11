@@ -499,7 +499,6 @@ Overlay field
     Object asm/overlay_01_021EAF00.o
     Object asm/overlay_01_021EAFD4.o
     Object src/field/weather_manager.o
-    Object asm/overlay_01_021EB1E8.o
     Object asm/overlay_01_021EDAFC.o
     Object src/field/scrcmd_message.o
     Object src/field/draw_map_name.o

@@ -44,7 +44,7 @@ struct WeatherSystem_Sub0 {
 
 struct WeatherSystem {
     WeatherSystem_Sub0 *unk0;
-    WeatherGfxNarcData *unk4;
+    const WeatherGfxNarcData *unk4;
     WeatherDraw weatherDraw;
     FieldSystem *fieldSystem;
     NARC *narc;
@@ -295,8 +295,210 @@ void WeatherDraw_SetSpriteMatrix(Sprite *sprite, VecFx32* matrix) {
     Sprite_SetMatrix(sprite, matrix);
 }
 
-extern WeatherSystem_Sub0 ov01_022098B0[];
-extern WeatherGfxNarcData ov01_0220675C[];
+static WeatherSystem_Sub0 ov01_022098B0[] = {
+    {
+        .unk0 = 0xFFFF,
+        .unk2 = 0xFFFF,
+        .unk4 = 4,
+        .unk8 = NULL,
+        .weatherSpriteResources = NULL,
+        .unk10 = 0,
+        .unk12 = 0,
+        .task = NULL,
+        .unk18 = ov01_021EC8F8,
+    },
+    {
+        .unk0 = 0,
+        .unk2 = 0xFFFF,
+        .unk4 = 0xDC,
+        .unk8 = NULL,
+        .weatherSpriteResources = NULL,
+        .unk10 = 0,
+        .unk12 = 0,
+        .task = NULL,
+        .unk18 = ov01_021EC94C,
+    },
+    {
+        .unk0 = 0,
+        .unk2 = 0xFFFF,
+        .unk4 = 0xDC,
+        .unk8 = NULL,
+        .weatherSpriteResources = NULL,
+        .unk10 = 0,
+        .unk12 = 0,
+        .task = NULL,
+        .unk18 = ov01_021EC94C,
+    },
+    {
+        .unk0 = 0,
+        .unk2 = 0xFFFF,
+        .unk4 = 0xDC,
+        .unk8 = NULL,
+        .weatherSpriteResources = NULL,
+        .unk10 = 0,
+        .unk12 = 0,
+        .task = NULL,
+        .unk18 = ov01_021EC94C,
+    },
+    {
+        .unk0 = 1,
+        .unk2 = 0xFFFF,
+        .unk4 = 0xDC,
+        .unk8 = NULL,
+        .weatherSpriteResources = NULL,
+        .unk10 = 0,
+        .unk12 = 0,
+        .task = NULL,
+        .unk18 = ov01_021ECD08,
+    },
+    {
+        .unk0 = 1,
+        .unk2 = 0xFFFF,
+        .unk4 = 0xDC,
+        .unk8 = NULL,
+        .weatherSpriteResources = NULL,
+        .unk10 = 0,
+        .unk12 = 0,
+        .task = NULL,
+        .unk18 = ov01_021ECD08,
+    },
+    {
+        .unk0 = 1,
+        .unk2 = 0xFFFF,
+        .unk4 = 0xDC,
+        .unk8 = NULL,
+        .weatherSpriteResources = NULL,
+        .unk10 = 0,
+        .unk12 = 0,
+        .task = NULL,
+        .unk18 = ov01_021ECD08,
+    },
+    {
+        .unk0 = 0xFFFF,
+        .unk2 = 0xFFFF,
+        .unk4 = 4,
+        .unk8 = NULL,
+        .weatherSpriteResources = NULL,
+        .unk10 = 0,
+        .unk12 = 0,
+        .task = NULL,
+        .unk18 = ov01_021EC8F8,
+    },
+    {
+        .unk0 = 4,
+        .unk2 = 0xFFFF,
+        .unk4 = 0xDC,
+        .unk8 = NULL,
+        .weatherSpriteResources = NULL,
+        .unk10 = 0,
+        .unk12 = 0,
+        .task = NULL,
+        .unk18 = ov01_021ED0F0,
+    },
+    {
+        .unk0 = 0xFFFF,
+        .unk2 = 6,
+        .unk4 = 0xAC,
+        .unk8 = NULL,
+        .weatherSpriteResources = NULL,
+        .unk10 = 0,
+        .unk12 = 0,
+        .task = NULL,
+        .unk18 = ov01_021ED584,
+    },
+    {
+        .unk0 = 0xFFFF,
+        .unk2 = 6,
+        .unk4 = 0xAC,
+        .unk8 = NULL,
+        .weatherSpriteResources = NULL,
+        .unk10 = 0,
+        .unk12 = 0,
+        .task = NULL,
+        .unk18 = ov01_021ED584,
+    },
+    {
+        .unk0 = 0xFFFF,
+        .unk2 = 0xFFFF,
+        .unk4 = 0x634,
+        .unk8 = NULL,
+        .weatherSpriteResources = NULL,
+        .unk10 = 0,
+        .unk12 = 0,
+        .task = NULL,
+        .unk18 = ov01_021ED710,
+    },
+    {
+        .unk0 = 0xFFFF,
+        .unk2 = 0xFFFF,
+        .unk4 = 0x634,
+        .unk8 = NULL,
+        .weatherSpriteResources = NULL,
+        .unk10 = 0,
+        .unk12 = 0,
+        .task = NULL,
+        .unk18 = ov01_021ED924,
+    },
+    {
+        .unk0 = 0xFFFF,
+        .unk2 = 0xFFFF,
+        .unk4 = 0xC0,
+        .unk8 = NULL,
+        .weatherSpriteResources = NULL,
+        .unk10 = 0,
+        .unk12 = 0,
+        .task = NULL,
+        .unk18 = ov01_021EDA50,
+    },
+};
+
+static const WeatherGfxNarcData ov01_0220675C[] = {
+    {
+        .paletteId = 0x15,
+        .charId = 0x24,
+        .screenId = 0x26,
+    },
+    {
+        .paletteId = 0x25,
+        .charId = 0x24,
+        .screenId = 0x26,
+    },
+    {
+        .paletteId = 0x9,
+        .charId = 0x8,
+        .screenId = 0xA,
+    },
+    {
+        .paletteId = 0x2A,
+        .charId = 0x2C,
+        .screenId = 0x2B,
+    },
+    {
+        .paletteId = 0x1E,
+        .charId = 0x1D,
+        .screenId = 0x1F,
+    },
+    {
+        .paletteId = 0x2E,
+        .charId = 0x2D,
+        .screenId = 0x2F,
+    },
+    {
+        .paletteId = 0x33,
+        .charId = 0x2D,
+        .screenId = 0x2F,
+    },
+    {
+        .paletteId = 0x34,
+        .charId = 0x35,
+        .screenId = 0x36,
+    },
+    {
+        .paletteId = 0x31,
+        .charId = 0x30,
+        .screenId = 0x32,
+    },
+};
 
 WeatherSystem* WeatherSystem_New(FieldSystem *fieldSystem) {
     WeatherSystem *weatherSystem = Heap_Alloc(HEAP_ID_FIELD1, sizeof(WeatherSystem));
@@ -1590,9 +1792,8 @@ void ov01_021ECD08(SysTask *task, void* data) {
     }
 }
 
-//NOTE: make these direct inlines rather than external data
-extern int ov01_0220673C[4];
-extern int ov01_0220674C[4];
+static const ov01_0220674C[] = {2, 2, 2, 2};
+static const ov01_0220673C[] = {16, 32, 16, 10};
 
 void ov01_021ECF4C(WeatherSystem_Sub0_Sub8* a0, int a1) {
     int table0[4];

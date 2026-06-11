@@ -147,6 +147,7 @@ typedef struct UnkStruct_021ED710_Sub {
     u32 unk2C;
     u16 unk30[4][192];
 } UnkStruct_021ED710_Sub;
+
 typedef struct UnkStruct_021ED710 {
     UnkStruct_021ED710_Sub unk0;
     void *unk62C;
