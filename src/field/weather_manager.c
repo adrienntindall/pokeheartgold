@@ -10,13 +10,14 @@
 #include "unk_0200ACF0.h"
 #include "unk_02020B8C.h"
 #include "math_util.h"
+#include "unk_0200FA24.h"
 
 struct WeatherSystem_Sub0_Sub8 {
     WeatherSystem *weatherSystem;
     WeatherSystem_Sub0 *unk4;
-    UnkWeatherStruct_021EB968 *unk8;
-    WeatherSystem_Sub0_Sub8_LinkedList linkedListDummy;
-    WeatherSystem_Sub0_Sub8_LinkedList linkedList[64];
+    WeatherSpriteResources *unk8;
+    WeatherObject linkedListDummy;
+    WeatherObject linkedList[64];
     SysTask *unkF48;
     VecFx32 cameraTarget;
     void *unkF58;
@@ -25,7 +26,7 @@ struct WeatherSystem_Sub0_Sub8 {
     u16 unkF62;
     u16 unkF64;
     u16 unkF66;
-    u32 unkF68;
+    s32 unkF68;
     SysTask *unkF6C;
 };
 
@@ -34,7 +35,7 @@ struct WeatherSystem_Sub0 {
     u16 unk2;
     int unk4;
     WeatherSystem_Sub0_Sub8 *unk8;
-    UnkWeatherStruct_021EB968 *unkC;
+    WeatherSpriteResources *weatherSpriteResources;
     u16 unk10;
     u16 unk12;
     SysTask *task;
@@ -43,7 +44,7 @@ struct WeatherSystem_Sub0 {
 
 struct WeatherSystem {
     WeatherSystem_Sub0 *unk0;
-    WeatherSystem_Sub4 *unk4;
+    WeatherGfxNarcData *unk4;
     WeatherDraw weatherDraw;
     FieldSystem *fieldSystem;
     NARC *narc;
@@ -54,6 +55,13 @@ void ov01_021EB1E8(UnkStruct_ov01_021EB1E8 *a0) {
     a0->unk188 = 1;
 }
 
+/**
+ * @brief Creates the weather manager and initializes with default values
+ *
+ * @param fieldSystem
+ *
+ * @return WeatherManager *
+ */
 WeatherManager *WeatherManager_New(FieldSystem *fieldSystem) {
     WeatherManager *weatherManager = Heap_Alloc(HEAP_ID_FIELD1, sizeof(WeatherManager));
 
@@ -71,6 +79,11 @@ WeatherManager *WeatherManager_New(FieldSystem *fieldSystem) {
     return weatherManager;
 }
 
+/**
+ * @brief Deletes and frees the weather manager and embedded structs
+ *
+ * @param weatherManager
+ */
 void WeatherManager_Delete(WeatherManager* weatherManager) {
     if (weatherManager->task) {
         SysTask_Destroy(weatherManager->task);
@@ -283,7 +296,7 @@ void WeatherDraw_SetSpriteMatrix(Sprite *sprite, VecFx32* matrix) {
 }
 
 extern WeatherSystem_Sub0 ov01_022098B0[];
-extern WeatherSystem_Sub4 ov01_0220675C[];
+extern WeatherGfxNarcData ov01_0220675C[];
 
 WeatherSystem* WeatherSystem_New(FieldSystem *fieldSystem) {
     WeatherSystem *weatherSystem = Heap_Alloc(HEAP_ID_FIELD1, sizeof(WeatherSystem));
@@ -306,7 +319,7 @@ void WeatherSystem_Delete(WeatherSystem** pWeatherSystem) {
             ov01_021EBB90(*pWeatherSystem, i);
         }
 
-        ov01_021EA864((*pWeatherSystem)->fieldSystem->fog, 1, FALSE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x8000, 0);
+        Fog_Set((*pWeatherSystem)->fieldSystem->fog, 1, FALSE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x8000, 0);
 
         reg_G2_BG0CNT = (reg_G2_BG0CNT & ~3) | 1;
 
@@ -329,7 +342,7 @@ BOOL WeatherSystem_Process(WeatherSystem *weatherSystem, int state, int weather)
     }
 
     switch (state) {
-    case 0:
+    case WEATHER_SYS_PROC_INIT:
         ret = WeatherSystem_Init(weatherSystem, weather);
         break;
     case 1:
@@ -414,14 +427,14 @@ BOOL ov01_021EB840(UnkWeatherStruct_021EB830* a0) {
     return TRUE;
 }
 
-void ov01_021EB86C(WeatherSystem *weatherSystem, s32 arg1, UnkWeatherStruct_021EB968 *arg2) {
+void ov01_021EB86C(WeatherSystem *weatherSystem, s32 arg1, WeatherSpriteResources *arg2) {
     ov01_021EBEF0(weatherSystem, arg1, arg2);
     ov01_021EBF24(weatherSystem, arg1, arg2);
     ov01_021EBF58(weatherSystem, arg1, arg2);
     ov01_021EBF94(weatherSystem, arg1, arg2);
 }
 
-SpriteResource *ov01_021EB898(GF_2DGfxResHeader *headerList, s32 resourceType, s32 headerIndex, GF_2DGfxResMan *resMan, NARC *narc, BOOL atEnd) {
+SpriteResource *Weather_AddResObjFromOpenNarc(GF_2DGfxResHeader *headerList, s32 resourceType, s32 headerIndex, GF_2DGfxResMan *resMan, NARC *narc, BOOL atEnd) {
     GF_2DGfxResHeader *header = GF2DGfxResHeader_GetByIndex(headerList, resourceType);
     u32 member = GF2DGfxResHeader_GetNarcMemberIdByIndex(header, headerIndex);
     u32 compressFlag = GF2DGfxResHeader_GetCompressFlagByIndex(header, headerIndex);
@@ -448,13 +461,13 @@ SpriteResource *ov01_021EB898(GF_2DGfxResHeader *headerList, s32 resourceType, s
     return ret;
 }
 
-void ov01_021EB968(WeatherSystem* weatherSystem, s32 a1, UnkWeatherStruct_021EB968* a2) {
+void ov01_021EB968(WeatherSystem* weatherSystem, s32 a1, WeatherSpriteResources* a2) {
     if (a1 != 0xFFFF) {
-        if (a2->charResObj[0] != 0) {
-            sub_0200AEB0(a2->charResObj[0]);
+        if (a2->charResObj[GF_GFX_RES_TYPE_CHAR] != 0) {
+            sub_0200AEB0(a2->charResObj[GF_GFX_RES_TYPE_CHAR]);
         }
-        if (a2->charResObj[1] != 0) {
-            sub_0200B0A8(a2->charResObj[1]);
+        if (a2->charResObj[GF_GFX_RES_TYPE_PLTT] != 0) {
+            sub_0200B0A8(a2->charResObj[GF_GFX_RES_TYPE_PLTT]);
         }
 
         for (int i = 0; i < 4; i++) {
@@ -478,7 +491,7 @@ BOOL WeatherSystem_Init(WeatherSystem* weatherSystem, int weather) {
             return FALSE;
         }
 
-        v0->unk8->unk8 = v0->unkC;
+        v0->unk8->unk8 = v0->weatherSpriteResources;
         
         if (v0->unk0 != 0xFFFF) {
             ov01_021EC028(v0->unk8);
@@ -511,7 +524,7 @@ BOOL ov01_021EBA08(WeatherSystem *weatherSystem, int weather) {
 BOOL WeatherSystem_Start(WeatherSystem *weatherSystem, int weather, u32 a2, u32 a3) {
     WeatherSystem_Sub0 *v0 = &weatherSystem->unk0[weather];
 
-    if (v0->unk0 != 0xFFFF && v0->unkC == 0) {
+    if (v0->unk0 != 0xFFFF && v0->weatherSpriteResources == 0) {
         return FALSE;
     }
 
@@ -583,10 +596,10 @@ void ov01_021EBB90(WeatherSystem *weatherSystem, u32 weather) {
         G2_BlendNone();
     }
     
-    if (v0->unkC) {
-        ov01_021EB968(weatherSystem, v0->unk0, v0->unkC);
-        Heap_FreeExplicit(HEAP_ID_FIELD1, v0->unkC);
-        v0->unkC = NULL;
+    if (v0->weatherSpriteResources) {
+        ov01_021EB968(weatherSystem, v0->unk0, v0->weatherSpriteResources);
+        Heap_FreeExplicit(HEAP_ID_FIELD1, v0->weatherSpriteResources);
+        v0->weatherSpriteResources = NULL;
         if (v0->task) {
             SysTask_Destroy(v0->task);
             v0->task = NULL;
@@ -594,7 +607,7 @@ void ov01_021EBB90(WeatherSystem *weatherSystem, u32 weather) {
     }
     
     if (v0->unk8) {
-        ov01_021EC2CC(&v0->unk8->linkedListDummy);
+        WeatherObject_DeleteAll(&v0->unk8->linkedListDummy);
 
         if (v0->unk0 != 0xFFFF) {
             ov01_021EC058(v0->unk8);
@@ -625,7 +638,7 @@ void ov01_021EBB90(WeatherSystem *weatherSystem, u32 weather) {
         v0->unk8 = NULL;
     }
 
-    ov01_021EA864(weatherSystem->fieldSystem->fog, 1, FALSE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x8000, 0);
+    Fog_Set(weatherSystem->fieldSystem->fog, 1, FALSE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x8000, 0);
 }
 
 void ov01_021EBCA4(WeatherSystem_Sub0* a0) {
@@ -637,7 +650,7 @@ void ov01_021EBCA4(WeatherSystem_Sub0* a0) {
     }
 
     if (a0->unk8 != NULL) {
-        ov01_021EC2CC(&a0->unk8->linkedListDummy);
+        WeatherObject_DeleteAll(&a0->unk8->linkedListDummy);
 
         if (a0->unk8->unkF5C == 1) {
             ov01_021EDAE0(a0->unk8);
@@ -657,11 +670,11 @@ void ov01_021EBD18(WeatherSystem *weatherSystem, u16 a1) {
 }
 
 BOOL ov01_021EBD34(WeatherSystem *weatherSystem, WeatherSystem_Sub0 *a1) {
-    if (a1->unk0 != 0xFFFF && a1->unkC == NULL) {
+    if (a1->unk0 != 0xFFFF && a1->weatherSpriteResources == NULL) {
         if (ov01_021EBEB8(a1) == FALSE) {
             return FALSE;
         }
-        ov01_021EB86C(weatherSystem, a1->unk0, a1->unkC);
+        ov01_021EB86C(weatherSystem, a1->unk0, a1->weatherSpriteResources);
         ov01_021EBFD0(weatherSystem, a1);
     }
     return TRUE;
@@ -676,7 +689,7 @@ void ov01_021EBD70(SysTask *task, void *data) {
         v0->unk12++;
         break;
     case 1:
-        ov01_021EBEF0(weatherSystem, v0->unk0, v0->unkC);
+        ov01_021EBEF0(weatherSystem, v0->unk0, v0->weatherSpriteResources);
         v0->unk12++;
         break;
     case 2:
@@ -684,7 +697,7 @@ void ov01_021EBD70(SysTask *task, void *data) {
         v0->unk12++;
         break;
     case 3:
-        ov01_021EBF24(weatherSystem, v0->unk0, v0->unkC);
+        ov01_021EBF24(weatherSystem, v0->unk0, v0->weatherSpriteResources);
         v0->unk12++;
         break;
     case 4:
@@ -692,7 +705,7 @@ void ov01_021EBD70(SysTask *task, void *data) {
         v0->unk12++;
         break;
     case 5:
-        ov01_021EBF58(weatherSystem, v0->unk0, v0->unkC);
+        ov01_021EBF58(weatherSystem, v0->unk0, v0->weatherSpriteResources);
         v0->unk12++;
         break;
     case 6:
@@ -700,12 +713,12 @@ void ov01_021EBD70(SysTask *task, void *data) {
         v0->unk12++;
         break;
     case 7:
-        ov01_021EBF94(weatherSystem, v0->unk0, v0->unkC);
+        ov01_021EBF94(weatherSystem, v0->unk0, v0->weatherSpriteResources);
         v0->unk12++;
         break;
     case 8:
         ov01_021EBFD0(weatherSystem, v0);
-        v0->unk8->unk8 = v0->unkC;
+        v0->unk8->unk8 = v0->weatherSpriteResources;
         if (v0->unk0 != 0xFFFF) {
             ov01_021EC028(v0->unk8);
         }
@@ -741,62 +754,62 @@ BOOL ov01_021EBE4C(WeatherSystem *weatherSystem, WeatherSystem_Sub0 *a1) {
 
 BOOL ov01_021EBEB8(WeatherSystem_Sub0 *a0) {
     if (a0->unk0 != 0xFFFF) {
-        if (a0->unkC != NULL) {
+        if (a0->weatherSpriteResources != NULL) {
             return TRUE;
         }
-        a0->unkC = Heap_Alloc(HEAP_ID_FIELD1, sizeof(UnkWeatherStruct_021EB968));
-        if (a0->unkC == NULL) {
+        a0->weatherSpriteResources = Heap_Alloc(HEAP_ID_FIELD1, sizeof(WeatherSpriteResources));
+        if (a0->weatherSpriteResources == NULL) {
             return FALSE;
         }
-        memset(a0->unkC, 0, sizeof(UnkWeatherStruct_021EB968));
+        memset(a0->weatherSpriteResources, 0, sizeof(WeatherSpriteResources));
     }
     return TRUE;
 }
 
-void ov01_021EBEF0(WeatherSystem *weatherSystem, u32 a1, UnkWeatherStruct_021EB968 *a2) {
-    if (a1 != 0xFFFF) {
-        a2->charResObj[2] = ov01_021EB898(weatherSystem->weatherDraw.header, 2, a1, weatherSystem->weatherDraw.resMan[2], weatherSystem->narc, 0);
+void ov01_021EBEF0(WeatherSystem *weatherSystem, u32 headerIndex, WeatherSpriteResources *a2) {
+    if (headerIndex != 0xFFFF) {
+        a2->charResObj[GF_GFX_RES_TYPE_CELL] = Weather_AddResObjFromOpenNarc(weatherSystem->weatherDraw.header, GF_GFX_RES_TYPE_CELL, headerIndex, weatherSystem->weatherDraw.resMan[GF_GFX_RES_TYPE_CELL], weatherSystem->narc, 0);
     }
 }
 
-void ov01_021EBF24(WeatherSystem *weatherSystem, u32 a1, UnkWeatherStruct_021EB968 *a2) {
-    if (a1 != 0xFFFF) {
-        a2->charResObj[3] = ov01_021EB898(weatherSystem->weatherDraw.header, 3, a1, weatherSystem->weatherDraw.resMan[3], weatherSystem->narc, 0);
+void ov01_021EBF24(WeatherSystem *weatherSystem, u32 headerIndex, WeatherSpriteResources *a2) {
+    if (headerIndex != 0xFFFF) {
+        a2->charResObj[GF_GFX_RES_TYPE_ANIM] = Weather_AddResObjFromOpenNarc(weatherSystem->weatherDraw.header, GF_GFX_RES_TYPE_ANIM, headerIndex, weatherSystem->weatherDraw.resMan[GF_GFX_RES_TYPE_ANIM], weatherSystem->narc, 0);
     }
 }
 
-void ov01_021EBF58(WeatherSystem *weatherSystem, u32 a1, UnkWeatherStruct_021EB968 *a2) {
-    if (a1 != 0xFFFF) {
-        a2->charResObj[0] = ov01_021EB898(weatherSystem->weatherDraw.header, 0, a1, weatherSystem->weatherDraw.resMan[0], weatherSystem->narc, 1);
-        sub_0200ADA4(a2->charResObj[0]);
-        sub_0200A740(a2->charResObj[0]);
+void ov01_021EBF58(WeatherSystem *weatherSystem, u32 headerIndex, WeatherSpriteResources *a2) {
+    if (headerIndex != 0xFFFF) {
+        a2->charResObj[GF_GFX_RES_TYPE_CHAR] = Weather_AddResObjFromOpenNarc(weatherSystem->weatherDraw.header, GF_GFX_RES_TYPE_CHAR, headerIndex, weatherSystem->weatherDraw.resMan[GF_GFX_RES_TYPE_CHAR], weatherSystem->narc, 1);
+        sub_0200ADA4(a2->charResObj[GF_GFX_RES_TYPE_CHAR]);
+        sub_0200A740(a2->charResObj[GF_GFX_RES_TYPE_CHAR]);
     }
 }
 
-void ov01_021EBF94(WeatherSystem *weatherSystem, u32 a1, UnkWeatherStruct_021EB968 *a2) {
-    if (a1 != 0xFFFF) {
-        a2->charResObj[1] = ov01_021EB898(weatherSystem->weatherDraw.header, 1, a1, weatherSystem->weatherDraw.resMan[1], weatherSystem->narc, 1);
-        sub_0200B00C(a2->charResObj[1]);
-        sub_0200A740(a2->charResObj[1]);
+void ov01_021EBF94(WeatherSystem *weatherSystem, u32 headerIndex, WeatherSpriteResources *a2) {
+    if (headerIndex != 0xFFFF) {
+        a2->charResObj[GF_GFX_RES_TYPE_PLTT] = Weather_AddResObjFromOpenNarc(weatherSystem->weatherDraw.header, GF_GFX_RES_TYPE_PLTT, headerIndex, weatherSystem->weatherDraw.resMan[GF_GFX_RES_TYPE_PLTT], weatherSystem->narc, 1);
+        sub_0200B00C(a2->charResObj[GF_GFX_RES_TYPE_PLTT]);
+        sub_0200A740(a2->charResObj[GF_GFX_RES_TYPE_PLTT]);
     }
 }
 
 void ov01_021EBFD0(WeatherSystem *weatherSystem, WeatherSystem_Sub0 *a1) {
     if (a1->unk0 != 0xFFFF) {
-        ov01_021EC240(&a1->unkC->unk40, weatherSystem, a1->unkC, 0, 1);
-        memset(&a1->unkC->unk10, 0, sizeof(SpriteTemplate));
-        a1->unkC->unk10.spriteList = weatherSystem->weatherDraw.spriteList;
-        a1->unkC->unk10.header = &a1->unkC->unk40;
-        a1->unkC->unk10.scale.x = 1 << 12;
-        a1->unkC->unk10.scale.y = 1 << 12;
-        a1->unkC->unk10.scale.z = 1 << 12;
-        a1->unkC->unk10.whichScreen = NNS_G2D_VRAM_TYPE_2DMAIN;
+        ov01_021EC240(&a1->weatherSpriteResources->spriteResHeader, weatherSystem, a1->weatherSpriteResources, 0, 1);
+        memset(&a1->weatherSpriteResources->spriteTemplate, 0, sizeof(SpriteTemplate));
+        a1->weatherSpriteResources->spriteTemplate.spriteList = weatherSystem->weatherDraw.spriteList;
+        a1->weatherSpriteResources->spriteTemplate.header = &a1->weatherSpriteResources->spriteResHeader;
+        a1->weatherSpriteResources->spriteTemplate.scale.x = 1 << 12;
+        a1->weatherSpriteResources->spriteTemplate.scale.y = 1 << 12;
+        a1->weatherSpriteResources->spriteTemplate.scale.z = 1 << 12;
+        a1->weatherSpriteResources->spriteTemplate.whichScreen = NNS_G2D_VRAM_TYPE_2DMAIN;
     }
 }
 
 void ov01_021EC028(WeatherSystem_Sub0_Sub8 *a0) {
     for (int i = 0; i < 64; i++) {
-        a0->linkedList[i].unk4 = Sprite_CreateAffine(&a0->unk8->unk10);
+        a0->linkedList[i].unk4 = Sprite_CreateAffine(&a0->unk8->spriteTemplate);
         Sprite_SetDrawFlag(a0->linkedList[i].unk4, 0);
         GF_ASSERT(a0->linkedList[i].unk4);
     }
@@ -814,7 +827,7 @@ void ov01_021EC058(WeatherSystem_Sub0_Sub8 *a0) {
 void ov01_021EC078(WeatherSystem* weatherSystem, u16 a1) {
     UnkWeatherStruct_021EC078 v0;
     if (a1 != 0xFFFF) {
-        v0.unk0 = NARC_AllocAndReadWholeMember(weatherSystem->narc, weatherSystem->unk4[a1].unk0, HEAP_ID_FIELD1);
+        v0.unk0 = NARC_AllocAndReadWholeMember(weatherSystem->narc, weatherSystem->unk4[a1].paletteId, HEAP_ID_FIELD1);
         NNS_G2dGetUnpackedPaletteData(v0.unk0, &v0.unk14);
         BG_LoadPlttData(2, v0.unk14->pRawData, 32, 0xc0);
         Heap_Free(v0.unk0);
@@ -825,7 +838,7 @@ void ov01_021EC078(WeatherSystem* weatherSystem, u16 a1) {
 void ov01_021EC0C0(WeatherSystem* weatherSystem, u16 a1) {
     UnkWeatherStruct_021EC078 v0;
     if (a1 != 0xFFFF) {
-        v0.unk4 = NARC_AllocAndReadWholeMember(weatherSystem->narc, weatherSystem->unk4[a1].unk4, HEAP_ID_FIELD1);
+        v0.unk4 = NARC_AllocAndReadWholeMember(weatherSystem->narc, weatherSystem->unk4[a1].charId, HEAP_ID_FIELD1);
         NNS_G2dGetUnpackedCharacterData(v0.unk4, &v0.unk10);
         BG_LoadCharTilesData(weatherSystem->fieldSystem->bgConfig, 2, v0.unk10->pRawData, v0.unk10->szByte, 0);
         Heap_Free(v0.unk4);
@@ -837,7 +850,7 @@ void ov01_021EC114(WeatherSystem* weatherSystem, u16 a1) {
     UnkWeatherStruct_021EC078 v0;
     if (a1 != 0xFFFF) {
         GfGfx_EngineATogglePlanes(4, 0);
-        v0.unk8 = NARC_AllocAndReadWholeMember(weatherSystem->narc, weatherSystem->unk4[a1].unk8, HEAP_ID_FIELD1);
+        v0.unk8 = NARC_AllocAndReadWholeMember(weatherSystem->narc, weatherSystem->unk4[a1].screenId, HEAP_ID_FIELD1);
         GF_ASSERT(v0.unk8);
         NNS_G2dGetUnpackedScreenData(v0.unk8, &v0.unkC);
         BgCopyOrUncompressTilemapBufferRangeToVram(weatherSystem->fieldSystem->bgConfig, 2, v0.unkC->rawData, v0.unkC->szByte, 0);
@@ -849,21 +862,21 @@ void ov01_021EC114(WeatherSystem* weatherSystem, u16 a1) {
     }
 }
 
-void ov01_021EC1BC(WeatherSystem_Sub0_Sub8_LinkedList* a0, int a1) {
+void ov01_021EC1BC(WeatherObject* a0, int a1) {
     GF_ASSERT(a0->unk8 == 0);
     GF_ASSERT(a1 > 0);
     GF_ASSERT(a1 <= 0x28u);
     a0->unk8 = a0->unk10;
 }
 
-void ov01_021EC1E4(WeatherSystem_Sub0_Sub8_LinkedList* a0) {
+void ov01_021EC1E4(WeatherObject* a0) {
     a0->unk8 = NULL;
     memset(a0->unk10, 0, 10 * sizeof(u32));
 }
 
 void* ov01_021EC1F4(WeatherSystem_Sub0_Sub8* a0, int a1) {
     WeatherSystem *weatherSystem = a0->weatherSystem;
-    WeatherSystem_Sub0_Sub8_LinkedList *v0 = ov01_021EC8D8(a0);
+    WeatherObject *v0 = ov01_021EC8D8(a0);
     if (v0 == NULL) {
         return NULL;
     }
@@ -883,7 +896,7 @@ void* ov01_021EC1F4(WeatherSystem_Sub0_Sub8* a0, int a1) {
     return v0;
 }
 
-void ov01_021EC240(SpriteResourcesHeader *header, WeatherSystem *weatherSystem, UnkWeatherStruct_021EB968 *a2, u32 a3, u32 a4) {
+void ov01_021EC240(SpriteResourcesHeader *header, WeatherSystem *weatherSystem, WeatherSpriteResources *a2, u32 a3, u32 a4) {
     int resID[4];
 
     for (int i = 0; i < 4; i++) {
@@ -893,7 +906,7 @@ void ov01_021EC240(SpriteResourcesHeader *header, WeatherSystem *weatherSystem, 
     CreateSpriteResourcesHeader(header, resID[0], resID[1], resID[2], resID[3], -1, -1, a3, a4, weatherSystem->weatherDraw.resMan[0], weatherSystem->weatherDraw.resMan[1], weatherSystem->weatherDraw.resMan[2], weatherSystem->weatherDraw.resMan[3], NULL, NULL);
 }
 
-void ov01_021EC29C(WeatherSystem_Sub0_Sub8_LinkedList* a0) {
+void WeatherObject_Delete(WeatherObject* a0) {
     a0->prev->next = a0->next;
     a0->next->prev = a0->prev;
     
@@ -901,24 +914,24 @@ void ov01_021EC29C(WeatherSystem_Sub0_Sub8_LinkedList* a0) {
     ov01_021EC1E4(a0);
 
     Sprite *temp = a0->unk4;
-    memset(a0, 0, sizeof(WeatherSystem_Sub0_Sub8_LinkedList));
+    memset(a0, 0, sizeof(WeatherObject));
     a0->unk4 = temp;
 }
 
-void ov01_021EC2CC(WeatherSystem_Sub0_Sub8_LinkedList * a0) {
-    WeatherSystem_Sub0_Sub8_LinkedList *cur = a0->next;
-    WeatherSystem_Sub0_Sub8_LinkedList *next;
+void WeatherObject_DeleteAll(WeatherObject * a0) {
+    WeatherObject *cur = a0->next;
+    WeatherObject *next;
 
     while (cur != a0) {
         next = cur->next;
-        ov01_021EC29C(cur);
+        WeatherObject_Delete(cur);
         cur = next;
     }
 }
 
-void ov01_021EC2E4(WeatherSystem_Sub0_Sub8_LinkedList *a0, UnkLinkedListFunc func) {
-    WeatherSystem_Sub0_Sub8_LinkedList *cur = a0->next;
-    WeatherSystem_Sub0_Sub8_LinkedList *next = cur->next;
+void ov01_021EC2E4(WeatherObject *a0, UnkLinkedListFunc func) {
+    WeatherObject *cur = a0->next;
+    WeatherObject *next = cur->next;
 
     while (cur != a0) {
         func(cur);
@@ -931,7 +944,7 @@ void ov01_021EC300(void *data) {
     
 }
 
-VecFx32 ov01_021EC304(WeatherSystem_Sub0_Sub8_LinkedList *a0) {
+VecFx32 ov01_021EC304(WeatherObject *a0) {
     return *Sprite_GetMatrixPtr(a0->unk4);
 }
 
@@ -1005,7 +1018,7 @@ void ov01_021EC470(WeatherSystem_Sub0_Sub8 *a0, int *xOut, int *zOut) {
 }
 
 void ov01_021EC4A8(WeatherSystem_Sub0_Sub8 *a0, fx32 *x, fx32 *y) {
-    WeatherSystem_Sub0_Sub8_LinkedList *cur;
+    WeatherObject *cur;
     fx32 xScale, yScale;
     VecFx32 matrix;
     ov01_021EC31C(&xScale, &yScale, a0);
@@ -1113,7 +1126,7 @@ s32 ov01_021EC538(UnkStruct_021EC504* arg0) {
     return var_r4;
 }
 
-void ov01_021EC5FC(UnkStruct_021EC5FC *arg0, UnkStruct_021EC774* arg1, FogData *fog, GXFogSlope fogSlope, s32 fogOffset, GXRgb rgb, s32 arg6, s32 arg7) {
+void ov01_021EC5FC(WeatherFogChange *arg0, UnkStruct_021EC774* arg1, FogData *fog, GXFogSlope fogSlope, s32 fogOffset, GXRgb rgb, s32 arg6, s32 arg7) {
     arg1->fog = fog;
     if (arg7 != 0) {
         if (arg7 == 1) {
@@ -1126,7 +1139,7 @@ void ov01_021EC5FC(UnkStruct_021EC5FC *arg0, UnkStruct_021EC774* arg1, FogData *
     }
 }
 
-BOOL ov01_021EC650(UnkStruct_021EC5FC *arg0, UnkStruct_021EC774 *arg1, s32 arg2) {
+BOOL ov01_021EC650(WeatherFogChange *arg0, UnkStruct_021EC774 *arg1, s32 arg2) {
     s32 var_r4;
 
     var_r4 = 1;
@@ -1143,25 +1156,25 @@ BOOL ov01_021EC650(UnkStruct_021EC5FC *arg0, UnkStruct_021EC774 *arg1, s32 arg2)
 }
 
 void ov01_021EC678(FogData *fog, GXFogSlope fogSlope, s32 fogOffset, GXRgb rgb) {
-    ov01_021EA864(fog, -1, TRUE, GX_FOGBLEND_COLOR_ALPHA, fogSlope, fogOffset);
+    Fog_Set(fog, -1, TRUE, GX_FOGBLEND_COLOR_ALPHA, fogSlope, fogOffset);
     ov01_021EA89C(fog, -1, rgb, 0x1F);
 }
 
-void ov01_021EC6A4(UnkStruct_021EC5FC* arg0, FogData *fog, s32 arg2, s32 arg3, GXRgb rgb, s32 arg5) {
-    int v0 = Fog_GetSlope(fog);
-    int v1 = Fog_GetOffset(fog);
-    GXRgb v2 = ov01_021EA860(fog);
+void ov01_021EC6A4(WeatherFogChange* fogChange, FogData *fog, s32 arg2, s32 arg3, GXRgb rgb, s32 arg5) {
+    int slope = Fog_GetSlope(fog);
+    int offset = Fog_GetOffset(fog);
+    GXRgb rgb2 = ov01_021EA860(fog);
 
-    arg0->fog = fog;
+    fogChange->fog = fog;
 
-    ov01_021EB830(&arg0->unk4, v1, arg3, arg5);
-    ov01_021EB830(&arg0->unk18, v2 & GX_RGB_R_MASK, rgb & GX_RGB_R_MASK, arg5);
-    ov01_021EB830(&arg0->unk2C, (v2 >> GX_RGB_G_SHIFT) & 0x1F, (rgb >> GX_RGB_G_SHIFT) & 0x1F, arg5);
-    ov01_021EB830(&arg0->unk40, (v2 >> GX_RGB_B_SHIFT) & 0x1F, (rgb >> GX_RGB_B_SHIFT) & 0x1F, arg5);
-    ov01_021EB830(&arg0->unk54, v0, arg2, arg5);
+    ov01_021EB830(&fogChange->unk4, offset, arg3, arg5);
+    ov01_021EB830(&fogChange->unk18, rgb2 & GX_RGB_R_MASK, rgb & GX_RGB_R_MASK, arg5);
+    ov01_021EB830(&fogChange->unk2C, (rgb2 >> GX_RGB_G_SHIFT) & 0x1F, (rgb >> GX_RGB_G_SHIFT) & 0x1F, arg5);
+    ov01_021EB830(&fogChange->unk40, (rgb2 >> GX_RGB_B_SHIFT) & 0x1F, (rgb >> GX_RGB_B_SHIFT) & 0x1F, arg5);
+    ov01_021EB830(&fogChange->unk54, slope, arg2, arg5);
 }
 
-BOOL ov01_021EC728(UnkStruct_021EC5FC *arg0) {
+BOOL ov01_021EC728(WeatherFogChange *arg0) {
     BOOL ret = ov01_021EB840(&arg0->unk4);
     ov01_021EB840(&arg0->unk18);
     ov01_021EB840(&arg0->unk2C);
@@ -1257,8 +1270,8 @@ void ov01_021EC85C(WeatherSystem_Sub0_Sub8 *a0, UnkWeatherSystemSub0Sub8Func a1,
     
     int i, j;
     int v0 = 0;
-    WeatherSystem_Sub0_Sub8_LinkedList *cur = a0->linkedListDummy.next;
-    WeatherSystem_Sub0_Sub8_LinkedList *next = cur->next;
+    WeatherObject *cur = a0->linkedListDummy.next;
+    WeatherObject *next = cur->next;
 
     for (i = 0; i < a2; i++) {
         if (cur == &a0->linkedListDummy) {
@@ -1282,7 +1295,7 @@ void ov01_021EC85C(WeatherSystem_Sub0_Sub8 *a0, UnkWeatherSystemSub0Sub8Func a1,
     }
 }
 
-WeatherSystem_Sub0_Sub8_LinkedList *ov01_021EC8D8(WeatherSystem_Sub0_Sub8 * a0) {
+WeatherObject *ov01_021EC8D8(WeatherSystem_Sub0_Sub8 * a0) {
     for (int i = 0; i < 64; i++) {
         if (a0->linkedList[i].weatherSystem == NULL) {
             return &a0->linkedList[i];
@@ -1399,7 +1412,7 @@ void ov01_021EC94C(SysTask *task, void *data) {
         break;
     case 5:
         if (v0->unkF64) {
-            ov01_021EA864(v1->unk1C.fog, 1, FALSE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x8000, 0);
+            Fog_Set(v1->unk1C.fog, 1, FALSE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x8000, 0);
         }
         ov01_021EBCA4(v0->unk4);
         break;
@@ -1414,7 +1427,7 @@ void ov01_021EC94C(SysTask *task, void *data) {
 
 void ov01_021ECBB4(WeatherSystem_Sub0_Sub8 *a0, int arg1) {
     for (int i = 0; i < arg1; i++) {
-        WeatherSystem_Sub0_Sub8_LinkedList *v0 = ov01_021EC1F4(a0, 32);
+        WeatherObject *v0 = ov01_021EC1F4(a0, 32);
         if (v0 == NULL) {
             break;
         }
@@ -1449,7 +1462,7 @@ void ov01_021ECBB4(WeatherSystem_Sub0_Sub8 *a0, int arg1) {
     }
 }
 
-void ov01_021ECC70(WeatherSystem_Sub0_Sub8_LinkedList *a0) {
+void ov01_021ECC70(WeatherObject *a0) {
     int i;
     s32 *data = a0->unk8;
     VecFx32 vec;
@@ -1478,7 +1491,7 @@ void ov01_021ECC70(WeatherSystem_Sub0_Sub8_LinkedList *a0) {
         }
         break;
     case 2:
-        ov01_021EC29C(a0);
+        WeatherObject_Delete(a0);
         break;
     }
 }
@@ -1564,7 +1577,7 @@ void ov01_021ECD08(SysTask *task, void* data) {
         break;
     case 5:
         if (v0->unkF64) {
-            ov01_021EA864(v1->unk1C.fog, 1, FALSE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x8000, 0);
+            Fog_Set(v1->unk1C.fog, 1, FALSE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x8000, 0);
         }
         ov01_021EBCA4(v0->unk4);
         break;
@@ -1589,7 +1602,7 @@ void ov01_021ECF4C(WeatherSystem_Sub0_Sub8* a0, int a1) {
     UnkStruct_021EC94C *v0 = a0->unkF58;
     
     for (int i = 0; i < a1; i++) {
-        WeatherSystem_Sub0_Sub8_LinkedList *v1 = ov01_021EC1F4(a0, 32);
+        WeatherObject *v1 = ov01_021EC1F4(a0, 32);
         if (v1 == NULL) {
             break;
         }
@@ -1625,7 +1638,7 @@ void ov01_021ECF4C(WeatherSystem_Sub0_Sub8* a0, int a1) {
     }
 }
 
-void ov01_021ED070(WeatherSystem_Sub0_Sub8_LinkedList* a0) {
+void ov01_021ED070(WeatherObject* a0) {
     s32 *data = a0->unk8;
     VecFx32 vec = ov01_021EC304(a0);
 
@@ -1649,7 +1662,7 @@ void ov01_021ED070(WeatherSystem_Sub0_Sub8_LinkedList* a0) {
         WeatherDraw_SetSpriteMatrix(a0->unk4, &vec);
         break;
     case 1:
-        ov01_021EC29C(a0);
+        WeatherObject_Delete(a0);
         break;
     }
 }
@@ -1726,7 +1739,7 @@ void ov01_021ED0F0(SysTask *task, void* data) {
         break;
     case 5:
         if (v0->unkF64) {
-            ov01_021EA864(v1->unk1C.fog, 1, FALSE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x8000, 0);
+            Fog_Set(v1->unk1C.fog, 1, FALSE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x8000, 0);
         }
         ov01_021EBCA4(v0->unk4);
         break;
@@ -1742,7 +1755,7 @@ void ov01_021ED0F0(SysTask *task, void* data) {
 void ov01_021ED31C(WeatherSystem_Sub0_Sub8 *a0, int a1) {
     VecFx32 vec;
     for (int i = 0; i < a1; i++) {
-        WeatherSystem_Sub0_Sub8_LinkedList *v0 = ov01_021EC1F4(a0, 32);
+        WeatherObject *v0 = ov01_021EC1F4(a0, 32);
         if (v0 == NULL) {
             break;
         }
@@ -1795,11 +1808,11 @@ void ov01_021ED31C(WeatherSystem_Sub0_Sub8 *a0, int a1) {
     }
 }
 
-void ov01_021ED44C(WeatherSystem_Sub0_Sub8_LinkedList *a0) {
+void ov01_021ED44C(WeatherObject *a0) {
     s32 *data = a0->unk8;
     ov01_021EC304(a0);
     if (++data[0] >= data[1]) {
-        ov01_021EC29C(a0);
+        WeatherObject_Delete(a0);
     }
 }
 
@@ -1845,7 +1858,7 @@ void ov01_021ED474(WeatherSystem_Sub0_Sub8* a0, UnkStruct_021ED474* a1, GXFogSlo
         break;
     case 5:
         if (a0->unkF64 != 0) {
-            ov01_021EA864(a1->unk1C.fog, 1, FALSE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x8000, 0);
+            Fog_Set(a1->unk1C.fog, 1, FALSE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x8000, 0);
         } 
         ov01_021EBCA4(a0->unk4);
         break;
@@ -1907,10 +1920,165 @@ void ov01_021ED584(SysTask *task, void* data) {
         break;
     case 5:
         if (v0->unkF64 != 0) {
-            ov01_021EA864(v1->unk1C.fog, 1, FALSE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x8000, 0);
+            Fog_Set(v1->unk1C.fog, 1, FALSE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x8000, 0);
         }
         ov01_021EBCA4(v0->unk4);
         break;
     }
 }
 
+void ov01_021ED710(SysTask *task, void *data) {
+    WeatherSystem_Sub0_Sub8 *v0 = data;
+    WeatherSystem *weatherSystem = v0->weatherSystem;
+    FieldSystem *fieldSystem = weatherSystem->fieldSystem;
+    UnkStruct_021ED710 *v1 = v0->unkF58;
+
+    switch (v0->unkF62) {
+    case 0:
+        v1->unk62C = ov01_02203EA0(PlayerAvatar_GetMapObject(fieldSystem->playerAvatar));
+        Fog_Set(fieldSystem->fog, -1, TRUE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x0020, 0);
+        ov01_021EA89C(fieldSystem->fog, -1, 0, 0);
+        {
+            s8 v2[32];
+            for (int i = 0; i < 32; i++) {
+                v2[i] = -1;
+            }
+            ov01_021EA8C4(fieldSystem->fog, v2);
+        }
+        v1->unk630 = 0;
+        v0->unkF62 = 1;
+        break;
+    case 1:
+        v0->unkF62 = 3;
+        break;
+    case 2:
+        v1->unk62C = ov01_02203EA0(PlayerAvatar_GetMapObject(fieldSystem->playerAvatar));
+        Fog_Set(fieldSystem->fog, -1, TRUE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x0020, 0);
+        ov01_021EA89C(fieldSystem->fog, -1, 0, 0);
+        {
+            s8 v2[32];
+            for (int i = 0; i < 32; i++) {
+                v2[i] = -1;
+            }
+            ov01_021EA8C4(fieldSystem->fog, v2);
+        }
+        v1->unk630 = 0;
+        v0->unkF62 = 3;
+        break;
+    case 3:
+        if (v0->unkF66 == 5) {
+            v1->unk632 = 0;
+            v0->unkF62 = 4;
+        }
+        break;
+    case 4:
+        switch (v1->unk632) {
+        case 0:
+            BeginNormalPaletteFade(3, 0, 0, 0x7FFF, 6, 1, HEAP_ID_FIELD1);
+            v1->unk632++;
+            break;
+        case 1:
+            if (IsPaletteFadeFinished()) {
+                BeginNormalPaletteFade(3, 1, 1, 0x7FFF, 6, 1, HEAP_ID_FIELD1);
+                v1->unk632++;
+            }
+            break;
+        case 2:
+            if (IsPaletteFadeFinished()) {
+                v1->unk632++;
+            }
+            break;
+        case 3:
+            v1->unk630++;
+            float v3 = 1.0 + (v1->unk630*3.0) / 24.0;
+            ov01_02203F2C(v1->unk62C, v3);
+            if (v3 >= 4.0) {
+                v0->unkF62 = 5;
+            }
+            break;
+        }
+        break;
+    case 5:
+        ov01_021EBCA4(v0->unk4);
+        break;
+    }
+}
+
+void ov01_021ED924(SysTask *task, void *data) {
+    WeatherSystem_Sub0_Sub8 *v0 = data;
+    WeatherSystem *weatherSystem = v0->weatherSystem;
+    FieldSystem *fieldSystem = weatherSystem->fieldSystem;
+    UnkStruct_021ED710 *v1 = v0->unkF58;
+
+    switch (v0->unkF62) {
+    case 0:
+        v1->unk62C = ov01_02203EA0(PlayerAvatar_GetMapObject(fieldSystem->playerAvatar));
+        Fog_Set(fieldSystem->fog, -1, TRUE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x0020, 0);
+        ov01_021EA89C(fieldSystem->fog, -1, 0, 0);
+        {
+            s8 v2[32];
+            for (int i = 0; i < 32; i++) {
+                v2[i] = -1;
+            }
+            ov01_021EA8C4(fieldSystem->fog, v2);
+        }
+        ov01_02203F2C(v1->unk62C, 4);
+        v0->unkF62 = 1;
+        break;
+    case 1:
+        v0->unkF62 = 3;
+        break;
+    case 2:
+        v1->unk62C = ov01_02203EA0(PlayerAvatar_GetMapObject(fieldSystem->playerAvatar));
+        Fog_Set(fieldSystem->fog, -1, TRUE, GX_FOGBLEND_COLOR_ALPHA, GX_FOGSLOPE_0x0020, 0);
+        ov01_021EA89C(fieldSystem->fog, -1, 0, 0);
+        {
+            s8 v2[32];
+            for (int i = 0; i < 32; i++) {
+                v2[i] = -1;
+            }
+            ov01_021EA8C4(fieldSystem->fog, v2);
+        }
+        ov01_02203F2C(v1->unk62C, 4);
+        v0->unkF62 = 3;
+        break;
+    case 3:
+        if (v0->unkF66 == 5) {
+            v0->unkF62 = 4;
+        }
+        break;
+    case 4:
+        v0->unkF62 = 5;
+        break;
+    case 5:
+        ov01_021EBCA4(v0->unk4);
+        break;
+    }
+}
+
+void ov01_021EDA50(SysTask *task, void *data) {
+    WeatherSystem_Sub0_Sub8 *v0 = data;
+    ov01_021ED474(v0, v0->unkF58, GX_FOGSLOPE_0x4000, 0x4B6F, 0x421, 0, 0);
+}
+
+void ov01_021EDA7C(SysTask *task, void* data) {
+    WeatherSystem_Sub0_Sub8 *v0 = data;
+    if (--v0->unkF68 <= 0) {
+        ov01_021EDAB4(v0, SEQ_SE_DP_T_AME);
+        SysTask_Destroy(task);
+        v0->unkF6C = 0;
+    }
+}
+
+void ov01_021EDAB4(WeatherSystem_Sub0_Sub8* a0, u32 sndSeq) {
+    GF_ASSERT(a0->unkF5C == 0);
+
+    a0->unkF5C = 1;
+    a0->sndSeq = sndSeq;
+    PlaySE(sndSeq);
+}
+
+void ov01_021EDAE0(WeatherSystem_Sub0_Sub8* arg0) {
+    StopSE(arg0->sndSeq, 0);
+    arg0->unkF5C = 0;
+}

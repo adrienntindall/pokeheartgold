@@ -6,17 +6,21 @@
 #include "sprite.h"
 #include "field/fog.h"
 
-typedef struct UnkWeatherStruct_021EB968 {
-    SpriteResource *charResObj[4];
-    SpriteTemplate unk10;
-    SpriteResourcesHeader unk40;
-} UnkWeatherStruct_021EB968;
+enum WeatherSystemProcess {
+    WEATHER_SYS_PROC_INIT = 0,
+};
 
-typedef struct WeatherSystem_Sub4 {
-    u32 unk0;
-    u32 unk4;
-    u32 unk8;
-} WeatherSystem_Sub4;
+typedef struct WeatherSpriteResources {
+    SpriteResource *charResObj[4];
+    SpriteTemplate spriteTemplate;
+    SpriteResourcesHeader spriteResHeader;
+} WeatherSpriteResources;
+
+typedef struct WeatherGfxNarcData {
+    u32 paletteId;
+    u32 charId;
+    u32 screenId;
+} WeatherGfxNarcData;
 
 typedef struct WeatherDraw {
     GF_2DGfxResMan *resMan[4];
@@ -39,14 +43,14 @@ typedef struct UnkWeatherStruct_021EC078 {
 typedef struct WeatherSystem WeatherSystem;
 typedef struct WeatherSystem_Sub0 WeatherSystem_Sub0;
 typedef struct WeatherSystem_Sub0_Sub8 WeatherSystem_Sub0_Sub8;
-typedef struct WeatherSystem_Sub0_Sub8_LinkedList WeatherSystem_Sub0_Sub8_LinkedList;
-struct WeatherSystem_Sub0_Sub8_LinkedList {
+typedef struct WeatherObject WeatherObject;
+struct WeatherObject {
     WeatherSystem *weatherSystem;
     Sprite *unk4;
     u32 *unk8;
     u32 unk10[10];
-    WeatherSystem_Sub0_Sub8_LinkedList *next;
-    WeatherSystem_Sub0_Sub8_LinkedList *prev;
+    WeatherObject *next;
+    WeatherObject *prev;
 };
 
 typedef struct UnkStruct_ov01_021EB1E8 {
@@ -85,16 +89,16 @@ typedef struct UnkStruct_021EC504 {
     UnkWeatherSystemSub0Sub8Func unk18;
 } UnkStruct_021EC504;
 
-typedef void (*UnkLinkedListFunc)(WeatherSystem_Sub0_Sub8_LinkedList *);
+typedef void (*UnkLinkedListFunc)(WeatherObject *);
 
-typedef struct UnkStruct_021EC5FC {
+typedef struct WeatherFogChange {
     FogData *fog;
     UnkWeatherStruct_021EB830 unk4;
     UnkWeatherStruct_021EB830 unk18;
     UnkWeatherStruct_021EB830 unk2C;
     UnkWeatherStruct_021EB830 unk40;
     UnkWeatherStruct_021EB830 unk54;
-} UnkStruct_021EC5FC;
+} WeatherFogChange;
 
 typedef struct UnkStruct_021EC774 {
     FogData *fog;
@@ -108,21 +112,47 @@ typedef struct UnkStruct_021EC774 {
 typedef struct UnkStruct_021EC94C {
     UnkStruct_021EC504 unk0;
     UnkStruct_021EC774 unk1C;
-    UnkStruct_021EC5FC unk50;
+    WeatherFogChange unk50;
     s32 data[10];
 } UnkStruct_021EC94C;
 
 typedef struct UnkStruct_021ED474 {
     UnkStruct_021EC774 unk1C;
-    UnkStruct_021EC5FC unk50;
+    WeatherFogChange unk50;
     s32 data[10];
 } UnkStruct_021ED474;
 
 typedef struct UnkStruct_021ED584 {
     UnkWeatherStruct_021EB830 unk0;
     UnkStruct_021EC774 unk1C;
-    UnkStruct_021EC5FC unk50;
+    WeatherFogChange unk50;
 } UnkStruct_021ED584;
+
+typedef struct UnkStruct_021ED710_Sub_Sub4 {
+    fx32 unk0;
+    fx32 unk4;
+    fx32 unk8;
+    s16 unkC;
+    s16 unkE;
+} UnkStruct_021ED710_Sub_Sub4;
+
+typedef struct UnkStruct_021ED710_Sub {
+    s16 x;
+    s16 z;
+    UnkStruct_021ED710_Sub_Sub4 unk4;
+    void *unk14;
+    void *unk18;
+    void *unk1C[2];
+    SysTask *task;
+    u32 unk2C;
+    u16 unk30[4][192];
+} UnkStruct_021ED710_Sub;
+typedef struct UnkStruct_021ED710 {
+    UnkStruct_021ED710_Sub unk0;
+    void *unk62C;
+    u16 unk630;
+    u16 unk632;
+} UnkStruct_021ED710;
 
 void ov01_021EB1E8(UnkStruct_ov01_021EB1E8 *a0);
 WeatherManager *WeatherManager_New(FieldSystem *fieldSystem);
@@ -147,9 +177,9 @@ u16 ov01_021EB804(WeatherSystem* weatherSystem, int weather);
 void ov01_021EB818(u32 arg0, u32 arg1);
 void ov01_021EB830(UnkWeatherStruct_021EB830* arg0, s32 arg1, s32 arg2, s32 arg3);
 BOOL ov01_021EB840(UnkWeatherStruct_021EB830* a0);
-void ov01_021EB86C(WeatherSystem *weatherSystem, s32 arg1, UnkWeatherStruct_021EB968 *arg2);
-SpriteResource *ov01_021EB898(GF_2DGfxResHeader *headerList, s32 resIndex, s32 headerIndex, GF_2DGfxResMan *resMan, NARC *narc, BOOL atEnd);
-void ov01_021EB968(WeatherSystem* weatherSystem, s32 a1, UnkWeatherStruct_021EB968* a2);
+void ov01_021EB86C(WeatherSystem *weatherSystem, s32 arg1, WeatherSpriteResources *arg2);
+SpriteResource *Weather_AddResObjFromOpenNarc(GF_2DGfxResHeader *headerList, s32 resIndex, s32 headerIndex, GF_2DGfxResMan *resMan, NARC *narc, BOOL atEnd);
+void ov01_021EB968(WeatherSystem* weatherSystem, s32 a1, WeatherSpriteResources* a2);
 BOOL WeatherSystem_Init(WeatherSystem* weatherSystem, int weather);
 BOOL ov01_021EBA08(WeatherSystem *weatherSystem, int weather);
 void ov01_021EBB40(WeatherSystem *weatherSystem, int weather, u16 a2);
@@ -160,34 +190,34 @@ void ov01_021EBD18(WeatherSystem *weatherSystem, u16 a1);
 BOOL ov01_021EBD34(WeatherSystem *weatherSystem, WeatherSystem_Sub0 *a1);
 BOOL ov01_021EBE4C(WeatherSystem *weatherSystem, WeatherSystem_Sub0 *a1);
 BOOL ov01_021EBEB8(WeatherSystem_Sub0 *a0);
-void ov01_021EBEF0(WeatherSystem *weatherSystem, u32 a1, UnkWeatherStruct_021EB968 *a2);
-void ov01_021EBF24(WeatherSystem *weatherSystem, u32 a1, UnkWeatherStruct_021EB968 *a2);
-void ov01_021EBF58(WeatherSystem *weatherSystem, u32 a1, UnkWeatherStruct_021EB968 *a2);
-void ov01_021EBF94(WeatherSystem *weatherSystem, u32 a1, UnkWeatherStruct_021EB968 *a2);
+void ov01_021EBEF0(WeatherSystem *weatherSystem, u32 a1, WeatherSpriteResources *a2);
+void ov01_021EBF24(WeatherSystem *weatherSystem, u32 a1, WeatherSpriteResources *a2);
+void ov01_021EBF58(WeatherSystem *weatherSystem, u32 a1, WeatherSpriteResources *a2);
+void ov01_021EBF94(WeatherSystem *weatherSystem, u32 a1, WeatherSpriteResources *a2);
 void ov01_021EBFD0(WeatherSystem *weatherSystem, WeatherSystem_Sub0 *a1);
 void ov01_021EC028(WeatherSystem_Sub0_Sub8 *a0);
 void ov01_021EC078(WeatherSystem *weatherSystem, u16 a1);
 void ov01_021EC0C0(WeatherSystem *weatherSystem, u16 a1);
 void ov01_021EC114(WeatherSystem* weatherSystem, u16 a1);
-void ov01_021EC1BC(WeatherSystem_Sub0_Sub8_LinkedList* a0, int a1);
-void ov01_021EC1E4(WeatherSystem_Sub0_Sub8_LinkedList* a0);
-void ov01_021EC240(SpriteResourcesHeader *spriteTemplate, WeatherSystem *weatherSystem, UnkWeatherStruct_021EB968 *a2, u32 a3, u32 a4);
-void ov01_021EC29C(WeatherSystem_Sub0_Sub8_LinkedList* a0);
-void ov01_021EC2CC(WeatherSystem_Sub0_Sub8_LinkedList * a0);
-void ov01_021EC2E4(WeatherSystem_Sub0_Sub8_LinkedList *a0, UnkLinkedListFunc func);
+void ov01_021EC1BC(WeatherObject* a0, int a1);
+void ov01_021EC1E4(WeatherObject* a0);
+void ov01_021EC240(SpriteResourcesHeader *spriteTemplate, WeatherSystem *weatherSystem, WeatherSpriteResources *a2, u32 a3, u32 a4);
+void WeatherObject_Delete(WeatherObject* a0);
+void WeatherObject_DeleteAll(WeatherObject * a0);
+void ov01_021EC2E4(WeatherObject *a0, UnkLinkedListFunc func);
 void ov01_021EC300(void *data);
-VecFx32 ov01_021EC304(WeatherSystem_Sub0_Sub8_LinkedList *a0);
+VecFx32 ov01_021EC304(WeatherObject *a0);
 void ov01_021EC31C(fx32* x, fx32* z, WeatherSystem_Sub0_Sub8* a0);
 void ov01_021EC470(WeatherSystem_Sub0_Sub8 *a0, int *xOut, int *zOut);
 void ov01_021EC4A8(WeatherSystem_Sub0_Sub8 *a0, fx32 *x, fx32 *y);
 void ov01_021EC504(UnkStruct_021EC504* arg0, WeatherSystem_Sub0_Sub8 *arg1, s16 arg2, s16 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8, UnkWeatherSystemSub0Sub8Func arg9);
 void ov01_021EC52C(UnkStruct_021EC504* arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4);
 s32 ov01_021EC538(UnkStruct_021EC504* arg0);
-void ov01_021EC5FC(UnkStruct_021EC5FC *arg0, UnkStruct_021EC774* arg1, FogData *fog, GXFogSlope fogSlope, s32 fogOffset, GXRgb rgb, s32 arg6, s32 arg7);
-BOOL ov01_021EC650(UnkStruct_021EC5FC *arg0, UnkStruct_021EC774 *arg1, s32 arg2);
+void ov01_021EC5FC(WeatherFogChange *arg0, UnkStruct_021EC774* arg1, FogData *fog, GXFogSlope fogSlope, s32 fogOffset, GXRgb rgb, s32 arg6, s32 arg7);
+BOOL ov01_021EC650(WeatherFogChange *arg0, UnkStruct_021EC774 *arg1, s32 arg2);
 void ov01_021EC678(FogData *fog, GXFogSlope fogSlope, s32 fogOffset, GXRgb rgb);
-void ov01_021EC6A4(UnkStruct_021EC5FC* arg0, FogData *fog, s32 arg2, s32 arg3, GXRgb rgb, s32 arg5);
-BOOL ov01_021EC728(UnkStruct_021EC5FC *arg0);
+void ov01_021EC6A4(WeatherFogChange* arg0, FogData *fog, s32 arg2, s32 arg3, GXRgb rgb, s32 arg5);
+BOOL ov01_021EC728(WeatherFogChange *arg0);
 void ov01_021EC774(UnkStruct_021EC774* a0);
 void ov01_021EC790(UnkStruct_021EC774* arg0, s32 arg1, s32 arg2);
 s32 ov01_021EC7AC(UnkStruct_021EC774* arg0);
@@ -195,19 +225,25 @@ void ov01_021EC7C8(UnkStruct_021EC774* arg0);
 s32 ov01_021EC7E8(UnkStruct_021EC774 *arg0);
 void ov01_021EC828(UnkStruct_021EC774 *arg0);
 void ov01_021EC85C(WeatherSystem_Sub0_Sub8 *a0, UnkWeatherSystemSub0Sub8Func a1, int a2, int a3, int a4, UnkLinkedListFunc a5);
-WeatherSystem_Sub0_Sub8_LinkedList *ov01_021EC8D8(WeatherSystem_Sub0_Sub8 *a0);
+WeatherObject *ov01_021EC8D8(WeatherSystem_Sub0_Sub8 *a0);
 void ov01_021EC8F8(SysTask *task, void* data);
 void ov01_021EC94C(SysTask *task, void *data);
 void ov01_021ECBB4(WeatherSystem_Sub0_Sub8 *, int);
-void ov01_021ECC70(WeatherSystem_Sub0_Sub8_LinkedList *a0);
+void ov01_021ECC70(WeatherObject *a0);
 void ov01_021ECD08(SysTask *task, void* data);
 void ov01_021ECF4C(WeatherSystem_Sub0_Sub8* a0, int a1);
-void ov01_021ED070(WeatherSystem_Sub0_Sub8_LinkedList *a0);
+void ov01_021ED070(WeatherObject *a0);
 void ov01_021ED0F0(SysTask *task, void* data);
 void ov01_021ED31C(WeatherSystem_Sub0_Sub8 *a0, int a1);
-void ov01_021ED44C(WeatherSystem_Sub0_Sub8_LinkedList *a0);
+void ov01_021ED44C(WeatherObject *a0);
 void ov01_021ED474(WeatherSystem_Sub0_Sub8* a0, UnkStruct_021ED474* a1, GXFogSlope fogSlope, s32 arg3, GXRgb arg4, s32 arg5, s32 arg6);
 void ov01_021ED584(SysTask *task, void* data);
+void ov01_021ED710(SysTask *task, void *data);
+void ov01_021ED924(SysTask *task, void *data);
+void ov01_021EDA50(SysTask *task, void *data);
+void ov01_021EDA7C(SysTask *task, void* data);
+void ov01_021EDAB4(WeatherSystem_Sub0_Sub8* a0, u32 sndSeq);
+void ov01_021EDAE0(WeatherSystem_Sub0_Sub8* arg0);
 
 // Not yet decompiled
 void ov01_021EB3F0(SysTask *task, void *data);
@@ -216,8 +252,8 @@ void Weather_Init2DGfxRes(GF_2DGfxResHeader *header, u32 a1, u32 a2);
 BOOL WeatherSystem_Start(WeatherSystem *weatherSystem, int weather, u32 a2, u32 a3);
 void ov01_021EBD70(SysTask *task, void *data);
 void ov01_021EC058(WeatherSystem_Sub0_Sub8 *a0);
-void ov01_021EDAE0(WeatherSystem_Sub0_Sub8 *a0);
 void* ov01_021EC1F4(WeatherSystem_Sub0_Sub8* a0, int a1);
-void ov01_021EDA7C(SysTask *task, void *data);
-
+void *ov01_02203EA0();
+void ov01_02203F2C(void *, float a0);
+        
 #endif // POKEHEARTGOLD_FIELD_WEATHER_MANAGER_H

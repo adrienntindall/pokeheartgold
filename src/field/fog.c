@@ -29,7 +29,7 @@ u16 ov01_021EA860(FogData *fog) {
     return fog->unk10;
 }
 
-void ov01_021EA864(FogData *fog, s32 arg1, BOOL enable, GXFogBlend fogMode, GXFogSlope fogSlope, int fogOffset) {
+void Fog_Set(FogData *fog, s32 arg1, BOOL enable, GXFogBlend fogMode, GXFogSlope fogSlope, int fogOffset) {
     if (arg1 & 1 << 0) {
         fog->enable = enable;
     }

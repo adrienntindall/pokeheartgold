@@ -80,7 +80,7 @@
 .public Fog_GetSlope
 .public Fog_GetOffset
 .public ov01_021EA860
-.public ov01_021EA864
+.public Fog_Set
 .public ov01_021EA89C
 .public ov01_021EA8C4
 .public ov01_021EB1E8
