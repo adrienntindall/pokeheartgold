@@ -2,6 +2,7 @@
 #define POKEHEARTGOLD_FIELD_SYSTEM_H
 
 #include "field/draw_map_name.h"
+#include "field/fog.h"
 #include "field/overlay_01_021E66E4.h"
 #include "field/weather_manager.h"
 
@@ -25,7 +26,6 @@
 #include "sys_task_api.h"
 #include "terrain_attributes.h"
 #include "unk_02092BB8.h"
-#include "field/fog.h"
 
 typedef struct FollowMon {
     LocalMapObject *mapObject;
