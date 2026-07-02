@@ -1,6 +1,7 @@
 .PHONY:     \
 	all 	\
 	check	\
+	meson   \
 	release \	
 	skrew	\
 	skrewrm \
@@ -9,7 +10,11 @@
 
 SUBPROJ_DIR := subprojects
 
-MESON := meson
+MESON_VER := 1.10.0
+MESON_DIR := $(SUBPROJ_DIR)/meson-$(MESON_VER)
+MESON_SUB := $(MESON_DIR)/meson.py
+
+MESON ?= $(MESON_SUB)
 NINJA ?= ninja
 GIT ?= git
 

@@ -1,6 +1,6 @@
 msgenc_exe = executable('msgenc',
     sources : [
-        'msgenc.c',
+        'msgenc.cpp',
         'Options.cpp',
         'MessagesConverter.cpp',
         'MessagesDecoder.cpp',
