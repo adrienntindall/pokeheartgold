@@ -107,5 +107,3 @@ compile_commands.json
 __pycache__
 .venv/
 *.pyc
-
-/subprojects/meson-*/
