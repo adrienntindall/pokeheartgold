@@ -135,7 +135,7 @@ MessageFormat *sub_0204B538(SaveData *saveData, u16 numEligiblePokemon, u16 a2, 
     speciesName = String_New(14, HEAP_ID_FIELD1);
     unused = String_New(2, HEAP_ID_FIELD1);
     pokedex = Save_Pokedex_Get(saveData);
-    messageData = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, NARC_msgdata_msg, NARC_msg_msg_0237_bin, HEAP_ID_FIELD1);
+    messageData = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, NARC_msgdata_msg, msg_0237, HEAP_ID_FIELD1);
     messageFormat = MessageFormat_New_Custom(19, 14, HEAP_ID_FIELD1);
     BufferIntegerAsString(messageFormat, 0, numEligiblePokemon, 1, PRINTING_MODE_LEFT_ALIGN, TRUE);
     for (u8 i = 0; i < NUM_BANNED_BATTLE_FRONTIER; i++) {
@@ -235,14 +235,14 @@ u16 FrontierFieldSystem_GetRandomFrontierTrainerID(FrontierFieldSystem *frontier
     }
 }
 
-static u16 *sub_0204B7D0(FrontierTrainer *frontierTrainer, u32 frontierTrainerIndex, enum HeapID heapID) {
-    MsgData *messageData = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, NARC_msgdata_msg, NARC_msg_msg_0027_bin, heapID);
-    MI_CpuClear8(frontierTrainer, sizeof(FrontierTrainer));
-    u16 *frontierTrainerData = GetFrontierTrainerData(frontierTrainerIndex, heapID);
-    frontierTrainer->index = frontierTrainerIndex;
-    frontierTrainer->introMessage.msg_bank = 0xffff;
-    frontierTrainer->introMessage.msg_no = frontierTrainerIndex * 3;
-    frontierTrainer->trainerClass = frontierTrainerData[0];
+static u16 *sub_0204B7D0(UnkStruct_0204B7D0 *a0, u32 frontierTrainerIndex, enum HeapID heapID) {
+    MsgData *messageData = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, NARC_msgdata_msg, msg_0027, heapID);
+    MI_CpuClear8(a0, sizeof(UnkStruct_0204B7D0));
+    u16 *unk = sub_0204BC7C(frontierTrainerIndex, heapID);
+    a0->unk00 = frontierTrainerIndex;
+    a0->unk18 = 0xffff;
+    a0->unk1a = frontierTrainerIndex * 3;
+    a0->unk04 = unk[0];
     String *trainerName = NewString_ReadMsgData(messageData, frontierTrainerIndex);
     CopyStringToU16Array(trainerName, frontierTrainer->name, NELEMS(frontierTrainer->name));
     String_Delete(trainerName);
