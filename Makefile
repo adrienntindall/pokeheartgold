@@ -6,7 +6,8 @@
 	skrew	\
 	skrewrm \
 	skrewup \
-	target  
+	target  \
+	update
 
 SUBPROJ_DIR := subprojects
 
@@ -19,7 +20,6 @@ NINJA ?= ninja
 GIT ?= git
 
 BUILD ?= build
-ROOT_INI := $(BUILD)/root.ini
 
 UNAME_R := $(shell uname -r)
 UNAME_S := $(shell uname -s)
@@ -80,7 +80,10 @@ target: $(BUILD)/build.ninja
 	@echo $(SKREW_EXE)
 	$(MESON) compile -C $(BUILD)
 
-$(BUILD)/build.ninja: $(ROOT_INI) | $(BUILD) $(SKREW_EXE) meson
+clean: $(BUILD)/build.ninja
+	$(MESON) compile -C $(BUILD) --clean
+
+$(BUILD)/build.ninja: | $(BUILD) $(SKREW_EXE) meson
 	$(MESON) setup \
 		--native-file=$(ROOT_INI) \
 		--cross-file=meson/$(CROSS) \
@@ -93,6 +96,9 @@ $(ROOT_INI): | $(BUILD)
 	
 $(BUILD):
 	mkdir -p -- $(BUILD)
+	
+update: meson skrewup
+	$(MESON) subprojects update || true
 	
 meson: ;
 ifeq ($(MESON),$(MESON_SUB))
