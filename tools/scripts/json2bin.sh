@@ -17,6 +17,7 @@ help() {
     echo " -D | --define            defines to be used by the compiler"
     echo " -N | --narc              outputs the narc directly. For use when everything is contained in a single json file."
     echo " -w | --overwrite-name    name to use for the output files instead of the original name"
+    echo " -x | --overwrite-ext     extension to use for the output files instead of .bin"
     echo " -y | --obj-copy          use object copy instead of o2narc"
 }
 
@@ -33,6 +34,8 @@ POSTSCRIPT=""
 BUILD_NARC=false
 OW_NAME=""
 OW_NAME_FLAG=false
+OW_EXT=""
+OW_EXT_FLAG=false
 OBJ_COPY="arm-none-eabi-objcopy"
 OBJ_COPY_FLAG=false
 
@@ -97,6 +100,12 @@ while [[ $# -gt 0 ]] ; do
             shift
             shift
             ;;
+        -x|--overwrite-ext)
+            OW_EXT="$2"
+            OW_EXT_FLAG=true
+            shift
+            shift
+            ;;
         -y|--obj-copy)
             OBJ_COPY_FLAG=true
             shift;
@@ -124,6 +133,9 @@ for json_file in "${JSON_FILES[@]}" ; do
         fi
         json_obj="$OUTDIR/$OW_NAME.o"
         json_bin="$OUTDIR/$OW_NAME.bin"
+        if [ "$OW_EXT_FLAG" = true ] ; then
+            json_bin="$OUTDIR/$OW_NAME.$OW_EXT"
+        fi
         narc="$OUTDIR/$OW_NAME.narc"
     else 
         json_intr="$OUTDIR/$json_noext.c"
@@ -132,6 +144,9 @@ for json_file in "${JSON_FILES[@]}" ; do
         fi
         json_obj="$OUTDIR/$json_noext.o"
         json_bin="$OUTDIR/$json_noext.bin"
+        if [ "$OW_EXT_FLAG" = true ] ; then
+            json_bin="$OUTDIR/$json_noext.$OW_EXT"
+        fi
         narc="$OUTDIR/$json_noext.narc"
     fi
     # Convert
