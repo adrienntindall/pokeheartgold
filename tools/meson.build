@@ -1,5 +1,6 @@
 nitrorom_exe = find_program('bin/makerom.exe') #this will eventually be nitrorom.exe like in plat
 
+subdir('compstatic')
 subdir('csv2bin')
 subdir('knarc')
 subdir('jsonproc')
