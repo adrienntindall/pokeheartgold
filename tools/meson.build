@@ -2,7 +2,6 @@ nitrorom_exe = find_program('bin/makerom.exe') #this will eventually be nitrorom
 
 subdir('compstatic')
 subdir('csv2bin')
-subdir('knarc')
 subdir('jsonproc')
 subdir('msgenc')
 subdir('nitrogfx')
