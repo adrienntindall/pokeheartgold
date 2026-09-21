@@ -1,10 +1,10 @@
 #ifndef POKEHEARTGOLD_UNK_02035900_H
 #define POKEHEARTGOLD_UNK_02035900_H
 
-#include "unk_02037C94.h"
 #include "global.h"
 
 #include "safari_zone.h"
+#include "unk_02037C94.h"
 
 BOOL sub_02036144(void);
 BOOL sub_020373B4(u16 arg0);

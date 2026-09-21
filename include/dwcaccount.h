@@ -14,7 +14,7 @@ typedef struct DWCFriendData {
 BOOL DWC_CheckValidConsole(DWCUserData *userData);
 BOOL DWC_CheckHasProfile(DWCUserData *userData);
 int DWC_IsValidFriendData(DWCFriendData *friendData);
-void DWC_CreateExchangeToken(DWCUserData*, DWCFriendData*);
+void DWC_CreateExchangeToken(DWCUserData *, DWCFriendData *);
 void DWC_CreateFriendKeyToken(DWCFriendData *friendData, u64 a1);
 int DWC_CheckFriendKey(DWCUserData *userData, u64 a1);
 int DWC_GetGsProfileId(DWCUserData *userData, DWCFriendData *friendData);
