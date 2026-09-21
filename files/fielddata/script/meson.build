@@ -8,7 +8,7 @@ subdir('scr_seq')
 scr_seq_gen = generator(makescript_sh,
     arguments : [
         '--out-dir', build_dir / 'scr_seq.narc.p',
-        '-a', meson.get_compiler('nasm', native: false).cmd_array()[0],
+        '-a', arm_none_eabi_gcc_exe.full_path(),
         '-i', relative_source_root / 'subprojects' / 'NitroSDK-4.2.30001' / 'include',
         '-i', relative_source_root / 'subprojects' / 'NitroSDK-4.2.30001' / 'include' / 'nitro',
         '-i', relative_source_root / 'subprojects' / 'NitroSystem-071126.1' / 'include',
