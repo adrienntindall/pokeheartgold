@@ -305,8 +305,8 @@
 .public ov12_0225B3A0
 .public ov12_0225B34C
 .public ov12_0226D120
-.public ov12_02259944
-.public ov12_02259968
+.public BattleDisplay_InitTaskSetupUI
+.public BattleDisplay_InitTaskSetEncounter
 .public ov12_02259BA8
 .public ov12_02259D48
 .public ov12_02259F30

@@ -4210,19 +4210,19 @@ void sub_020729A4(NARC *narc, u8 *ret, u16 species, u16 isFrontpic) {
     *ret = sp4.unk0[r5].unk_0;
 }
 
-void sub_020729D8(NARC *narc, s8 *ret, u16 a2, u16 a3) {
+void sub_020729D8(NARC *narc, s8 *ret, u16 a2) {
     struct UnkStruct_02072914 sp4;
     NARC_ReadFromMember(narc, 0, a2 * sizeof(struct UnkStruct_02072914), sizeof(struct UnkStruct_02072914), &sp4);
     *ret = sp4.unk_56;
 }
 
-void sub_020729FC(NARC *narc, s8 *ret, u16 a2, u16 a3) {
+void sub_020729FC(NARC *narc, s8 *ret, u16 a2) {
     struct UnkStruct_02072914 sp4;
     NARC_ReadFromMember(narc, 0, a2 * sizeof(struct UnkStruct_02072914), sizeof(struct UnkStruct_02072914), &sp4);
     *ret = sp4.unk_57;
 }
 
-void sub_02072A20(NARC *narc, u8 *ret, u16 a2, u16 a3) {
+void sub_02072A20(NARC *narc, u8 *ret, u16 a2) {
     struct UnkStruct_02072914 sp4;
     NARC_ReadFromMember(narc, 0, a2 * sizeof(struct UnkStruct_02072914), sizeof(struct UnkStruct_02072914), &sp4);
     *ret = sp4.unk_58;

@@ -507,7 +507,7 @@ typedef struct OpponentData {
 } OpponentData;
 
 typedef struct UnkBattleSystemSub17C {
-    ManagedSprite *unk0;
+    ManagedSprite *managedSprite;
     BattleSystem *battleSystem;
     u8 unk8;
     u8 unk9;

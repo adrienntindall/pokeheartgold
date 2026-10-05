@@ -1,0 +1,21 @@
+#ifndef POKEHEARTGOLD_BATTLE_BATTLE_DISPLAY_H
+#define POKEHEARTGOLD_BATTLE_BATTLE_DISPLAY_H
+
+#include "battle/battle.h"
+#include "battle/battle_system.h"
+#include "battle/battle_message_structs.h"
+
+typedef struct UISetupTaskData {
+    BattleSystem *battleSys;
+    void *animContext;
+    void *animObjects[3];
+    u8 step;
+    u8 frameCount;
+    u8 fadeStep;
+    u8 unused;
+} UISetupTaskData;
+
+void BattleDisplay_InitTaskSetupUI(BattleSystem *battleSys, OpponentData *opponentData);
+void BattleDisplay_InitTaskSetEncounter(BattleSystem *battleSys, OpponentData *opponentData, MonEncounterMessage *message);
+
+#endif

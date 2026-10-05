@@ -179,7 +179,7 @@ static void BattleIOCmd_SetupUI(BattleSystem *battleSys, OpponentData *opponentD
     UISetupMessage *message = (UISetupMessage *)&opponentData->unk94[0];
 
     BattleSystem_SetRandTemp(battleSys, message->seed);
-    ov12_02259944(battleSys, opponentData);
+    BattleDisplay_InitTaskSetupUI(battleSys, opponentData);
     BattleController_EmitClearCommand(battleSys, opponentData->battlerId, BATTLE_COMMAND_SETUP_UI);
     ov12_02259928(opponentData);
 }
@@ -187,7 +187,7 @@ static void BattleIOCmd_SetupUI(BattleSystem *battleSys, OpponentData *opponentD
 static void BattleIOCmd_SetEncounter(BattleSystem *battleSys, OpponentData *opponentData) {
     MonEncounterMessage *message = (MonEncounterMessage *)&opponentData->unk94[0];
 
-    ov12_02259968(battleSys, opponentData, message);
+    BattleDisplay_InitTaskSetEncounter(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
