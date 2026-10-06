@@ -17,5 +17,6 @@ typedef struct UISetupTaskData {
 
 void BattleDisplay_InitTaskSetupUI(BattleSystem *battleSys, OpponentData *opponentData);
 void BattleDisplay_InitTaskSetEncounter(BattleSystem *battleSys, OpponentData *opponentData, MonEncounterMessage *message);
+void BattleDisplay_InitTaskShowEncounter(BattleSystem *battleSys, OpponentData *opponentData, MonShowMessage *message);
 
 #endif

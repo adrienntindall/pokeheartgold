@@ -307,9 +307,9 @@
 .public ov12_0226D120
 .public BattleDisplay_InitTaskSetupUI
 .public BattleDisplay_InitTaskSetEncounter
-.public ov12_02259BA8
-.public ov12_02259D48
-.public ov12_02259F30
+.public BattleDisplay_InitTaskShowEncounter
+.public BattleDisplay_InitTaskShowPokemon
+.public BattleDisplay_InitTaskReturnPokemon
 .public ov12_0225A018
 .public ov12_0225A07C
 .public ov12_0225A2A0

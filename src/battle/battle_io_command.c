@@ -194,21 +194,21 @@ static void BattleIOCmd_SetEncounter(BattleSystem *battleSys, OpponentData *oppo
 static void BattleIOCmd_ShowEncounter(BattleSystem *battleSys, OpponentData *opponentData) {
     MonShowMessage *message = (MonShowMessage *)&opponentData->unk94[0];
 
-    ov12_02259BA8(battleSys, opponentData, message);
+    BattleDisplay_InitTaskShowEncounter(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_ShowPokemon(BattleSystem *battleSys, OpponentData *opponentData) {
     MonShowMessage *message = (MonShowMessage *)&opponentData->unk94[0];
 
-    ov12_02259D48(battleSys, opponentData, message);
+    BattleDisplay_InitTaskShowPokemon(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_ReturnPokemon(BattleSystem *battleSys, OpponentData *opponentData) {
     MonReturnMessage *message = (MonReturnMessage *)&opponentData->unk94[0];
 
-    ov12_02259F30(battleSys, opponentData, message);
+    BattleDisplay_InitTaskReturnPokemon(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 

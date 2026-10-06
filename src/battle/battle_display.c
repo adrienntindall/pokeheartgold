@@ -128,3 +128,204 @@ void BattleDisplay_InitTaskSetEncounter(BattleSystem *battleSys, OpponentData *o
 
     sub_02005B58(TRUE);
 }
+
+extern void ov12_0225B960(SysTask *, void *);
+extern void ov12_0225BE38(SysTask *, void *);
+
+typedef struct MonShowData {
+    BattleSystem *battleSys;
+    OpponentData *opponentData;
+    void *ballCapsuleSealEffect;
+    void *ballRotation;
+    void *btlMonObjData;
+    PokepicTemplate spriteTemplate;
+    void *battleAnimSys;
+    MoveAnimation moveAnim;
+    u8 command;
+    u8 battler;
+    u8 battlerType;
+    u8 state;
+    u8 face;
+    u8 yOffset;
+    u16 species;
+    int cryMod;
+    u8 selectedPartySlot;
+    u8 nature;
+    u16 capturedBall;
+    s8 height;
+    s8 shadowXOffset;
+    u8 isShiny;
+    u8 shadowSize;
+    u16 isQuickSendOut;
+    u8 delay;
+    u8 formNum;
+    int isSubstitute;
+} MonShowData;
+
+void BattleDisplay_InitTaskShowEncounter(BattleSystem *battleSys, OpponentData *opponentData, MonShowMessage *message)
+{
+    BOOL isShiny;
+    MonShowData *monShowData;
+    int battleType = BattleSystem_GetBattleType(battleSys);
+    monShowData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(MonShowData));
+
+    if (opponentData->battlerType & 1) {
+        monShowData->face = 2;
+    } else {
+        monShowData->face = 0;
+    }
+
+    isShiny = !!message->isShiny;
+
+    GetMonSpriteCharAndPlttNarcIdsEx(&monShowData->spriteTemplate, message->species, message->gender, monShowData->face, isShiny, message->formNum, message->personality);
+
+    monShowData->yOffset = GetMonPicHeightBySpeciesGenderForm(message->species, message->gender, monShowData->face, message->formNum, message->personality);
+
+    sub_020729D8(opponentData->narc, &monShowData->height, message->species);
+    sub_020729FC(opponentData->narc, &monShowData->shadowXOffset, message->species);
+    sub_02072A20(opponentData->narc, &monShowData->shadowSize, message->species);
+    OpponentData_ClearSavedCursorPosition(opponentData);
+
+    monShowData->battleSys = battleSys;
+    monShowData->opponentData = opponentData;
+    monShowData->state = 0;
+    monShowData->delay = 0;
+    monShowData->command = message->command;
+    monShowData->battler = opponentData->battlerId;
+    monShowData->species = message->species;
+    monShowData->formNum = message->formNum;
+    monShowData->battlerType = opponentData->battlerType;
+    monShowData->cryMod = message->cryModulation;
+    monShowData->selectedPartySlot = message->selectedPartySlot;
+    monShowData->nature = GetNatureFromPersonality(message->personality);
+    monShowData->capturedBall = message->capturedBall;
+    monShowData->isShiny = message->isShiny;
+    monShowData->isQuickSendOut = 0;
+
+    sub_02005B58(TRUE);
+
+    battleType = BattleSystem_GetBattleType(battleSys);
+    
+    if (ov12_0223C140(battleSys, opponentData->battlerId) != 255) {
+        if ((battleType & 2) && !(battleType & 8) && opponentData->battlerType > 3) {
+            SysTask_CreateOnMainQueue(ov12_0225B960, monShowData, 0);
+        } else {
+            SysTask_CreateOnMainQueue(ov12_0225BE38, monShowData, 0);
+        }
+    } else {
+        SysTask_CreateOnMainQueue(ov12_0225B960, monShowData, 0);
+    }
+}
+
+extern void ov12_0225C18C(SysTask *, void *);
+extern void ov12_0225C6C8(SysTask *, void *);
+
+void BattleDisplay_InitTaskShowPokemon(BattleSystem *battleSys, OpponentData *opponentData, MonShowMessage *message)
+{
+    BOOL isShiny;
+    MonShowData *monShowData;
+    int battleType = BattleSystem_GetBattleType(battleSys);
+    monShowData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(MonShowData));
+    monShowData->state = 0;
+
+    if (opponentData->battlerType & 1) {
+        monShowData->face = 2;
+    } else {
+        monShowData->face = 0;
+    }
+
+    isShiny = !!message->isShiny;
+
+    GetMonSpriteCharAndPlttNarcIdsEx(&monShowData->spriteTemplate, message->species, message->gender, monShowData->face, isShiny, message->formNum, message->personality);
+
+    monShowData->yOffset = GetMonPicHeightBySpeciesGenderForm(message->species, message->gender, monShowData->face, message->formNum, message->personality);
+
+    sub_020729D8(opponentData->narc, &monShowData->height, message->species);
+    sub_020729FC(opponentData->narc, &monShowData->shadowXOffset, message->species);
+    sub_02072A20(opponentData->narc, &monShowData->shadowSize, message->species);
+    OpponentData_ClearSavedCursorPosition(opponentData);
+
+    monShowData->battleSys = battleSys;
+    monShowData->opponentData = opponentData;
+    monShowData->command = message->command;
+    monShowData->battler = opponentData->battlerId;
+    monShowData->species = message->species;
+    monShowData->formNum = message->formNum;
+    monShowData->battlerType = opponentData->battlerType;
+    monShowData->cryMod = message->cryModulation;
+    monShowData->selectedPartySlot = message->selectedPartySlot;
+    monShowData->nature = GetNatureFromPersonality(message->personality);
+    monShowData->capturedBall = message->capturedBall;
+    monShowData->isShiny = message->isShiny;
+    monShowData->isQuickSendOut = message->isQuickSendOut;
+    monShowData->delay = 0;
+    monShowData->isSubstitute = message->isSubstitute;
+
+    for (int i = 0; i < 4; i++) {
+        monShowData->moveAnim.species[i] = message->battleMonSpecies[i];
+        monShowData->moveAnim.genders[i] = message->battleMonGenders[i];
+        monShowData->moveAnim.isShiny[i] = message->battleMonIsShiny[i];
+        monShowData->moveAnim.formNums[i] = message->battleMonFormNums[i];
+        monShowData->moveAnim.personalities[i] = message->battleMonPersonalities[i];
+    }
+
+    u32 unk = ov12_0223C140(battleSys, opponentData->battlerId);
+    
+    if (unk == 255 || unk != monShowData->selectedPartySlot) {
+        SysTask_CreateOnMainQueue(ov12_0225C18C, monShowData, 0);
+    } else {
+        SysTask_CreateOnMainQueue(ov12_0225C6C8, monShowData, 0);
+    }
+}
+
+typedef struct MonReturnData {
+    BattleSystem *battleSys;
+    OpponentData *opponentData;
+    Pokepic *monSprite;
+    void *ballRotation;
+    MoveAnimation moveAnim;
+    u8 command;
+    u8 battler;
+    u8 battlerType;
+    u8 state;
+    u8 yOffset;
+    u8 unused;
+    u16 capturedBall;
+    int isSubstitute;
+    u32 unk_74;
+} MonReturnData;
+
+void ov12_0225C9BC(SysTask *, void *);
+void ov12_0225CC58(SysTask *, void *);
+
+void BattleDisplay_InitTaskReturnPokemon(BattleSystem *battleSys, OpponentData *opponentData, MonReturnMessage *message)
+{
+    MonReturnData *monReturnData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(MonReturnData));
+    monReturnData->battleSys = battleSys;
+    monReturnData->opponentData = opponentData;
+    monReturnData->monSprite = opponentData->pokepic;
+    monReturnData->command = message->command;
+    monReturnData->battler = opponentData->battlerId;
+    monReturnData->battlerType = opponentData->battlerType;
+    monReturnData->state = 0;
+    monReturnData->yOffset = message->yOffset;
+    monReturnData->capturedBall = message->capturedBall;
+    monReturnData->isSubstitute = message->isSubstitute;
+    monReturnData->unk_74 = message->unk2C;
+
+    for (int i = 0; i < 4; i++) {
+        monReturnData->moveAnim.species[i] = message->battleMonSpecies[i];
+        monReturnData->moveAnim.genders[i] = message->battleMonGenders[i];
+        monReturnData->moveAnim.isShiny[i] = message->battleMonIsShiny[i];
+        monReturnData->moveAnim.formNums[i] = message->battleMonFormNums[i];
+        monReturnData->moveAnim.personalities[i] = message->battleMonPersonalities[i];
+    }
+
+    u32 unk = ov12_0223C140(battleSys, opponentData->battlerId);
+    
+    if (unk == 255 || unk != monReturnData->unk_74) {
+        SysTask_CreateOnMainQueue(ov12_0225C9BC, monReturnData, 0);
+    } else {
+        SysTask_CreateOnMainQueue(ov12_0225CC58, monReturnData, 0);
+    }
+}
