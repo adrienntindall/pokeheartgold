@@ -310,8 +310,8 @@
 .public BattleDisplay_InitTaskShowEncounter
 .public BattleDisplay_InitTaskShowPokemon
 .public BattleDisplay_InitTaskReturnPokemon
-.public ov12_0225A018
-.public ov12_0225A07C
+.public BattleDisplay_InitTaskOpenCaptureBall
+.public BattleDisplay_InitTaskSetTrainerEncounter
 .public ov12_0225A2A0
 .public ov12_0225A334
 .public ov12_0225A37C

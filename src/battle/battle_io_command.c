@@ -215,7 +215,7 @@ static void BattleIOCmd_ReturnPokemon(BattleSystem *battleSys, OpponentData *opp
 static void BattleIOCmd_OpenCaptureBall(BattleSystem *battleSys, OpponentData *opponentData) {
     OpenCaptureBallMessage *message = (OpenCaptureBallMessage *)&opponentData->unk94[0];
 
-    ov12_0225A018(battleSys, opponentData, message);
+    BattleDisplay_InitTaskOpenCaptureBall(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
@@ -228,7 +228,7 @@ static void BattleIOCmd_DeletePokemon(BattleSystem *battleSys, OpponentData *opp
 static void BattleIOCmd_SetTrainerEncounter(BattleSystem *battleSys, OpponentData *opponentData) {
     TrainerEncounterMessage *message = (TrainerEncounterMessage *)&opponentData->unk94[0];
 
-    ov12_0225A07C(battleSys, opponentData, message);
+    BattleDisplay_InitTaskSetTrainerEncounter(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 

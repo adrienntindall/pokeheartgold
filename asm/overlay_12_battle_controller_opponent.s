@@ -6,57 +6,8 @@
 
 	.text
 
-	thumb_func_start ov12_0225A018
-ov12_0225A018: ; 0x0225A018
-	push {r3, r4, r5, r6, r7, lr}
-	add r7, r0, #0
-	add r5, r1, #0
-	mov r0, #5
-	mov r1, #0x10
-	add r6, r2, #0
-	bl Heap_Alloc
-	add r4, r0, #0
-	str r7, [r4]
-	ldr r0, [r5, #0x20]
-	str r0, [r4, #4]
-	ldrb r0, [r6]
-	strb r0, [r4, #8]
-	mov r0, #0x65
-	lsl r0, r0, #2
-	ldrb r1, [r5, r0]
-	add r0, r0, #1
-	strb r1, [r4, #9]
-	ldrb r0, [r5, r0]
-	mov r1, #0
-	add r3, r1, #0
-	strb r0, [r4, #0xa]
-	strb r1, [r4, #0xb]
-	ldrb r0, [r6, #1]
-	strb r0, [r4, #0xc]
-	ldrh r0, [r6, #2]
-	lsl r2, r0, #1
-	ldr r0, _0225A074 ; =ov12_0226D15A
-	ldrh r0, [r0, r2]
-	mov r2, #0x10
-	str r0, [sp]
-	ldr r0, [r4, #4]
-	bl Pokepic_StartPaletteFade
-	ldr r0, [r4, #4]
-	mov r1, #0x2d
-	mov r2, #1
-	bl Pokepic_SetAttr
-	ldr r0, _0225A078 ; =ov12_0225CDB8
-	add r1, r4, #0
-	mov r2, #0
-	bl SysTask_CreateOnMainQueue
-	pop {r3, r4, r5, r6, r7, pc}
-	.balign 4, 0
-_0225A074: .word ov12_0226D15A
-_0225A078: .word ov12_0225CDB8
-	thumb_func_end ov12_0225A018
-
-	thumb_func_start ov12_0225A07C
-ov12_0225A07C: ; 0x0225A07C
+	thumb_func_start BattleDisplay_InitTaskSetTrainerEncounter
+BattleDisplay_InitTaskSetTrainerEncounter: ; 0x0225A07C
 	push {r3, r4, r5, r6, r7, lr}
 	sub sp, #0x50
 	add r6, r0, #0
@@ -142,7 +93,7 @@ _0225A11C:
 	lsl r2, r2, #0x18
 	add r0, r6, #0
 	lsr r2, r2, #0x18
-	bl ov12_02261EF0
+	bl BattleDisplay_GetLinkTrainerClass
 	strh r0, [r7, #2]
 	add r0, r6, #0
 	bl BattleSystem_GetBattleType
@@ -315,7 +266,7 @@ _0225A290: .word ov07_022377F4 + 2
 _0225A294: .word ov07_022377F4 + 4
 _0225A298: .word ov07_022377DC
 _0225A29C: .word ov12_0225CE28
-	thumb_func_end ov12_0225A07C
+	thumb_func_end BattleDisplay_InitTaskSetTrainerEncounter
 
 	thumb_func_start ov12_0225A2A0
 ov12_0225A2A0: ; 0x0225A2A0
@@ -359,7 +310,7 @@ _0225A2DA:
 	ldrb r1, [r5, r1]
 	ldrb r2, [r2, #1]
 	add r0, r6, #0
-	bl ov12_02261EF0
+	bl BattleDisplay_GetLinkTrainerClass
 	mov r1, #0
 	bl TrainerClassToBackpicID
 _0225A2FC:
@@ -15893,8 +15844,8 @@ ov12_02261ED4: ; 0x02261ED4
 	.balign 4, 0
 	thumb_func_end ov12_02261ED4
 
-	thumb_func_start ov12_02261EF0
-ov12_02261EF0: ; 0x02261EF0
+	thumb_func_start BattleDisplay_GetLinkTrainerClass
+BattleDisplay_GetLinkTrainerClass: ; 0x02261EF0
 	push {r4, r5, r6, lr}
 	add r5, r0, #0
 	add r6, r1, #0
@@ -15933,7 +15884,7 @@ _02261F32:
 	add r0, r4, #0
 	pop {r4, r5, r6, pc}
 	.balign 4, 0
-	thumb_func_end ov12_02261EF0
+	thumb_func_end BattleDisplay_GetLinkTrainerClass
 
 	thumb_func_start ov12_02261F38
 ov12_02261F38: ; 0x02261F38
@@ -16030,6 +15981,7 @@ ov12_0226D141: ; 0x0226D141
 	.byte 0x28, 0x0A, 0x23, 0x0A, 0x1E, 0x0A, 0x19, 0x0A, 0x14, 0x0A, 0x0F, 0x0A, 0x0A, 0x0F, 0x0A
 	.byte 0x14, 0x0A, 0x19, 0x0A, 0x1E, 0x0A, 0x23, 0x0A, 0x28, 0x0A
 
+.public ov12_0226D15A
 ov12_0226D15A: ; 0x0226D15A
 	.byte 0x00, 0x00, 0x97, 0x72, 0xFF, 0x3F
 	.byte 0xF0, 0x7A, 0xDF, 0x7A, 0xD7, 0x53, 0xF5, 0x67, 0x2C, 0x7B, 0x7E, 0x2B, 0x1F, 0x43, 0xDD, 0x7B

@@ -281,7 +281,7 @@ void BattleDisplay_InitTaskShowPokemon(BattleSystem *battleSys, OpponentData *op
 typedef struct MonReturnData {
     BattleSystem *battleSys;
     OpponentData *opponentData;
-    Pokepic *monSprite;
+    Pokepic *pokepic;
     void *ballRotation;
     MoveAnimation moveAnim;
     u8 command;
@@ -303,7 +303,7 @@ void BattleDisplay_InitTaskReturnPokemon(BattleSystem *battleSys, OpponentData *
     MonReturnData *monReturnData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(MonReturnData));
     monReturnData->battleSys = battleSys;
     monReturnData->opponentData = opponentData;
-    monReturnData->monSprite = opponentData->pokepic;
+    monReturnData->pokepic = opponentData->pokepic;
     monReturnData->command = message->command;
     monReturnData->battler = opponentData->battlerId;
     monReturnData->battlerType = opponentData->battlerType;
@@ -328,4 +328,36 @@ void BattleDisplay_InitTaskReturnPokemon(BattleSystem *battleSys, OpponentData *
     } else {
         SysTask_CreateOnMainQueue(ov12_0225CC58, monReturnData, 0);
     }
+}
+
+typedef struct OpenCaptureBallData {
+    BattleSystem *battleSys;
+    Pokepic *pokepic;
+    u8 command;
+    u8 battler;
+    u8 battlerType;
+    u8 state;
+    u8 yOffset;
+    u8 unused_0D;
+    u16 unused_0E;
+} OpenCaptureBallData;
+
+extern u16 ov12_0226D15A[];
+extern void ov12_0225CDB8(SysTask *, void *);
+
+void BattleDisplay_InitTaskOpenCaptureBall(BattleSystem *battleSys, OpponentData *opponentData, OpenCaptureBallMessage *message)
+{
+    OpenCaptureBallData *captureOpenBallData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(OpenCaptureBallData));
+
+    captureOpenBallData->battleSys = battleSys;
+    captureOpenBallData->pokepic = opponentData->pokepic;
+    captureOpenBallData->command = message->command;
+    captureOpenBallData->battler = opponentData->battlerId;
+    captureOpenBallData->battlerType = opponentData->battlerType;
+    captureOpenBallData->state = 0;
+    captureOpenBallData->yOffset = message->yOffset;
+
+    Pokepic_StartPaletteFade(captureOpenBallData->pokepic, 0, 16, 0, ov12_0226D15A[message->ball]);
+    Pokepic_SetAttr(captureOpenBallData->pokepic, 0x2D, TRUE);
+    SysTask_CreateOnMainQueue(ov12_0225CDB8, captureOpenBallData, 0);
 }
