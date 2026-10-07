@@ -235,19 +235,19 @@ static void BattleIOCmd_SetTrainerEncounter(BattleSystem *battleSys, OpponentDat
 static void BattleIOCmd_ThrowTrainerBall(BattleSystem *battleSys, OpponentData *opponentData) {
     TrainerThrowBallMessage *message = (TrainerThrowBallMessage *)&opponentData->unk94[0];
 
-    ov12_0225A2A0(battleSys, opponentData, message);
+    BattleDisplay_InitTaskThrowTrainerBall(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_SlideTrainerOut(BattleSystem *battleSys, OpponentData *opponentData) {
-    ov12_0225A334(battleSys, opponentData);
+    BattleDisplay_InitTaskSlideTrainerOut(battleSys, opponentData);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_SlideTrainerIn(BattleSystem *battleSys, OpponentData *opponentData) {
     TrainerSlideInMessage *message = (TrainerSlideInMessage *)&opponentData->unk94[0];
 
-    ov12_0225A37C(battleSys, opponentData, message);
+    BattleDisplay_InitTaskSlideTrainerIn(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 

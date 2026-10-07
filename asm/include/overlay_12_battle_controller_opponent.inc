@@ -137,7 +137,7 @@
 .public ov07_0223494C
 .public ov07_02234A20
 .public ov07_02234B5C
-.public ov07_022377DC
+.public gBattlerEncounterX
 .public ov07_022377F4
 .public ov08_022225D4
 .public ov10_0221BE20
@@ -312,9 +312,9 @@
 .public BattleDisplay_InitTaskReturnPokemon
 .public BattleDisplay_InitTaskOpenCaptureBall
 .public BattleDisplay_InitTaskSetTrainerEncounter
-.public ov12_0225A2A0
-.public ov12_0225A334
-.public ov12_0225A37C
+.public BattleDisplay_InitTaskThrowTrainerBall
+.public BattleDisplay_InitTaskSlideTrainerOut
+.public BattleDisplay_InitTaskSlideTrainerIn
 .public ov12_0225A414
 .public ov12_0225A4DC
 .public ov12_0225A524

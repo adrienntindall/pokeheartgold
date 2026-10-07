@@ -232,7 +232,7 @@
 .public ov07_0223494C
 .public ov07_02234A20
 .public ov07_02234B5C
-.public ov07_022377DC
+.public gBattlerEncounterX
 .public ov07_022377F4
 .public BattleSystem_GetSpriteSystem
 .public BattleSystem_GetSpriteManager

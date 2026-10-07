@@ -6,451 +6,6 @@
 
 	.text
 
-	thumb_func_start BattleDisplay_InitTaskSetTrainerEncounter
-BattleDisplay_InitTaskSetTrainerEncounter: ; 0x0225A07C
-	push {r3, r4, r5, r6, r7, lr}
-	sub sp, #0x50
-	add r6, r0, #0
-	add r5, r1, #0
-	mov r0, #5
-	mov r1, #0x24
-	add r7, r2, #0
-	bl Heap_Alloc
-	add r4, r0, #0
-	mov r2, #0
-	ldr r0, _0225A288 ; =0x00000195
-	strb r2, [r4, #0x12]
-	ldrb r0, [r5, r0]
-	mov r1, #1
-	tst r0, r1
-	beq _0225A0C4
-	mov r0, #2
-	strb r0, [r4, #0x13]
-	add r0, r6, #0
-	bl ov12_0223A8F4
-	str r0, [r4, #8]
-	ldr r1, _0225A288 ; =0x00000195
-	ldr r0, [r0]
-	ldrb r2, [r5, r1]
-	mov r1, #1
-	and r1, r2
-	mov r2, #6
-	mul r2, r1
-	ldr r1, _0225A28C ; =ov07_022377F4
-	ldrsh r1, [r1, r2]
-	mov r2, #0x58
-	bl ManagedSprite_SetPositionXY
-	b _0225A0E8
-_0225A0C4:
-	add r0, r6, #0
-	add r1, r2, #0
-	strb r2, [r4, #0x13]
-	bl ov12_0223A8F4
-	str r0, [r4, #8]
-	ldr r1, _0225A288 ; =0x00000195
-	ldr r0, [r0]
-	ldrb r2, [r5, r1]
-	mov r1, #1
-	and r1, r2
-	mov r2, #6
-	mul r2, r1
-	ldr r1, _0225A28C ; =ov07_022377F4
-	ldrsh r1, [r1, r2]
-	mov r2, #0x88
-	bl ManagedSprite_SetPositionXY
-_0225A0E8:
-	add r0, r6, #0
-	bl BattleSystem_GetBattleType
-	mov r1, #8
-	tst r0, r1
-	bne _0225A10A
-	add r0, r6, #0
-	bl BattleSystem_GetBattleType
-	mov r1, #0x10
-	tst r0, r1
-	beq _0225A112
-	ldr r0, _0225A288 ; =0x00000195
-	ldrb r1, [r5, r0]
-	mov r0, #1
-	tst r0, r1
-	beq _0225A112
-_0225A10A:
-	ldr r0, _0225A288 ; =0x00000195
-	ldrb r0, [r5, r0]
-	str r0, [sp, #0x10]
-	b _0225A11C
-_0225A112:
-	ldr r0, _0225A288 ; =0x00000195
-	ldrb r1, [r5, r0]
-	mov r0, #1
-	and r0, r1
-	str r0, [sp, #0x10]
-_0225A11C:
-	mov r1, #0x65
-	ldrh r2, [r7, #2]
-	lsl r1, r1, #2
-	ldrb r1, [r5, r1]
-	lsl r2, r2, #0x18
-	add r0, r6, #0
-	lsr r2, r2, #0x18
-	bl BattleDisplay_GetLinkTrainerClass
-	strh r0, [r7, #2]
-	add r0, r6, #0
-	bl BattleSystem_GetBattleType
-	mov r1, #0x65
-	lsl r1, r1, #2
-	str r0, [sp, #0x20]
-	mov r0, #0
-	str r0, [sp, #0x1c]
-	ldrb r1, [r5, r1]
-	add r0, r6, #0
-	bl ov12_0223C140
-	cmp r0, #0xff
-	beq _0225A166
-	ldr r0, [sp, #0x20]
-	mov r1, #2
-	tst r0, r1
-	beq _0225A162
-	ldr r0, [sp, #0x20]
-	mov r1, #8
-	tst r0, r1
-	bne _0225A162
-	mov r0, #0
-	str r0, [sp, #0x1c]
-	b _0225A166
-_0225A162:
-	mov r0, #1
-	str r0, [sp, #0x1c]
-_0225A166:
-	ldr r1, [sp, #0x10]
-	mov r0, #6
-	mul r0, r1
-	ldr r1, _0225A28C ; =ov07_022377F4
-	ldr r3, _0225A288 ; =0x00000195
-	ldrsh r1, [r1, r0]
-	str r1, [sp, #0x14]
-	ldr r1, _0225A290 ; =ov07_022377F4 + 2
-	ldrsh r0, [r1, r0]
-	ldr r1, [sp, #0x10]
-	str r0, [sp, #0x18]
-	ldr r0, [sp, #0x1c]
-	str r0, [sp]
-	ldr r0, [sp, #0x14]
-	str r0, [sp, #4]
-	ldr r0, [sp, #0x18]
-	str r0, [sp, #8]
-	ldrh r2, [r7, #2]
-	ldrb r3, [r5, r3]
-	add r0, r6, #0
-	bl ov12_02261B2C
-	str r0, [r5, #0x18]
-	str r0, [r4, #0xc]
-	ldrb r0, [r4, #0x13]
-	cmp r0, #0
-	bne _0225A23A
-	add r0, r6, #0
-	bl BattleSystem_GetBattleType
-	cmp r0, #0
-	beq _0225A1E8
-	add r0, r6, #0
-	bl BattleSystem_GetBattleType
-	cmp r0, #0x20
-	beq _0225A1E8
-	add r0, r6, #0
-	bl BattleSystem_GetBattleType
-	mov r1, #1
-	lsl r1, r1, #8
-	cmp r0, r1
-	beq _0225A1E8
-	add r0, r6, #0
-	bl BattleSystem_GetBattleType
-	mov r1, #2
-	lsl r1, r1, #8
-	cmp r0, r1
-	beq _0225A1E8
-	add r0, r6, #0
-	bl BattleSystem_GetBattleType
-	mov r1, #1
-	lsl r1, r1, #0xa
-	cmp r0, r1
-	beq _0225A1E8
-	add r0, r6, #0
-	bl BattleSystem_GetBattleType
-	mov r1, #1
-	lsl r1, r1, #0xc
-	cmp r0, r1
-	bne _0225A23A
-_0225A1E8:
-	add r0, r6, #0
-	bl BattleSystem_GetPokepicManager
-	str r0, [sp, #0x24]
-	ldrh r0, [r7, #2]
-	ldrb r1, [r4, #0x13]
-	add r2, sp, #0x28
-	bl sub_02070D84
-	ldr r1, [sp, #0x28]
-	add r0, sp, #0x28
-	strh r1, [r0, #0x18]
-	ldr r1, [sp, #0x3c]
-	ldr r2, [sp, #0x10]
-	strh r1, [r0, #0x1a]
-	ldr r1, [sp, #0x30]
-	add r3, sp, #0x40
-	strh r1, [r0, #0x1c]
-	mov r1, #0
-	strh r1, [r0, #0x1e]
-	mov r0, #6
-	mul r0, r2
-	ldr r2, _0225A294 ; =ov07_022377F4 + 4
-	strb r1, [r3, #8]
-	ldrsh r0, [r2, r0]
-	str r1, [sp, #0x4c]
-	str r0, [sp]
-	mov r0, #0x65
-	lsl r0, r0, #2
-	ldrb r0, [r5, r0]
-	str r0, [sp, #4]
-	str r1, [sp, #8]
-	str r1, [sp, #0xc]
-	add r1, r3, #0
-	ldr r0, [sp, #0x24]
-	ldr r2, [sp, #0x14]
-	ldr r3, [sp, #0x18]
-	bl PokepicManager_CreatePokepic
-	str r0, [r4, #4]
-	b _0225A23E
-_0225A23A:
-	mov r0, #0
-	str r0, [r4, #4]
-_0225A23E:
-	ldr r0, [sp, #0x10]
-	lsl r1, r0, #2
-	ldr r0, _0225A298 ; =ov07_022377DC
-	ldrsh r0, [r0, r1]
-	strh r0, [r4, #0x14]
-	str r6, [r4]
-	ldrb r0, [r7]
-	strb r0, [r4, #0x10]
-	mov r0, #0x65
-	lsl r0, r0, #2
-	ldrb r1, [r5, r0]
-	add r0, r0, #1
-	strb r1, [r4, #0x11]
-	ldrb r0, [r5, r0]
-	str r0, [r4, #0x18]
-	mov r0, #0
-	str r0, [r4, #0x20]
-	ldr r0, [r4, #0x18]
-	cmp r0, #0
-	beq _0225A26A
-	cmp r0, #2
-	bne _0225A27A
-_0225A26A:
-	add r0, r6, #0
-	bl BattleSystem_GetBgConfig
-	mov r1, #3
-	mov r2, #2
-	mov r3, #0x84
-	bl BgSetPosTextAndCommit
-_0225A27A:
-	ldr r0, _0225A29C ; =ov12_0225CE28
-	add r1, r4, #0
-	mov r2, #0
-	bl SysTask_CreateOnMainQueue
-	add sp, #0x50
-	pop {r3, r4, r5, r6, r7, pc}
-	.balign 4, 0
-_0225A288: .word 0x00000195
-_0225A28C: .word ov07_022377F4
-_0225A290: .word ov07_022377F4 + 2
-_0225A294: .word ov07_022377F4 + 4
-_0225A298: .word ov07_022377DC
-_0225A29C: .word ov12_0225CE28
-	thumb_func_end BattleDisplay_InitTaskSetTrainerEncounter
-
-	thumb_func_start ov12_0225A2A0
-ov12_0225A2A0: ; 0x0225A2A0
-	push {r3, r4, r5, r6, r7, lr}
-	add r6, r0, #0
-	add r5, r1, #0
-	mov r0, #5
-	mov r1, #0x1c
-	add r7, r2, #0
-	bl Heap_Alloc
-	add r4, r0, #0
-	mov r0, #0
-	strb r0, [r4, #0xa]
-	str r6, [r4]
-	ldrb r1, [r7]
-	strb r1, [r4, #8]
-	ldrb r1, [r7, #1]
-	str r1, [r4, #0x10]
-	mov r1, #0x65
-	lsl r1, r1, #2
-	ldrb r2, [r5, r1]
-	strb r2, [r4, #9]
-	str r5, [r4, #4]
-	add r2, r1, #1
-	ldrb r3, [r5, r2]
-	mov r2, #1
-	tst r2, r3
-	beq _0225A2DA
-	mov r1, #2
-	strb r1, [r4, #0xb]
-	b _0225A2FC
-_0225A2DA:
-	ldrb r1, [r5, r1]
-	add r0, r6, #0
-	bl BattleSystem_GetTrainer
-	add r2, r0, #0
-	mov r0, #0
-	strb r0, [r4, #0xb]
-	mov r1, #0x65
-	lsl r1, r1, #2
-	ldrb r1, [r5, r1]
-	ldrb r2, [r2, #1]
-	add r0, r6, #0
-	bl BattleDisplay_GetLinkTrainerClass
-	mov r1, #0
-	bl TrainerClassToBackpicID
-_0225A2FC:
-	str r0, [r4, #0xc]
-	add r0, r6, #0
-	bl BattleSystem_GetBattleType
-	mov r1, #0x65
-	lsl r1, r1, #2
-	ldrb r1, [r5, r1]
-	add r0, r6, #0
-	bl ov12_0223C140
-	cmp r0, #0xff
-	beq _0225A320
-	ldr r0, _0225A32C ; =ov12_0225D644
-	add r1, r4, #0
-	mov r2, #0
-	bl SysTask_CreateOnMainQueue
-	pop {r3, r4, r5, r6, r7, pc}
-_0225A320:
-	ldr r0, _0225A330 ; =ov12_0225D138
-	add r1, r4, #0
-	mov r2, #0
-	bl SysTask_CreateOnMainQueue
-	pop {r3, r4, r5, r6, r7, pc}
-	.balign 4, 0
-_0225A32C: .word ov12_0225D644
-_0225A330: .word ov12_0225D138
-	thumb_func_end ov12_0225A2A0
-
-	thumb_func_start ov12_0225A334
-ov12_0225A334: ; 0x0225A334
-	push {r3, r4, r5, lr}
-	add r5, r0, #0
-	add r4, r1, #0
-	mov r0, #5
-	mov r1, #0x10
-	bl Heap_Alloc
-	add r1, r0, #0
-	mov r0, #0
-	strb r0, [r1, #0xa]
-	add r2, r4, #0
-	str r5, [r1]
-	add r2, #0x94
-	ldrb r2, [r2]
-	strb r2, [r1, #8]
-	mov r2, #0x65
-	lsl r2, r2, #2
-	ldrb r3, [r4, r2]
-	add r2, r2, #1
-	strb r3, [r1, #9]
-	str r4, [r1, #4]
-	ldrb r3, [r4, r2]
-	mov r2, #1
-	tst r2, r3
-	beq _0225A36A
-	mov r0, #2
-	b _0225A36A
-_0225A36A:
-	strb r0, [r1, #0xb]
-	ldr r0, _0225A378 ; =ov12_0225D890
-	mov r2, #0
-	bl SysTask_CreateOnMainQueue
-	pop {r3, r4, r5, pc}
-	nop
-_0225A378: .word ov12_0225D890
-	thumb_func_end ov12_0225A334
-
-	thumb_func_start ov12_0225A37C
-ov12_0225A37C: ; 0x0225A37C
-	push {r4, r5, r6, r7, lr}
-	sub sp, #0xc
-	add r7, r0, #0
-	add r5, r1, #0
-	add r6, r2, #0
-	bl BattleSystem_GetPokepicManager
-	mov r0, #5
-	mov r1, #0x10
-	bl Heap_Alloc
-	add r4, r0, #0
-	mov r0, #0
-	ldr r1, _0225A400 ; =0x00000195
-	strb r0, [r4, #0xa]
-	ldrb r2, [r5, r1]
-	mov r1, #1
-	tst r1, r2
-	beq _0225A3A6
-	mov r0, #2
-	b _0225A3A6
-_0225A3A6:
-	strb r0, [r4, #0xb]
-	ldr r0, _0225A400 ; =0x00000195
-	mov r2, #0
-	ldrb r3, [r5, r0]
-	mov r0, #1
-	add r1, r3, #0
-	and r1, r0
-	mov r0, #6
-	str r2, [sp]
-	ldr r2, _0225A404 ; =ov07_022377F4 + 36
-	mul r0, r1
-	ldrsh r2, [r2, r0]
-	str r2, [sp, #4]
-	ldr r2, _0225A408 ; =ov07_022377F4 + 38
-	ldrsh r0, [r2, r0]
-	str r0, [sp, #8]
-	ldrh r2, [r6, #2]
-	add r0, r7, #0
-	bl ov12_02261B2C
-	str r0, [r5, #0x18]
-	str r0, [r4, #4]
-	ldr r3, _0225A400 ; =0x00000195
-	ldr r2, [r6, #4]
-	ldrb r0, [r5, r3]
-	lsl r2, r2, #1
-	lsl r0, r0, #0x1f
-	lsr r1, r0, #0x1d
-	ldr r0, _0225A40C ; =ov07_022377DC
-	add r0, r0, r1
-	ldrsh r0, [r2, r0]
-	add r1, r4, #0
-	mov r2, #0
-	strh r0, [r4, #0xc]
-	str r7, [r4]
-	ldrb r0, [r6]
-	strb r0, [r4, #8]
-	sub r0, r3, #1
-	ldrb r0, [r5, r0]
-	strb r0, [r4, #9]
-	ldr r0, _0225A410 ; =ov12_0225D990
-	bl SysTask_CreateOnMainQueue
-	add sp, #0xc
-	pop {r4, r5, r6, r7, pc}
-	.balign 4, 0
-_0225A400: .word 0x00000195
-_0225A404: .word ov07_022377F4 + 36
-_0225A408: .word ov07_022377F4 + 38
-_0225A40C: .word ov07_022377DC
-_0225A410: .word ov12_0225D990
-	thumb_func_end ov12_0225A37C
-
 	thumb_func_start ov12_0225A414
 ov12_0225A414: ; 0x0225A414
 	push {r3, r4, r5, r6, r7, lr}
@@ -3388,7 +2943,7 @@ _0225BAAC:
 	add r0, r4, #0
 	add r0, #0x85
 	ldrb r0, [r0]
-	ldr r3, _0225BE2C ; =ov07_022377DC
+	ldr r3, _0225BE2C ; =gBattlerEncounterX
 	str r0, [sp, #8]
 	mov r0, #0x90
 	ldrsb r0, [r4, r0]
@@ -3771,7 +3326,7 @@ _0225BE20:
 	.balign 4, 0
 _0225BE24: .word ov07_022377F4 + 2
 _0225BE28: .word ov07_022377F4 + 4
-_0225BE2C: .word ov07_022377DC
+_0225BE2C: .word gBattlerEncounterX
 _0225BE30: .word ov12_0226D15A
 _0225BE34: .word 0x00000706
 	thumb_func_end ov12_0225B960
@@ -4293,7 +3848,7 @@ _0225C214:
 	add r0, r4, #0
 	add r0, #0x85
 	ldrb r0, [r0]
-	ldr r3, _0225C508 ; =ov07_022377DC
+	ldr r3, _0225C508 ; =gBattlerEncounterX
 	str r0, [sp, #8]
 	mov r0, #0x90
 	ldrsb r0, [r4, r0]
@@ -4613,7 +4168,7 @@ _0225C4AE:
 _0225C4FC: .word ov12_0226D120
 _0225C500: .word ov07_022377F4 + 2
 _0225C504: .word ov07_022377F4 + 4
-_0225C508: .word ov07_022377DC
+_0225C508: .word gBattlerEncounterX
 _0225C50C: .word ov12_0226D15A
 _0225C510: .word 0x00000706
 _0225C514:
@@ -15349,8 +14904,8 @@ _02261B22:
 	pop {r4, r5, r6, pc}
 	thumb_func_end ov12_02261AD4
 
-	thumb_func_start ov12_02261B2C
-ov12_02261B2C: ; 0x02261B2C
+	thumb_func_start BattleDisplay_NewManagedSpriteTrainer
+BattleDisplay_NewManagedSpriteTrainer: ; 0x02261B2C
 	push {r3, r4, r5, r6, r7, lr}
 	sub sp, #0x20
 	add r5, r0, #0
@@ -15391,7 +14946,7 @@ _02261B5A:
 	bl sub_02070C24
 	add sp, #0x20
 	pop {r3, r4, r5, r6, r7, pc}
-	thumb_func_end ov12_02261B2C
+	thumb_func_end BattleDisplay_NewManagedSpriteTrainer
 
 	thumb_func_start ov12_02261B80
 ov12_02261B80: ; 0x02261B80

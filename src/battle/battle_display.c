@@ -35,7 +35,7 @@ typedef struct MonEncounterData {
 } MonEncounterData;
 
 extern const s16 ov07_022377F4[][3];
-extern s16 ov07_022377DC[][2];
+extern s16 gBattlerEncounterX[][2];
 
 extern void ov12_0225B7B8(SysTask *, void *);
 extern void ov12_0225B494(SysTask *, void *);
@@ -106,7 +106,7 @@ void BattleDisplay_InitTaskSetEncounter(BattleSystem *battleSys, OpponentData *o
 
         monEncounterData->targetPos = spriteYCenter;
     } else {
-        monEncounterData->targetPos = ov07_022377DC[opponentData->battlerType][0];
+        monEncounterData->targetPos = gBattlerEncounterX[opponentData->battlerType][0];
     }
 
     monEncounterData->battleSys = battleSys;
@@ -360,4 +360,223 @@ void BattleDisplay_InitTaskOpenCaptureBall(BattleSystem *battleSys, OpponentData
     Pokepic_StartPaletteFade(captureOpenBallData->pokepic, 0, 16, 0, ov12_0226D15A[message->ball]);
     Pokepic_SetAttr(captureOpenBallData->pokepic, 0x2D, TRUE);
     SysTask_CreateOnMainQueue(ov12_0225CDB8, captureOpenBallData, 0);
+}
+
+typedef struct TrainerEncounterData {
+    BattleSystem *battleSys;
+    Pokepic *pokepic;
+    UnkBattleSystemSub17C *terrain;
+    ManagedSprite *managedSprite;
+    u8 command;
+    u8 battler;
+    u8 state;
+    u8 face;
+    s16 targetX;
+    u16 ballFlashStarted : 1;
+    u16 padding_12_1 : 15;
+    int battlerType;
+    int delay;
+    int enterFrameCount;
+} TrainerEncounterData;
+
+extern void ov12_0225CE28(SysTask *, void *);
+extern u8 BattleDisplay_GetLinkTrainerClass(BattleSystem *battleSys, u8 battler, u8 trainerClass);
+
+void BattleDisplay_InitTaskSetTrainerEncounter(BattleSystem *battleSys, OpponentData *opponentData, TrainerEncounterMessage *message)
+{
+    TrainerEncounterData *trainerEncounterData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(TrainerEncounterData));
+    int side;
+
+    trainerEncounterData->state = 0;
+
+    if (opponentData->battlerType & 1) {
+        trainerEncounterData->face = 2;
+        trainerEncounterData->terrain = ov12_0223A8F4(battleSys, 1);
+        ManagedSprite_SetPositionXY(trainerEncounterData->terrain->managedSprite, ov07_022377F4[opponentData->battlerType & 1][0], 8 * 11);
+    } else {
+        trainerEncounterData->face = 0;
+        trainerEncounterData->terrain = ov12_0223A8F4(battleSys, 0);
+        ManagedSprite_SetPositionXY(trainerEncounterData->terrain->managedSprite, ov07_022377F4[opponentData->battlerType & 1][0], 128 + 8);
+    }
+
+    if ((BattleSystem_GetBattleType(battleSys) & BATTLE_TYPE_MULTI)
+        || (BattleSystem_GetBattleType(battleSys) & BATTLE_TYPE_TAG && opponentData->battlerType & BATTLE_TYPE_TRAINER)) {
+        side = opponentData->battlerType;
+    } else {
+        side = opponentData->battlerType & 1;
+    }
+
+    message->trainerType = BattleDisplay_GetLinkTrainerClass(battleSys, opponentData->battlerId, message->trainerType);
+
+    u32 battleType = BattleSystem_GetBattleType(battleSys);
+    u32 flag = 0;
+    
+    if (ov12_0223C140(battleSys, opponentData->battlerId) != 255) {
+        if (battleType & 2 && !(battleType & 8)) {
+            flag = 0;
+        } else {
+            flag = 1;
+        }
+    } 
+    
+    trainerEncounterData->managedSprite = opponentData->managedSprite = BattleDisplay_NewManagedSpriteTrainer(battleSys,
+        side,
+        message->trainerType,
+        opponentData->battlerType,
+        flag,
+        ov07_022377F4[side][0],
+        ov07_022377F4[side][1]);
+
+    if (trainerEncounterData->face == 0 
+        && (BattleSystem_GetBattleType(battleSys) == 0 
+        || BattleSystem_GetBattleType(battleSys) == 0x20 
+        || BattleSystem_GetBattleType(battleSys) == (1 << 8) 
+        || BattleSystem_GetBattleType(battleSys) == (1 << 9) 
+        || BattleSystem_GetBattleType(battleSys) == (1 << 10) 
+        || BattleSystem_GetBattleType(battleSys) == (1 << 12))) {
+            PokepicManager *pokepicManager = BattleSystem_GetPokepicManager(battleSys);
+            PokepicTemplate pokepicTemplate;
+            UnkStruct_02070D3C unkStruct;
+            sub_02070D84(message->trainerType, trainerEncounterData->face, &unkStruct);
+            pokepicTemplate.narcID = unkStruct.narcId;
+            pokepicTemplate.charDataID = unkStruct.ncbr_id;
+            pokepicTemplate.palDataID = unkStruct.nclr_id;
+            pokepicTemplate.species = SPECIES_NONE;
+            pokepicTemplate.isAnimated = FALSE;
+            pokepicTemplate.personality = 0;
+            trainerEncounterData->pokepic = PokepicManager_CreatePokepic(pokepicManager, &pokepicTemplate, ov07_022377F4[side][0], ov07_022377F4[side][1], ov07_022377F4[side][2], opponentData->battlerId, 0, 0);
+        
+    } else {
+        trainerEncounterData->pokepic = NULL;   
+    }
+    trainerEncounterData->targetX = gBattlerEncounterX[side][0];
+    trainerEncounterData->battleSys = battleSys;
+    trainerEncounterData->command = message->command;
+    trainerEncounterData->battler = opponentData->battlerId;
+    trainerEncounterData->battlerType = opponentData->battlerType;
+    trainerEncounterData->enterFrameCount = 0;
+
+    if (trainerEncounterData->battlerType == BATTLER_TYPE_SOLO_PLAYER
+        || trainerEncounterData->battlerType == BATTLER_TYPE_PLAYER_SIDE_SLOT_1) {
+        BgSetPosTextAndCommit(BattleSystem_GetBgConfig(battleSys), 3, 2, 4 * 33);
+    }
+
+    SysTask_CreateOnMainQueue(ov12_0225CE28, trainerEncounterData, 0);
+}
+
+typedef struct TrainerThrowBallData {
+    BattleSystem *battleSys;
+    OpponentData *opponentData;
+    u8 command;
+    u8 battler;
+    u8 state;
+    u8 face;
+    int backSpriteIdx;
+    int ballTypeIn;
+    int delay;
+    int ballTargetState;
+} TrainerThrowBallData;
+
+extern void ov12_0225D644(SysTask *, void *);
+extern void ov12_0225D138(SysTask *, void *);
+
+void BattleDisplay_InitTaskThrowTrainerBall(BattleSystem *battleSys, OpponentData *opponentData, TrainerThrowBallMessage *message)
+{
+    TrainerThrowBallData *trainerThrowBallData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(TrainerThrowBallData));
+
+    trainerThrowBallData->state = 0;
+    trainerThrowBallData->battleSys = battleSys;
+    trainerThrowBallData->command = message->command;
+    trainerThrowBallData->ballTypeIn = message->ballTypeIn;
+    trainerThrowBallData->battler = opponentData->battlerId;
+    trainerThrowBallData->opponentData = opponentData;
+
+    if (opponentData->battlerType & 1) {
+        trainerThrowBallData->face = 2;
+        trainerThrowBallData->backSpriteIdx = 0;
+    } else {
+        Trainer *trainer = BattleSystem_GetTrainer(battleSys, opponentData->battlerId);
+        trainerThrowBallData->face = 0;
+        trainerThrowBallData->backSpriteIdx = TrainerClassToBackpicID(BattleDisplay_GetLinkTrainerClass(battleSys, opponentData->battlerId, trainer->data.trainerClass), 0);
+    }
+
+    u32 battleType = BattleSystem_GetBattleType(battleSys);
+
+    if (ov12_0223C140(battleSys, opponentData->battlerId) != 255) {
+        SysTask_CreateOnMainQueue(ov12_0225D644, trainerThrowBallData, 0);
+    } else {
+        SysTask_CreateOnMainQueue(ov12_0225D138, trainerThrowBallData, 0);
+    }
+}
+
+typedef struct SlideTrainerOutData {
+    BattleSystem *battleSys;
+    OpponentData *opponentData;
+    u8 command;
+    u8 battler;
+    u8 state;
+    u8 face;
+    int unused;
+} SlideTrainerOutData;
+
+extern void ov12_0225D890(SysTask *, void *);
+
+void BattleDisplay_InitTaskSlideTrainerOut(BattleSystem *battleSys, OpponentData *opponentData)
+{
+    SlideTrainerOutData *slideTrainerOutData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(SlideTrainerOutData));
+
+    slideTrainerOutData->state = 0;
+    slideTrainerOutData->battleSys = battleSys;
+    slideTrainerOutData->command = opponentData->unk94[0];
+    slideTrainerOutData->battler = opponentData->battlerId;
+    slideTrainerOutData->opponentData = opponentData;
+
+    if (opponentData->battlerType & 1) {
+        slideTrainerOutData->face = 2;
+    } else {
+        slideTrainerOutData->face = 0;
+    }
+
+    SysTask_CreateOnMainQueue(ov12_0225D890, slideTrainerOutData, 0);
+}
+
+typedef struct SlideTrainerInData {
+    BattleSystem *battleSys;
+    ManagedSprite *managedSprite;
+    u8 command;
+    u8 battler;
+    u8 state;
+    u8 face;
+    s16 x;
+    u16 unused;
+} SlideTrainerInData;
+
+extern void ov12_0225D990(SysTask *, void *);
+extern const s16 gSlideTrainerInCoords[][3];
+
+void BattleDisplay_InitTaskSlideTrainerIn(BattleSystem *battleSys, OpponentData *opponentData, TrainerSlideInMessage *message)
+{
+    PokepicManager *unused = BattleSystem_GetPokepicManager(battleSys);
+    SlideTrainerInData *slideTrainerInData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(SlideTrainerInData));
+    slideTrainerInData->state = 0;
+
+    if (opponentData->battlerType & 1) {
+        slideTrainerInData->face = 2;
+    } else {
+        slideTrainerInData->face = 0;
+    }
+
+    slideTrainerInData->managedSprite = opponentData->managedSprite = BattleDisplay_NewManagedSpriteTrainer(battleSys,
+        opponentData->battlerType & 1,
+        message->trainerType,
+        opponentData->battlerType,
+        0,
+        gSlideTrainerInCoords[opponentData->battlerType & 1][0],
+        gSlideTrainerInCoords[opponentData->battlerType & 1][1]);
+    slideTrainerInData->x = gBattlerEncounterX[opponentData->battlerType & 1][message->posIn];
+    slideTrainerInData->battleSys = battleSys;
+    slideTrainerInData->command = message->command;
+    slideTrainerInData->battler = opponentData->battlerId;
+
+    SysTask_CreateOnMainQueue(ov12_0225D990, slideTrainerInData, 0);
 }
