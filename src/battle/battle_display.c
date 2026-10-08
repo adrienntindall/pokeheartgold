@@ -925,3 +925,725 @@ void BattleDisplay_PrintAttackMessage(BattleSystem *battleSys, OpponentData *opp
 
     SysTask_CreateOnMainQueue(ov12_022605D0, waitTask, 0);
 }
+
+void BattleDisplay_PrintMessage(BattleSystem *battleSys, OpponentData *opponentData, BattleMessage *battleMsg)
+{
+    MsgData *msgLoader = BattleSystem_GetMessageLoader(battleSys);
+    BattleMessageWaitTask *waitTask = Heap_Alloc(HEAP_ID_BATTLE, sizeof(BattleMessageWaitTask));
+
+    waitTask->battleSys = battleSys;
+    waitTask->command = opponentData->unk94[0];
+    waitTask->battler = opponentData->battlerId;
+    waitTask->msgIdx = BattleSystem_PrintBattleMessage(battleSys, msgLoader, battleMsg, BattleSystem_GetTextFrameDelay(battleSys));
+
+    SysTask_CreateOnMainQueue(ov12_022605D0, waitTask, 0);
+}
+
+typedef struct SetMoveAnimationData {
+    BattleSystem *battleSys;
+    OpponentData *opponentData;
+    Pokepic *pokepic;
+    void *battleAnimSys;
+    MoveAnimation moveAnim;
+    u8 command;
+    u8 battler;
+    u8 state;
+    u8 hideHealthboxes;
+    u8 hideShadows;
+    u8 unused[3];
+} SetMoveAnimationData;
+
+extern void ov12_0225FD14(SysTask *, void *);
+
+void BattleDisplay_InitTaskSetMoveAnimation(BattleSystem *battleSys, OpponentData *opponentData, MoveAnimation *animation)
+{
+    SetMoveAnimationData *setMoveAnimationData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(SetMoveAnimationData));
+
+    setMoveAnimationData->state = 0;
+    setMoveAnimationData->battleSys = battleSys;
+    setMoveAnimationData->opponentData = opponentData;
+    setMoveAnimationData->command = opponentData->unk94[0];
+    setMoveAnimationData->battler = opponentData->battlerId;
+    setMoveAnimationData->battleAnimSys = ov12_0223A8DC(battleSys);
+    setMoveAnimationData->moveAnim = *animation;
+    setMoveAnimationData->pokepic = opponentData->pokepic;
+
+    if (animation->animMode == 1 && animation->secondaryAnimID == 25) {
+        opponentData->unk1A0 = 1;
+    }
+
+    if (animation->animMode == 1 && animation->secondaryAnimID == 26) {
+        opponentData->unk1A0 = 0;
+    }
+
+    BattleDisplay_GetAnimHideFlags(&setMoveAnimationData->hideHealthboxes, &setMoveAnimationData->hideShadows, animation->animMode, animation->secondaryAnimID, animation->move);
+    SysTask_CreateOnMainQueue(ov12_0225FD14, setMoveAnimationData, 0);
+}
+
+typedef struct FlickerOpponentData {
+    BattleSystem *battleSys;
+    Pokepic *pokepic;
+    u8 battler;
+    u8 counter;
+    u8 delay;
+    u8 unused;
+} FlickerOpponentData;
+
+void ov12_0225FF80(SysTask *, void *);
+
+void BattleDisplay_InitTaskFlickerBattler(BattleSystem *battleSys, OpponentData *opponentData)
+{
+    FlickerOpponentData *flickerOpponentData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(FlickerOpponentData));
+
+    flickerOpponentData->counter = 0;
+    flickerOpponentData->battleSys = battleSys;
+    flickerOpponentData->pokepic = opponentData->pokepic;
+    flickerOpponentData->battler = opponentData->battlerId;
+    flickerOpponentData->delay = 0;
+
+    SysTask_CreateOnMainQueue(ov12_0225FF80, flickerOpponentData, 0);
+}
+
+void ov12_0225FFDC(SysTask *, void *);
+
+void BattleDisplay_InitTaskUpdateHPGauge(BattleSystem *battleSys, OpponentData *opponentData, HPGaugeUpdateMessage *message)
+{
+    BattleHpBar *hpBar;
+
+    GF_ASSERT(opponentData->hpBar.boxObj != NULL);
+
+    hpBar = &opponentData->hpBar;
+    MI_CpuClear8(&hpBar->script, sizeof(u8));
+
+    hpBar->battleSystem = battleSys;
+    hpBar->unk4C = message->command;
+    hpBar->battlerId = opponentData->battlerId;
+    hpBar->type = BattleHpBar_Util_GetBarTypeFromBattlerSide(opponentData->battlerType, BattleSystem_GetBattleType(battleSys));
+    hpBar->hp = message->curHP;
+    hpBar->maxHp = message->maxHP;
+    hpBar->gainedHp = message->hpCalcTemp;
+    hpBar->level = message->level;
+
+    if (message->hpCalcTemp == 0x7FFF) {
+        hpBar->hp = 0;
+        hpBar->gainedHp = 0;
+    }
+
+    hpBar->unk10 = SysTask_CreateOnMainQueue(ov12_0225FFDC, hpBar, 1000);
+}
+
+void ov12_02260030(SysTask *, void *);
+
+void BattleDisplay_InitTaskUpdateExpGauge(BattleSystem *battleSys, OpponentData *opponentData, ExpGaugeUpdateMessage *message)
+{
+    BattleHpBar *hpBar;
+
+    GF_ASSERT(opponentData->hpBar.boxObj != NULL);
+
+    hpBar = &opponentData->hpBar;
+
+    MI_CpuClear8(&hpBar->script, sizeof(u8));
+
+    hpBar->battleSystem = battleSys;
+    hpBar->unk4C = message->command;
+    hpBar->battlerId = opponentData->battlerId;
+    hpBar->exp = message->curExp;
+    hpBar->maxExp = message->expToNextLevel;
+    hpBar->gainedExp = message->gainedExp - hpBar->exp;
+
+    if (opponentData->battlerType == BATTLER_TYPE_SOLO_PLAYER) {
+        hpBar->unk10 = SysTask_CreateOnMainQueue(ov12_02260030, hpBar, 1000);
+        return;
+    } else {
+        BattleController_EmitClearCommand(hpBar->battleSystem, hpBar->battlerId, hpBar->unk4C);
+    }
+}
+
+typedef struct FaintingSequenceData {
+    BattleSystem *battleSys;
+    OpponentData *opponentData;
+    Pokepic *pokepic;
+    MoveAnimation moveAnim;
+    u8 command;
+    u8 battler;
+    u8 state;
+    u8 face;
+    u16 species;
+    u8 gender;
+    u8 form;
+    u32 personality;
+    u16 isSubstitute;
+    u16 isTransformed;
+} FaintingSequenceData;
+
+extern void ov12_022600F0(SysTask *, void *);
+
+void BattleDisplay_InitTaskPlayFaintingSequence(BattleSystem *battleSys, OpponentData *opponentData, FaintingSequenceMessage *message)
+{
+    FaintingSequenceData *faintingSequenceData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(FaintingSequenceData));
+
+    if (opponentData->battlerType & 1) {
+        faintingSequenceData->face = 2;
+    } else {
+        faintingSequenceData->face = 0;
+    }
+
+    faintingSequenceData->state = 0;
+    faintingSequenceData->battleSys = battleSys;
+    faintingSequenceData->opponentData = opponentData;
+    faintingSequenceData->command = message->command;
+    faintingSequenceData->battler = opponentData->battlerId;
+    faintingSequenceData->pokepic = opponentData->pokepic;
+    faintingSequenceData->species = message->species;
+    faintingSequenceData->gender = message->gender;
+    faintingSequenceData->form = message->form;
+    faintingSequenceData->personality = message->personality;
+    faintingSequenceData->isSubstitute = message->isSubstitute;
+    faintingSequenceData->isTransformed = message->isTransformed;
+
+    for (int i = 0; i < 4; i++) {
+        faintingSequenceData->moveAnim.species[i] = message->monSpecies[i];
+        faintingSequenceData->moveAnim.genders[i] = message->monGenders[i];
+        faintingSequenceData->moveAnim.isShiny[i] = message->monShiny[i];
+        faintingSequenceData->moveAnim.formNums[i] = message->monFormNums[i];
+        faintingSequenceData->moveAnim.personalities[i] = message->monPersonalities[i];
+    }
+
+    SysTask_CreateOnMainQueue(ov12_022600F0, faintingSequenceData, 0);
+}
+
+void BattleDisplay_PlaySound(BattleSystem *battleSys, OpponentData *opponentData, PlaySoundMessage *message)
+{
+    int pan;
+
+    if (opponentData->battlerType & 1) {
+        pan = 0x75;
+    } else {
+        pan = -0x75;
+    }
+
+    BattleController_EmitClearCommand(battleSys, opponentData->battlerId, message->command);
+    sub_0200602C(message->sdatID, pan);
+}
+
+typedef struct FadeOutData {
+    BattleSystem *battleSys;
+    u8 command;
+    u8 battler;
+    u8 state;
+    u8 unused;
+} FadeOutData;
+
+extern void ov12_0226037C(SysTask *, void *);
+
+void BattleDisplay_InitTaskFadeOut(BattleSystem *battleSys, OpponentData *opponentData)
+{
+    FadeOutData *fadeOutData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(FadeOutData));
+
+    fadeOutData->state = 0;
+    fadeOutData->battleSys = battleSys;
+    fadeOutData->command = opponentData->unk94[0];
+    fadeOutData->battler = opponentData->battlerId;
+
+    SysTask_CreateOnMainQueue(ov12_0226037C, fadeOutData, 0);
+}
+
+typedef struct ToggleVanishData {
+    BattleSystem *battleSys;
+    OpponentData *opponentData;
+    MoveAnimation moveAnim;
+    u8 command;
+    u8 battler;
+    u8 state;
+    u8 toggleHide;
+    int isSubstitute;
+} ToggleVanishData;
+
+extern void ov12_02260418(SysTask *, void *);
+
+void BattleDisplay_InitTaskToggleVanish(BattleSystem *battleSys, OpponentData *opponentData, ToggleVanishMessage *message)
+{
+    ToggleVanishData *toggleVanishData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(ToggleVanishData));
+
+    toggleVanishData->battleSys = battleSys;
+    toggleVanishData->opponentData = opponentData;
+    toggleVanishData->command = message->command;
+    toggleVanishData->battler = opponentData->battlerId;
+    toggleVanishData->state = 0;
+    toggleVanishData->toggleHide = message->toggle;
+    toggleVanishData->isSubstitute = message->isSubstitute;
+
+    for (int i = 0; i < 4; i++) {
+        toggleVanishData->moveAnim.species[i] = message->species[i];
+        toggleVanishData->moveAnim.genders[i] = message->gender[i];
+        toggleVanishData->moveAnim.isShiny[i] = message->isShiny[i];
+        toggleVanishData->moveAnim.formNums[i] = message->formNum[i];
+        toggleVanishData->moveAnim.personalities[i] = message->personality[i];
+    }
+
+    SysTask_CreateOnMainQueue(ov12_02260418, toggleVanishData, 0);
+}
+
+void BattleDisplay_SetStatusIcon(BattleSystem *battleSys, OpponentData *opponentData, SetStatusIconMessage *message)
+{
+    GF_ASSERT(opponentData->hpBar.boxObj != NULL);
+
+    opponentData->hpBar.unk_4A = message->status;
+
+    ov12_0226498C(&opponentData->hpBar, opponentData->hpBar.hp, (1 << 8));
+    BattleController_EmitClearCommand(battleSys, opponentData->battlerId, message->command);
+}
+
+void BattleDisplay_PrintTrainerMessage(BattleSystem *battleSys, OpponentData *opponentData, TrainerMsgMessage *message)
+{
+    BattleMessageWaitTask *waitTask;
+    int trainerID = BattleSystem_GetTrainerIndex(battleSys, opponentData->battlerId);
+    waitTask = (BattleMessageWaitTask *)Heap_Alloc(HEAP_ID_BATTLE, sizeof(BattleMessageWaitTask));
+
+    waitTask->battleSys = battleSys;
+    waitTask->command = message->command;
+    waitTask->battler = opponentData->battlerId;
+    waitTask->msgIdx = BattleSystem_PrintTrainerMessage(battleSys, trainerID, opponentData->battlerId, message->msg, BattleSystem_GetTextFrameDelay(battleSys));
+
+    SysTask_CreateOnMainQueue(ov12_022605D0, waitTask, 0);
+}
+
+void BattleDisplay_PrintRecallMessage(BattleSystem *battleSys, OpponentData *opponentData, RecallMsgMessage *message)
+{
+    BattleMessageWaitTask *waitTask;
+    MsgData *msgLoader;
+    BattleMessage battleMsg;
+
+    ov12_02261390(battleSys, opponentData, message, &battleMsg);
+
+    msgLoader = BattleSystem_GetMessageLoader(battleSys);
+    waitTask = (BattleMessageWaitTask *)Heap_Alloc(HEAP_ID_BATTLE, sizeof(BattleMessageWaitTask));
+
+    waitTask->battleSys = battleSys;
+    waitTask->command = message->command;
+    waitTask->battler = opponentData->battlerId;
+    waitTask->msgIdx = BattleSystem_PrintBattleMessage(battleSys, msgLoader, &battleMsg, BattleSystem_GetTextFrameDelay(battleSys));
+
+    SysTask_CreateOnMainQueue(ov12_022605D0, waitTask, 0);
+}
+
+void BattleDisplay_PrintSendOutMessage(BattleSystem *battleSys, OpponentData *opponentData, SendOutMsgMessage *message)
+{
+    BattleMessageWaitTask *waitTask;
+    MsgData *msgLoader;
+    BattleMessage battleMsg;
+
+    ov12_02261464(battleSys, opponentData, message, &battleMsg);
+
+    msgLoader = BattleSystem_GetMessageLoader(battleSys);
+    waitTask = (BattleMessageWaitTask *)Heap_Alloc(HEAP_ID_BATTLE, sizeof(BattleMessageWaitTask));
+
+    waitTask->battleSys = battleSys;
+    waitTask->command = message->command;
+    waitTask->battler = opponentData->battlerId;
+    waitTask->msgIdx = BattleSystem_PrintBattleMessage(battleSys, msgLoader, &battleMsg, BattleSystem_GetTextFrameDelay(battleSys));
+
+    SysTask_CreateOnMainQueue(ov12_022605D0, waitTask, 0);
+}
+
+void BattleDisplay_PrintBattleStartMessage(BattleSystem *battleSys, OpponentData *opponentData)
+{
+    BattleMessageWaitTask *waitTask;
+    MsgData *msgLoader;
+    BattleMessage battleMsg;
+
+    ov12_02261544(battleSys, opponentData, &battleMsg);
+
+    msgLoader = BattleSystem_GetMessageLoader(battleSys);
+    waitTask = (BattleMessageWaitTask *)Heap_Alloc(HEAP_ID_BATTLE, sizeof(BattleMessageWaitTask));
+
+    waitTask->battleSys = battleSys;
+    waitTask->command = 34;
+    waitTask->battler = opponentData->battlerId;
+    waitTask->msgIdx = BattleSystem_PrintBattleMessage(battleSys, msgLoader, &battleMsg, BattleSystem_GetTextFrameDelay(battleSys));
+
+    SysTask_CreateOnMainQueue(ov12_022605D0, waitTask, 0);
+}
+
+void BattleDisplay_PrintLeadMonMessage(BattleSystem *battleSys, OpponentData *opponentData, LeadMonMsgMessage *message)
+{
+    BattleMessageWaitTask *waitTask;
+    MsgData *msgLoader;
+    BattleMessage battleMsg;
+
+    ov12_022615F0(battleSys, opponentData, message, &battleMsg);
+
+    msgLoader = BattleSystem_GetMessageLoader(battleSys);
+    waitTask = (BattleMessageWaitTask *)Heap_Alloc(HEAP_ID_BATTLE, sizeof(BattleMessageWaitTask));
+
+    waitTask->battleSys = battleSys;
+    waitTask->command = message->command;
+    waitTask->battler = opponentData->battlerId;
+    waitTask->msgIdx = BattleSystem_PrintBattleMessage(battleSys, msgLoader, &battleMsg, BattleSystem_GetTextFrameDelay(battleSys));
+
+    SysTask_CreateOnMainQueue(ov12_022605D0, waitTask, 0);
+}
+
+typedef struct PlayLevelUpAnimationData {
+    BattleSystem *battleSys;
+    void *hpBar;
+    u8 command;
+    u8 battler;
+    u8 state;
+    u8 flashComplete;
+} PlayLevelUpAnimationData;
+
+void ov12_02260584(SysTask *, void *);
+
+void BattleDisplay_InitTaskPlayLevelUpAnimation(BattleSystem *battleSys, OpponentData *opponentData)
+{
+    PlayLevelUpAnimationData *playLevelUpAnimationData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(PlayLevelUpAnimationData));
+
+    playLevelUpAnimationData->battleSys = battleSys;
+    playLevelUpAnimationData->command = opponentData->unk94[0];
+    playLevelUpAnimationData->battler = opponentData->battlerId;
+    playLevelUpAnimationData->state = 0;
+    playLevelUpAnimationData->hpBar = &opponentData->hpBar;
+
+    SysTask_CreateOnMainQueue(ov12_02260584, playLevelUpAnimationData, 0);
+}
+
+typedef struct {
+    BattleSystem *battleSys;
+    u8 command;
+    u8 battler;
+    u8 msgIdx;
+    u8 state;
+    u8 delay;
+    u8 unused[3];
+} AlertMsgData;
+
+extern void ov12_02260614(SysTask *, void *);
+
+void BattleDisplay_SetAlertMessage(BattleSystem *battleSys, OpponentData *opponentData, AlertMsgMessage *message)
+{
+    AlertMsgData *alertMsgData;
+    MsgData *msgLoader;
+
+    if (opponentData->unk196 == 0) {
+        msgLoader = BattleSystem_GetMessageLoader(battleSys);
+        alertMsgData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(AlertMsgData));
+
+        alertMsgData->battleSys = battleSys;
+        alertMsgData->command = message->command;
+        alertMsgData->battler = opponentData->battlerId;
+        alertMsgData->state = 0;
+        alertMsgData->msgIdx = BattleSystem_PrintBattleMessage(battleSys, msgLoader, &message->msg, BattleSystem_GetTextFrameDelay(battleSys));
+
+        SysTask_CreateOnMainQueue(ov12_02260614, alertMsgData, 0);
+    } else if (opponentData->unk196 == 1) {
+        BattleController_EmitAlertMessageAck(battleSys, opponentData->battlerId);
+        BattleController_EmitClearCommand(battleSys, opponentData->battlerId, message->command);
+    } else {
+        if ((BattleSystem_GetBattleType(battleSys) & BATTLE_TYPE_LINK) == FALSE) {
+            BattleController_EmitAlertMessageAck(battleSys, opponentData->battlerId);
+        }
+
+        BattleController_EmitClearCommand(battleSys, opponentData->battlerId, message->command);
+    }
+}
+
+void BattleDisplay_RefreshHPGauge(BattleSystem *battleSys, OpponentData *opponentData, RefreshHPGaugeMessage *message)
+{
+    BattleHpBar *hpBar = &opponentData->hpBar;
+
+    MI_CpuClearFast(&hpBar->script, sizeof(u8));
+
+    hpBar->battleSystem = battleSys;
+    hpBar->battlerId = opponentData->battlerId;
+    hpBar->type = BattleHpBar_Util_GetBarTypeFromBattlerSide(opponentData->battlerType, BattleSystem_GetBattleType(battleSys));
+    hpBar->unk4C = message->command;
+    hpBar->hp = message->curHP;
+    hpBar->maxHp = message->maxHP;
+    hpBar->level = message->level;
+    hpBar->unk49 = message->gender;
+    hpBar->gainedHp = 0;
+    hpBar->exp = message->curExp;
+    hpBar->maxExp = message->maxExp;
+    hpBar->monId = message->partySlot;
+    hpBar->unk_4A = message->status;
+    hpBar->unk4B = message->caughtSpecies;
+    hpBar->unk27 = message->numSafariBalls;
+
+    ov12_0226498C(hpBar, hpBar->hp, -33);
+    BattleController_EmitClearCommand(hpBar->battleSystem, hpBar->battlerId, hpBar->unk4C);
+}
+
+typedef struct ForgetMoveData {
+    BattleSystem *battleSys;
+    BattlePartyContext *battlePartyCtx;
+    u8 command;
+    u8 battler;
+    u8 state;
+    u8 unused_0B;
+    u16 move;
+    u8 slot;
+    u8 unused_0F;
+} ForgetMoveData;
+
+void ov12_022609F8(SysTask *, void *);
+
+void BattleDisplay_InitTaskForgetMove(BattleSystem *battleSys, OpponentData *opponentData, ForgetMoveMessage *message)
+{
+    ForgetMoveData *forgetMoveData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(ForgetMoveData));
+
+    forgetMoveData->state = 0;
+    forgetMoveData->battleSys = battleSys;
+    forgetMoveData->command = message->command;
+    forgetMoveData->battler = opponentData->battlerId;
+    forgetMoveData->move = message->move;
+    forgetMoveData->slot = message->slot;
+
+    SysTask_CreateOnMainQueue(ov12_022609F8, forgetMoveData, 0);
+}
+
+typedef struct SetMosaicData {
+    BattleSystem *battleSys;
+    Pokepic *pokepic;
+    u8 command;
+    u8 battler;
+    u8 state;
+    u8 intensity;
+    u8 counter;
+    u8 wait;
+    u16 unused;
+} SetMosaicData;
+
+void ov12_02260B30(SysTask *, void *);
+
+void BattleDisplay_InitTaskSetMosaic(BattleSystem *battleSys, OpponentData *opponentData, MosaicSetMessage *message)
+{
+    SetMosaicData *setMosaicData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(SetMosaicData));
+
+    setMosaicData->state = 0;
+    setMosaicData->battleSys = battleSys;
+    setMosaicData->pokepic = opponentData->pokepic;
+    setMosaicData->command = message->command;
+    setMosaicData->battler = opponentData->battlerId;
+    setMosaicData->intensity = message->intensity;
+    setMosaicData->counter = 0;
+    setMosaicData->wait = message->wait;
+
+    SysTask_CreateOnMainQueue(ov12_02260B30, setMosaicData, 0);
+}
+
+typedef struct PartyGaugeTask {
+    BattleSystem *battleSys;
+    u8 command;
+    u8 battler;
+    u8 battlerType;
+    u8 state;
+    u8 status[6];
+    u8 midBattle;
+} PartyGaugeTask;
+
+void ov12_02260BA0(SysTask *, void *);
+
+void BattleDisplay_InitTaskShowBattleStartPartyGauge(BattleSystem *battleSys, OpponentData *opponentData, PartyGaugeData *partyGauge)
+{
+    PartyGaugeTask *task = Heap_Alloc(HEAP_ID_BATTLE, sizeof(PartyGaugeTask));
+
+    task->state = 0;
+    task->battleSys = battleSys;
+    task->command = partyGauge->command;
+    task->battler = opponentData->battlerId;
+    task->battlerType = opponentData->battlerType;
+
+    for (int i = 0; i < 6; i++) {
+        task->status[i] = partyGauge->status[i];
+    }
+
+    task->midBattle = FALSE;
+    SysTask_CreateOnMainQueue(ov12_02260BA0, task, 0);
+}
+
+void ov12_02260C58(SysTask *, void *);
+
+void BattleDisplay_InitTaskHideBattleStartPartyGauge(BattleSystem *battleSys, OpponentData *opponentData, PartyGaugeData *partyGauge)
+{
+    PartyGaugeTask *task = Heap_Alloc(HEAP_ID_BATTLE, sizeof(PartyGaugeTask));
+
+    task->state = 0;
+    task->battleSys = battleSys;
+    task->command = partyGauge->command;
+    task->battler = opponentData->battlerId;
+    task->battlerType = opponentData->battlerType;
+    task->midBattle = FALSE;
+
+    SysTask_CreateOnMainQueue(ov12_02260C58, task, 0);
+}
+
+void ov12_02260BA0(SysTask *, void *);
+
+void BattleDisplay_InitTaskShowPartyGauge(BattleSystem *battleSys, OpponentData *opponentData, PartyGaugeData *partyGauge)
+{
+    PartyGaugeTask *task = Heap_Alloc(HEAP_ID_BATTLE, sizeof(PartyGaugeTask));
+
+    task->state = 0;
+    task->battleSys = battleSys;
+    task->command = partyGauge->command;
+    task->battler = opponentData->battlerId;
+    task->battlerType = opponentData->battlerType;
+
+    for (int i = 0; i < 6; i++) {
+        task->status[i] = partyGauge->status[i];
+    }
+
+    task->midBattle = TRUE;
+    SysTask_CreateOnMainQueue(ov12_02260BA0, task, 0);
+}
+
+void BattleDisplay_InitTaskHidePartyGauge(BattleSystem *battleSys, OpponentData *opponentData, PartyGaugeData *partyGauge)
+{
+    PartyGaugeTask *task = Heap_Alloc(HEAP_ID_BATTLE, sizeof(PartyGaugeTask));
+
+    task->state = 0;
+    task->battleSys = battleSys;
+    task->command = partyGauge->command;
+    task->battler = opponentData->battlerId;
+    task->battlerType = opponentData->battlerType;
+    task->midBattle = TRUE;
+
+    SysTask_CreateOnMainQueue(ov12_02260C58, task, 0);
+}
+
+void BattleDisplay_PrintLinkWaitMessage(BattleSystem *battleSys, OpponentData *opponentData)
+{
+    MsgData *msgLoader;
+    BattleMessage battleMsg;
+
+    if (opponentData->unk196 == 0) {
+        msgLoader = BattleSystem_GetMessageLoader(battleSys);
+
+        battleMsg.id = 0x39B;
+        battleMsg.tag = TAG_NONE;
+
+        BattleSystem_PrintBattleMessage(battleSys, msgLoader, &battleMsg, NULL);
+        ov12_0223BB80(battleSys, WaitingIcon_New(BattleSystem_GetWindow(battleSys, 0), 1));
+    }
+
+    BattleController_EmitClearCommand(battleSys, opponentData->battlerId, 55);
+}
+
+void BattleDisplay_RestoreSprite(BattleSystem *battleSys, OpponentData *opponentData, MoveAnimation *animation)
+{
+    BattlerSpriteContext battlerSpriteCtx;
+
+    BattleDisplay_PopulateBattlerContext(battleSys, animation, &battlerSpriteCtx, opponentData->battlerId);
+    ov07_0223494C(&battlerSpriteCtx, HEAP_ID_BATTLE);
+    BattleController_EmitClearCommand(battleSys, opponentData->battlerId, animation->command);
+}
+
+typedef struct SpriteToOAMData {
+    BattleSystem *battleSys;
+    OpponentData *opponentData;
+    Pokepic *pokepic;
+    u8 command;
+    u8 battler;
+    u8 state;
+    u8 unused[1];
+} SpriteToOAMData;
+
+void ov12_02260CDC(SysTask *, void *);
+
+void BattleDisplay_InitTaskSpriteToOAM(BattleSystem *battleSys, OpponentData *opponentData)
+{
+    SpriteToOAMData *spriteToOAMData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(SpriteToOAMData));
+
+    spriteToOAMData->state = 0;
+    spriteToOAMData->battleSys = battleSys;
+    spriteToOAMData->opponentData = opponentData;
+    spriteToOAMData->command = opponentData->unk94[0];
+    spriteToOAMData->battler = opponentData->battlerId;
+    spriteToOAMData->pokepic = opponentData->pokepic;
+
+    SysTask_CreateOnMainQueue(ov12_02260CDC, spriteToOAMData, 0);
+}
+
+typedef struct OAMToSpriteData {
+    BattleSystem *battleSys;
+    OpponentData *opponentData;
+    Pokepic *pokepic;
+    u8 command;
+    u8 battler;
+    u8 delay;
+    u8 unused[1];
+} OAMToSpriteData;
+
+void ov12_02260D28(SysTask *, void *);
+
+void BattleDisplay_InitTaskOAMToSprite(BattleSystem *battleSys, OpponentData *opponentData)
+{
+    OAMToSpriteData *oamToSpriteData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(OAMToSpriteData));
+
+    oamToSpriteData->delay = 0;
+    oamToSpriteData->battleSys = battleSys;
+    oamToSpriteData->opponentData = opponentData;
+    oamToSpriteData->command = opponentData->unk94[0];
+    oamToSpriteData->battler = opponentData->battlerId;
+    oamToSpriteData->pokepic = opponentData->pokepic;
+
+    SysTask_CreateOnMainQueue(ov12_02260D28, oamToSpriteData, 0);
+}
+
+void BattleDisplay_PrintResultMessage(BattleSystem *battleSys, OpponentData *opponentData)
+{
+    BattleMessageWaitTask *waitTask;
+    MsgData *msgLoader;
+    BattleMessage battleMsg;
+
+    ov12_02261928(battleSys, opponentData, &battleMsg);
+
+    msgLoader = BattleSystem_GetMessageLoader(battleSys);
+    waitTask = (BattleMessageWaitTask *)Heap_Alloc(HEAP_ID_BATTLE, sizeof(BattleMessageWaitTask));
+
+    waitTask->battleSys = battleSys;
+    waitTask->command = BATTLE_COMMAND_PRINT_RESULT_MESSAGE;
+    waitTask->battler = opponentData->battlerId;
+    waitTask->msgIdx = BattleSystem_PrintBattleMessage(battleSys, msgLoader, &battleMsg, BattleSystem_GetTextFrameDelay(battleSys));
+
+    SysTask_CreateOnMainQueue(ov12_022605D0, waitTask, 0);
+}
+
+void BattleDisplay_PrintEscapeMessage(BattleSystem *battleSys, OpponentData *opponentData, EscapeMsgMessage *message)
+{
+    BattleMessageWaitTask *waitTask;
+    MsgData *msgLoader;
+    BattleMessage battleMsg;
+
+    ov12_022619E4(battleSys, opponentData, message, &battleMsg);
+
+    msgLoader = BattleSystem_GetMessageLoader(battleSys);
+    waitTask = (BattleMessageWaitTask *)Heap_Alloc(HEAP_ID_BATTLE, sizeof(BattleMessageWaitTask));
+
+    waitTask->battleSys = battleSys;
+    waitTask->command = BATTLE_COMMAND_PRINT_ESCAPE_MESSAGE;
+    waitTask->battler = opponentData->battlerId;
+    waitTask->msgIdx = BattleSystem_PrintBattleMessage(battleSys, msgLoader, &battleMsg, BattleSystem_GetTextFrameDelay(battleSys));
+
+    SysTask_CreateOnMainQueue(ov12_022605D0, waitTask, 0);
+}
+
+void BattleDisplay_PrintForfeitMessage(BattleSystem *battleSys, OpponentData *opponentData)
+{
+    BattleMessageWaitTask *waitTask;
+    MsgData *msgLoader;
+    BattleMessage battleMsg;
+
+    ov12_02261AD4(battleSys, opponentData, &battleMsg);
+
+    msgLoader = BattleSystem_GetMessageLoader(battleSys);
+    waitTask = (BattleMessageWaitTask *)Heap_Alloc(HEAP_ID_BATTLE, sizeof(BattleMessageWaitTask));
+
+    waitTask->battleSys = battleSys;
+    waitTask->command = BATTLE_COMMAND_PRINT_FORFEIT_MESSAGE;
+    waitTask->battler = opponentData->battlerId;
+    waitTask->msgIdx = BattleSystem_PrintBattleMessage(battleSys, msgLoader, &battleMsg, BattleSystem_GetTextFrameDelay(battleSys));
+
+    SysTask_CreateOnMainQueue(ov12_022605D0, waitTask, 0);
+}

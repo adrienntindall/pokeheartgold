@@ -316,14 +316,14 @@ static void BattleIOCmd_PrintAttackMessage(BattleSystem *battleSys, OpponentData
 static void BattleIOCmd_PrintBattleMessage(BattleSystem *battleSys, OpponentData *opponentData) {
     BattleMessage *battleMsg = (BattleMessage *)&opponentData->unk94[0];
 
-    ov12_0225A8C4(battleSys, opponentData, battleMsg);
+    BattleDisplay_PrintMessage(battleSys, opponentData, battleMsg);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_SetMoveAnimation(BattleSystem *battleSys, OpponentData *opponentData) {
     MoveAnimation *moveAnim = (MoveAnimation *)&opponentData->unk94[0];
 
-    ov12_0225A914(battleSys, opponentData, moveAnim);
+    BattleDisplay_InitTaskSetMoveAnimation(battleSys, opponentData, moveAnim);
     ov12_02259928(opponentData);
 }
 
@@ -331,7 +331,7 @@ static void BattleIOCmd_FlickerBattler(BattleSystem *battleSys, OpponentData *op
     if (Pokepic_GetAttr(opponentData->pokepic, 6) == TRUE) {
         BattleController_EmitClearCommand(battleSys, opponentData->battlerId, BATTLE_COMMAND_FLICKER_BATTLER);
     } else {
-        ov12_0225A9B0(battleSys, opponentData);
+        BattleDisplay_InitTaskFlickerBattler(battleSys, opponentData);
     }
 
     ov12_02259928(opponentData);
@@ -340,99 +340,99 @@ static void BattleIOCmd_FlickerBattler(BattleSystem *battleSys, OpponentData *op
 static void BattleIOCmd_UpdateHPGauge(BattleSystem *battleSys, OpponentData *opponentData) {
     HPGaugeUpdateMessage *message = (HPGaugeUpdateMessage *)&opponentData->unk94[0];
 
-    ov12_0225A9E0(battleSys, opponentData, message);
+    BattleDisplay_InitTaskUpdateHPGauge(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_UpdateExpGauge(BattleSystem *battleSys, OpponentData *opponentData) {
     ExpGaugeUpdateMessage *message = (ExpGaugeUpdateMessage *)&opponentData->unk94[0];
 
-    ov12_0225AA6C(battleSys, opponentData, message);
+    BattleDisplay_InitTaskUpdateExpGauge(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_PlayFaintingSequence(BattleSystem *battleSys, OpponentData *opponentData) {
     FaintingSequenceMessage *message = (FaintingSequenceMessage *)&opponentData->unk94[0];
 
-    ov12_0225AAE0(battleSys, opponentData, message);
+    BattleDisplay_InitTaskPlayFaintingSequence(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_PlaySound(BattleSystem *battleSys, OpponentData *opponentData) {
     PlaySoundMessage *message = (PlaySoundMessage *)&opponentData->unk94[0];
 
-    ov12_0225ABB8(battleSys, opponentData, message);
+    BattleDisplay_PlaySound(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_FadeOut(BattleSystem *battleSys, OpponentData *opponentData) {
-    ov12_0225ABE8(battleSys, opponentData);
+    BattleDisplay_InitTaskFadeOut(battleSys, opponentData);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_ToggleVanish(BattleSystem *battleSys, OpponentData *opponentData) {
     ToggleVanishMessage *message = (ToggleVanishMessage *)&opponentData->unk94[0];
 
-    ov12_0225AC1C(battleSys, opponentData, message);
+    BattleDisplay_InitTaskToggleVanish(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_SetStatusIcon(BattleSystem *battleSys, OpponentData *opponentData) {
     SetStatusIconMessage *message = (SetStatusIconMessage *)&opponentData->unk94[0];
 
-    ov12_0225ACB0(battleSys, opponentData, message);
+    BattleDisplay_SetStatusIcon(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_PrintTrainerMessage(BattleSystem *battleSys, OpponentData *opponentData) {
     TrainerMsgMessage *message = (TrainerMsgMessage *)&opponentData->unk94[0];
 
-    ov12_0225ACE8(battleSys, opponentData, message);
+    BattleDisplay_PrintTrainerMessage(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_PrintReturnMessage(BattleSystem *battleSys, OpponentData *opponentData) {
     ReturnMsgMessage *message = (ReturnMsgMessage *)&opponentData->unk94[0];
 
-    ov12_0225AD44(battleSys, opponentData, message);
+    BattleDisplay_PrintRecallMessage(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_PrintSendOutMessage(BattleSystem *battleSys, OpponentData *opponentData) {
     SendOutMsgMessage *message = (SendOutMsgMessage *)&opponentData->unk94[0];
 
-    ov12_0225AD9C(battleSys, opponentData, message);
+    BattleDisplay_PrintSendOutMessage(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_PrintEncounterMessage(BattleSystem *battleSys, OpponentData *opponentData) {
-    ov12_0225ADF4(battleSys, opponentData);
+    BattleDisplay_PrintBattleStartMessage(battleSys, opponentData);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_PrintLeadMonMessage(BattleSystem *battleSys, OpponentData *opponentData) {
     LeadMonMsgMessage *message = (LeadMonMsgMessage *)&opponentData->unk94[0];
 
-    ov12_0225AE48(battleSys, opponentData, message);
+    BattleDisplay_PrintLeadMonMessage(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_PlayLevelUpAnimation(BattleSystem *battleSys, OpponentData *opponentData) {
-    ov12_0225AEA0(battleSys, opponentData);
+    BattleDisplay_InitTaskPlayLevelUpAnimation(battleSys, opponentData);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_SetAlertMessage(BattleSystem *battleSys, OpponentData *opponentData) {
     AlertMsgMessage *message = (AlertMsgMessage *)&opponentData->unk94[0];
 
-    ov12_0225AED8(battleSys, opponentData, message);
+    BattleDisplay_SetAlertMessage(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_RefreshHPGauge(BattleSystem *battleSys, OpponentData *opponentData) {
     RefreshHPGaugeMessage *message = (RefreshHPGaugeMessage *)&opponentData->unk94[0];
 
-    ov12_0225AF74(battleSys, opponentData, message);
+    BattleDisplay_RefreshHPGauge(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
@@ -520,14 +520,14 @@ static void BattleIOCmd_RefreshPartyStatus(BattleSystem *battleSys, OpponentData
 static void BattleIOCmd_ForgetMove(BattleSystem *battleSys, OpponentData *opponentData) {
     ForgetMoveMessage *message = (ForgetMoveMessage *)&opponentData->unk94[0];
 
-    ov12_0225B028(battleSys, opponentData, message);
+    BattleDisplay_InitTaskForgetMove(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_SetMosaic(BattleSystem *battleSys, OpponentData *opponentData) {
     MosaicSetMessage *message = (MosaicSetMessage *)&opponentData->unk94[0];
 
-    ov12_0225B060(battleSys, opponentData, message);
+    BattleDisplay_InitTaskSetMosaic(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
@@ -605,14 +605,14 @@ static void BattleIOCmd_ClearTouchScreen(BattleSystem *battleSys, OpponentData *
 static void BattleIOCmd_ShowBattleStartPartyGauge(BattleSystem *battleSys, OpponentData *opponentData) {
     PartyGaugeData *data = (PartyGaugeData *)&opponentData->unk94[0];
 
-    ov12_0225B0A0(battleSys, opponentData, data);
+    BattleDisplay_InitTaskShowBattleStartPartyGauge(battleSys, opponentData, data);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_HideBattleStartPartyGauge(BattleSystem *battleSys, OpponentData *opponentData) {
     PartyGaugeData *data = (PartyGaugeData *)&opponentData->unk94[0];
 
-    ov12_0225B0E8(battleSys, opponentData, data);
+    BattleDisplay_InitTaskHideBattleStartPartyGauge(battleSys, opponentData, data);
     ov12_02259928(opponentData);
 }
 
@@ -620,7 +620,7 @@ static void BattleIOCmd_ShowPartyGauge(BattleSystem *battleSys, OpponentData *op
     PartyGaugeData *data = (PartyGaugeData *)&opponentData->unk94[0];
 
     if (BattleSystem_GetFieldSide(battleSys, opponentData->battlerId)) {
-        ov12_0225B120(battleSys, opponentData, data);
+        BattleDisplay_InitTaskShowPartyGauge(battleSys, opponentData, data);
     } else {
         BattleController_EmitClearCommand(battleSys, opponentData->battlerId, BATTLE_COMMAND_SHOW_PARTY_GAUGE);
     }
@@ -632,7 +632,7 @@ static void BattleIOCmd_HidePartyGauge(BattleSystem *battleSys, OpponentData *op
     PartyGaugeData *data = (PartyGaugeData *)&opponentData->unk94[0];
 
     if (BattleSystem_GetFieldSide(battleSys, opponentData->battlerId)) {
-        ov12_0225B16C(battleSys, opponentData, data);
+        BattleDisplay_InitTaskHidePartyGauge(battleSys, opponentData, data);
     } else {
         BattleController_EmitClearCommand(battleSys, opponentData->battlerId, BATTLE_COMMAND_HIDE_PARTY_GAUGE);
     }
@@ -679,29 +679,29 @@ static void BattleIOCmd_PrintLinkWaitMessage(BattleSystem *battleSys, OpponentDa
     LinkWaitMsgMessage *message = (LinkWaitMsgMessage *)&opponentData->unk94[0];
 
     ov12_0223BF14(battleSys, message->recordedInputCount, message->recordedInputs);
-    ov12_0225B1A8(battleSys, opponentData);
+    BattleDisplay_PrintLinkWaitMessage(battleSys, opponentData);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_RestoreSprite(BattleSystem *battleSys, OpponentData *opponentData) {
     MoveAnimation *moveAnim = (MoveAnimation *)&opponentData->unk94[0];
 
-    ov12_0225B200(battleSys, opponentData, moveAnim);
+    BattleDisplay_RestoreSprite(battleSys, opponentData, moveAnim);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_SpriteToOAM(BattleSystem *battleSys, OpponentData *opponentData) {
-    ov12_0225B234(battleSys, opponentData);
+    BattleDisplay_InitTaskSpriteToOAM(battleSys, opponentData);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_OAMToSprite(BattleSystem *battleSys, OpponentData *opponentData) {
-    ov12_0225B26C(battleSys, opponentData);
+    BattleDisplay_InitTaskOAMToSprite(battleSys, opponentData);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_PrintResultMessage(BattleSystem *battleSys, OpponentData *opponentData) {
-    ov12_0225B2A4(battleSys, opponentData);
+    BattleDisplay_PrintResultMessage(battleSys, opponentData);
     ov12_02259928(opponentData);
 }
 
@@ -709,7 +709,7 @@ static void BattleIOCmd_PrintEscapeMessage(BattleSystem *battleSys, OpponentData
     EscapeMsgMessage *message = (EscapeMsgMessage *)&opponentData->unk94[0];
 
     ov12_0223BF14(battleSys, message->recordedInputCount, message->recordedInputs);
-    ov12_0225B2F8(battleSys, opponentData, message);
+    BattleDisplay_PrintEscapeMessage(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
@@ -717,7 +717,7 @@ static void BattleIOCmd_PrintForfeitMessage(BattleSystem *battleSys, OpponentDat
     ForfeitMsgMessage *message = (ForfeitMsgMessage *)&opponentData->unk94[0];
 
     ov12_0223BF14(battleSys, message->recordedInputCount, message->recordedInputs);
-    ov12_0225B34C(battleSys, opponentData);
+    BattleDisplay_PrintForfeitMessage(battleSys, opponentData);
     ov12_02259928(opponentData);
 }
 

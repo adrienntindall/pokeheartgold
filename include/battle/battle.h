@@ -763,4 +763,17 @@ typedef struct BattlePartyContext {
     u8 battlePartyExited;
 } BattlePartyContext;
 
+typedef struct BattlerSpriteContext {
+    int targetBattler;
+    int sourceBattler;
+    UnkBattleSystemSub1D0 *pokemonSpriteData[4];
+    Pokepic *sprites[4];
+    u16 species[4];
+    u8 genders[4];
+    u8 shinyFlags[4];
+    u8 forms[4];
+    u32 personalities[4];
+    u8 types[4];
+} BattlerSpriteContext;
+
 #endif
