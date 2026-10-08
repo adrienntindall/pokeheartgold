@@ -37,9 +37,9 @@ typedef struct MonEncounterData {
 } MonEncounterData;
 
 extern const s16 ov07_022377F4[][3];
-extern s16 gBattlerEncounterX[][2];
+extern const s16 gBattlerEncounterX[][2];
 
-extern void ov12_0225B7B8(SysTask *, void *);
+extern void BattleDisplayTask_SetGiratinaEncounter(SysTask *, void *);
 extern void BattleDisplayTask_SetEncounter(SysTask *, void *);
 
 void BattleDisplay_InitTaskSetEncounter(BattleSystem *battleSys, OpponentData *opponentData, MonEncounterMessage *message)
@@ -123,7 +123,7 @@ void BattleDisplay_InitTaskSetEncounter(BattleSystem *battleSys, OpponentData *o
     monEncounterData->isShiny = message->isShiny;
 
     if (monEncounterData->face == 2 && (BattleSystem_GetBattleSpecial(battleSys) & 0x40)) {
-        SysTask_CreateOnMainQueue(ov12_0225B7B8, monEncounterData, 0);
+        SysTask_CreateOnMainQueue(BattleDisplayTask_SetGiratinaEncounter, monEncounterData, 0);
     } else {
         SysTask_CreateOnMainQueue(BattleDisplayTask_SetEncounter, monEncounterData, 0);
     }
@@ -131,7 +131,7 @@ void BattleDisplay_InitTaskSetEncounter(BattleSystem *battleSys, OpponentData *o
     sub_02005B58(TRUE);
 }
 
-extern void ov12_0225B960(SysTask *, void *);
+extern void BattleDisplayTask_ShowEncounter(SysTask *, void *);
 extern void ov12_0225BE38(SysTask *, void *);
 
 typedef struct MonShowData {
@@ -210,12 +210,12 @@ void BattleDisplay_InitTaskShowEncounter(BattleSystem *battleSys, OpponentData *
     
     if (ov12_0223C140(battleSys, opponentData->battlerId) != 255) {
         if ((battleType & 2) && !(battleType & 8) && opponentData->battlerType > 3) {
-            SysTask_CreateOnMainQueue(ov12_0225B960, monShowData, 0);
+            SysTask_CreateOnMainQueue(BattleDisplayTask_ShowEncounter, monShowData, 0);
         } else {
             SysTask_CreateOnMainQueue(ov12_0225BE38, monShowData, 0);
         }
     } else {
-        SysTask_CreateOnMainQueue(ov12_0225B960, monShowData, 0);
+        SysTask_CreateOnMainQueue(BattleDisplayTask_ShowEncounter, monShowData, 0);
     }
 }
 
@@ -1712,4 +1712,378 @@ void ov12_0225B454(BattleSystem *battleSys, OpponentData* opponentData, Message_
     data->battlerId = opponentData->battlerId;
     
     SysTask_CreateOnMainQueue(ov12_02260D84, data, 0);
+}
+
+static void BattleDisplayTask_SetEncounter(SysTask *task, void *data)
+{
+    MonEncounterData *monEncounterData = data;
+    BattleAnimSystem *battleAnimSys = ov12_0223A8DC(monEncounterData->battleSys);
+    s16 x, y;
+
+    switch (monEncounterData->state) {
+    case 0:
+        monEncounterData->delay = 28;
+        monEncounterData->state++;
+    case 1:
+        if (--monEncounterData->delay) {
+            break;
+        }
+
+        monEncounterData->state++;
+    case 2:
+        if (monEncounterData->face == 2) {
+            ManagedSprite_GetPositionXY(monEncounterData->terrain->managedSprite, &x, &y);
+
+            if (monEncounterData->battlerType == BATTLER_TYPE_SOLO_ENEMY || monEncounterData->battlerType == BATTLER_TYPE_ENEMY_SIDE_SLOT_1) {
+                if (x < (24 * 8)) {
+                    ManagedSprite_OffsetPositionXY(monEncounterData->terrain->managedSprite, 8, 0);
+                } else {
+                    ManagedSprite_SetPositionXY(monEncounterData->terrain->managedSprite, 24 * 8, 8 * 11);
+                }
+            }
+
+            ManagedSprite_GetPositionXY(monEncounterData->terrain->managedSprite, &x, &y);
+
+            if (monEncounterData->battlerType == BATTLER_TYPE_SOLO_ENEMY) {
+                Pokepic_SetAttr(monEncounterData->sprite, 0, x);
+            } else if (monEncounterData->battlerType == BATTLER_TYPE_ENEMY_SIDE_SLOT_1) {
+                x = Pokepic_GetAttr(monEncounterData->sprite, 0) - x;
+                x -= 24;
+
+                Pokepic_AddAttr(monEncounterData->sprite, 0, -x);
+            } else if (monEncounterData->battlerType == BATTLER_TYPE_ENEMY_SIDE_SLOT_2) {
+                x = x - Pokepic_GetAttr(monEncounterData->sprite, 0);
+                x -= 16;
+
+                Pokepic_AddAttr(monEncounterData->sprite, 0, x);
+            }
+
+            if (Pokepic_GetAttr(monEncounterData->sprite, 0) >= monEncounterData->targetPos) {
+                Pokepic_SetAttr(monEncounterData->sprite, 0x2C, FALSE);
+                Pokepic_SetAttr(monEncounterData->sprite, 0x2D, FALSE);
+                Pokepic_SetAttr(monEncounterData->sprite, 0, monEncounterData->targetPos);
+
+                ov12_02261F38(monEncounterData->battleSys, monEncounterData->battler, monEncounterData->battlerType, monEncounterData->sprite, monEncounterData->opponentData->narc, monEncounterData->species, monEncounterData->formNum, monEncounterData->face, monEncounterData->cryMod);
+
+                if (monEncounterData->battlerType == BATTLER_TYPE_SOLO_ENEMY || monEncounterData->battlerType == BATTLER_TYPE_ENEMY_SIDE_SLOT_1) {
+                    ManagedSprite_SetPositionXY(monEncounterData->terrain->managedSprite, 24 * 8, 8 * 11);
+                }
+
+                Pokepic_StartPaletteFade(monEncounterData->sprite, 8, 0, 0, 0);
+                monEncounterData->state++;
+            }
+        } else {
+            ManagedSprite_GetPositionXY(monEncounterData->terrain->managedSprite, &x, &y);
+
+            if (monEncounterData->battlerType == BATTLER_TYPE_SOLO_PLAYER || monEncounterData->battlerType == BATTLER_TYPE_PLAYER_SIDE_SLOT_1) {
+                if (x > 64) {
+                    ManagedSprite_OffsetPositionXY(monEncounterData->terrain->managedSprite, -8, 0);
+                } else {
+                    ManagedSprite_SetPositionXY(monEncounterData->terrain->managedSprite, 64, 128 + 8);
+                }
+            }
+
+            ManagedSprite_GetPositionXY(monEncounterData->terrain->managedSprite, &x, &y);
+
+            if (monEncounterData->battlerType == BATTLER_TYPE_SOLO_PLAYER) {
+                Pokepic_SetAttr(monEncounterData->sprite, 0, x);
+            } else if (monEncounterData->battlerType == BATTLER_TYPE_PLAYER_SIDE_SLOT_1) {
+                x = x - Pokepic_GetAttr(monEncounterData->sprite, 0);
+                x -= 24;
+                Pokepic_AddAttr(monEncounterData->sprite, 0, x);
+            } else if (monEncounterData->battlerType == BATTLER_TYPE_PLAYER_SIDE_SLOT_2) {
+                x = Pokepic_GetAttr(monEncounterData->sprite, 0) - x;
+                x -= 16;
+                Pokepic_AddAttr(monEncounterData->sprite, 0, -x);
+            }
+
+            if (Pokepic_GetAttr(monEncounterData->sprite, 0) <= monEncounterData->targetPos) {
+                Pokepic_SetAttr(monEncounterData->sprite, 0, monEncounterData->targetPos);
+                
+                ov12_02261F38(monEncounterData->battleSys, monEncounterData->battler, monEncounterData->battlerType, monEncounterData->sprite, monEncounterData->opponentData->narc, monEncounterData->species, monEncounterData->formNum, monEncounterData->face, monEncounterData->cryMod);
+                
+                if (monEncounterData->battlerType == BATTLER_TYPE_SOLO_PLAYER || monEncounterData->battlerType == BATTLER_TYPE_PLAYER_SIDE_SLOT_1) {
+                    ManagedSprite_SetPositionXY(monEncounterData->terrain->managedSprite, 64, 128 + 8);
+                }
+
+                monEncounterData->state++;
+            }
+        }
+        break;
+    case 3:
+        if (sub_02017068(ov12_0223B750(monEncounterData->battleSys), monEncounterData->battler) == TRUE
+            && Pokepic_IsAnimFinished(monEncounterData->sprite) == FALSE) {
+            if (monEncounterData->isShiny) {
+                MoveAnimation moveAnim;
+
+                BattleController_SetMoveAnimation(monEncounterData->battleSys, NULL, &moveAnim, 1, 11, monEncounterData->battler, monEncounterData->battler, NULL);
+                BattleDisplay_PlayMoveAnimation(monEncounterData->battleSys, monEncounterData->opponentData, battleAnimSys, &moveAnim);
+                monEncounterData->state = 4;
+            } else {
+                monEncounterData->state = 0xFF;
+            }
+        }
+        break;
+    case 4:
+        ov07_0221C394(battleAnimSys);
+
+        if (ov07_0221C3B0(battleAnimSys) == FALSE) {
+            ov07_0221C3C0(battleAnimSys);
+            monEncounterData->state = 0xFF;
+        }
+        break;
+    default:
+        sub_02005B58(FALSE);
+        BattleController_EmitClearCommand(monEncounterData->battleSys, monEncounterData->battler, monEncounterData->command);
+        Heap_Free(data);
+        SysTask_Destroy(task);
+        break;
+    }
+}
+
+static void BattleDisplayTask_SetGiratinaEncounter(SysTask *task, void *data)
+{
+    MonEncounterData *monEncounterData = data;
+    BattleAnimSystem *battleAnimSys = ov12_0223A8DC(monEncounterData->battleSys);
+    s16 x, y;
+
+    switch (monEncounterData->state) {
+    case 0:
+        monEncounterData->delay = 28;
+        monEncounterData->state++;
+    case 1:
+        if (--monEncounterData->delay) {
+            break;
+        }
+
+        monEncounterData->state++;
+    case 2:
+        ManagedSprite_GetPositionXY(monEncounterData->terrain->managedSprite, &x, &y);
+
+        if (monEncounterData->battlerType == BATTLER_TYPE_SOLO_ENEMY || monEncounterData->battlerType == BATTLER_TYPE_ENEMY_SIDE_SLOT_1) {
+            if (x < (24 * 8)) {
+                ManagedSprite_OffsetPositionXY(monEncounterData->terrain->managedSprite, 8, 0);
+            } else {
+                ManagedSprite_SetPositionXY(monEncounterData->terrain->managedSprite, 24 * 8, 8 * 11);
+            }
+        }
+
+        ManagedSprite_GetPositionXY(monEncounterData->terrain->managedSprite, &x, &y);
+        Pokepic_AddAttr(monEncounterData->sprite, 1, 8 / 2);
+
+        if (Pokepic_GetAttr(monEncounterData->sprite, 1) >= monEncounterData->targetPos) {
+            Pokepic_SetAttr(monEncounterData->sprite, 0x2C, FALSE);
+            Pokepic_SetAttr(monEncounterData->sprite, 0x2D, FALSE);
+            Pokepic_SetAttr(monEncounterData->sprite, 1, monEncounterData->targetPos);
+            
+            ov12_02261F38(monEncounterData->battleSys, monEncounterData->battler, monEncounterData->battlerType, monEncounterData->sprite, monEncounterData->opponentData->narc, monEncounterData->species, monEncounterData->formNum, monEncounterData->face, monEncounterData->cryMod);
+
+            ManagedSprite_SetPositionXY(monEncounterData->terrain->managedSprite, 24 * 8, 8 * 11);
+            Pokepic_StartPaletteFade(monEncounterData->sprite, 8, 0, 0, 0);
+
+            monEncounterData->state++;
+        }
+        break;
+    case 3:
+        if (sub_02017068(ov12_0223B750(monEncounterData->battleSys), monEncounterData->battler) == TRUE
+            && Pokepic_IsAnimFinished(monEncounterData->sprite) == FALSE) {
+            if (monEncounterData->isShiny) {
+                MoveAnimation moveAnim;
+
+                BattleController_SetMoveAnimation(monEncounterData->battleSys, NULL, &moveAnim, 1, 11, monEncounterData->battler, monEncounterData->battler, NULL);
+                BattleDisplay_PlayMoveAnimation(monEncounterData->battleSys, monEncounterData->opponentData, battleAnimSys, &moveAnim);
+                monEncounterData->state = 4;
+            } else {
+                monEncounterData->state = 0xFF;
+            }
+        }
+        break;
+    case 4:
+        ov07_0221C394(battleAnimSys);
+
+        if (ov07_0221C3B0(battleAnimSys) == FALSE) {
+            ov07_0221C3C0(battleAnimSys);
+            monEncounterData->state = 0xFF;
+        }
+        break;
+    default:
+        sub_02005B58(FALSE);
+        BattleController_EmitClearCommand(monEncounterData->battleSys, monEncounterData->battler, monEncounterData->command);
+        Heap_Free(data);
+        SysTask_Destroy(task);
+        break;
+    }
+}
+
+static void BattleDisplayTask_ShowEncounter(SysTask *task, void *data)
+{
+    MonShowData *monShowData = data;
+
+    switch (monShowData->state) {
+    case 0:
+        monShowData->delay = 0;
+        monShowData->btlMonObjData = NULL;
+
+        if (BattleSystem_GetBattleType(monShowData->battleSys) & BATTLE_TYPE_MULTI) {
+            if ((BattleSystem_GetBattleSpecial(monShowData->battleSys) & (1 << 5)) == FALSE
+                && monShowData->battlerType == BATTLER_TYPE_PLAYER_SIDE_SLOT_1) {
+                monShowData->btlMonObjData = ov07_0221FDFC(monShowData->battleSys, HEAP_ID_BATTLE);
+            }
+        } else if ((BattleSystem_GetBattleSpecial(monShowData->battleSys) & (1 << 5)) == FALSE) {
+            if (BattleSystem_IsInitialized(monShowData->battleSys) == TRUE && monShowData->battlerType == BATTLER_TYPE_PLAYER_SIDE_SLOT_1) {
+                monShowData->btlMonObjData = ov07_0221FDFC(monShowData->battleSys, HEAP_ID_BATTLE);
+            } else if (monShowData->battlerType == BATTLER_TYPE_SOLO_PLAYER) {
+                monShowData->btlMonObjData = ov07_0221FDFC(monShowData->battleSys, HEAP_ID_BATTLE);
+            }
+        }
+
+        monShowData->state++;
+        break;
+    case 1:
+        BallCapsuleConfig ballCapCfg = { 0 };
+
+        ballCapCfg.battlerType = monShowData->battlerType;
+        ballCapCfg.mon = BattleSystem_GetPartyMon(monShowData->battleSys, monShowData->battler, monShowData->selectedPartySlot);
+        
+        monShowData->ballCapsuleSealEffect = ov07_02232694(HEAP_ID_BATTLE, &ballCapCfg);
+
+        ov07_022329B0(monShowData->ballCapsuleSealEffect);
+        monShowData->state++;
+        break;
+    case 2:
+        if (ov07_02233F20(monShowData->opponentData->ballData) != 0) {
+            break;
+        }
+
+        if (ov07_02232A04(monShowData->ballCapsuleSealEffect) != 1) {
+            break;
+        }
+
+        if (ov07_02233EA0(monShowData->opponentData->ballData) == 1) {
+            if (monShowData->battlerType == BATTLER_TYPE_PLAYER_SIDE_SLOT_2) {
+                monShowData->delay++;
+
+                if (monShowData->delay >= 12) {
+                    monShowData->delay = 0;
+                } else {
+                    break;
+                }
+            }
+
+            PokepicManager *monSpriteMan = BattleSystem_GetPokepicManager(monShowData->battleSys);
+            PokepicAnimScript animScript[10];
+
+            NARC_ReadPokepicAnimScript(monShowData->opponentData->narc, &animScript[0], monShowData->species, monShowData->battlerType);
+            monShowData->opponentData->pokepic = ov12_022612A4(monShowData->battleSys,
+                monSpriteMan,
+                &monShowData->spriteTemplate,
+                gBattlerEncounterX[monShowData->battlerType][0],
+                ov07_022377F4[monShowData->battlerType][1],
+                ov07_022377F4[monShowData->battlerType][2],
+                monShowData->yOffset,
+                monShowData->height,
+                monShowData->shadowXOffset,
+                monShowData->shadowSize,
+                monShowData->battler,
+                &animScript[0],
+                NULL);
+
+            Pokepic_SetAttr(monShowData->opponentData->pokepic, 12, 0);
+            Pokepic_SetAttr(monShowData->opponentData->pokepic, 13, 0);
+            Pokepic_SetAttr(monShowData->opponentData->pokepic, 0x2C, FALSE);
+            Pokepic_SetAttr(monShowData->opponentData->pokepic, 6, TRUE);
+
+            Pokepic_StartPaletteFade(monShowData->opponentData->pokepic, 16, 16, 0, ov12_0226D15A[monShowData->capturedBall]);
+            Pokepic_SetAttr(monShowData->opponentData->pokepic, 6, FALSE);
+
+            ov07_02232A44(monShowData->ballCapsuleSealEffect);
+
+            if (monShowData->face == 2) {
+                sub_0200602C(0x706, 0x75);
+            } else {
+                sub_0200602C(0x706, -0x75);
+            }
+
+            if (monShowData->btlMonObjData) {
+                ov07_0221FE08(monShowData->btlMonObjData);
+                monShowData->btlMonObjData = NULL;
+            }
+
+            monShowData->state++;
+        }
+        break;
+    case 3:
+        if (ov07_02233E88(monShowData->opponentData->ballData) != 1) {
+            monShowData->state++;
+        }
+    case 4:
+        if (Pokepic_GetAttr(monShowData->opponentData->pokepic, 12) == 0x100 && ov07_02232A54(monShowData->ballCapsuleSealEffect) == 0) {
+            if (monShowData->face == 2) {
+                Pokepic_SetAttr(monShowData->opponentData->pokepic, 0x2D, FALSE);
+            } 
+
+            ov12_02261F38(monShowData->battleSys, monShowData->battler, monShowData->battlerType, monShowData->opponentData->pokepic, monShowData->opponentData->narc, monShowData->species, monShowData->formNum, monShowData->face, monShowData->cryMod);
+            
+            Pokepic_StartPaletteFade(monShowData->opponentData->pokepic, 16, 0, 0, ov12_0226D15A[monShowData->capturedBall]);
+
+            monShowData->state = 5;
+        } else if (Pokepic_GetAttr(monShowData->opponentData->pokepic, 12) >= 0x100) {
+            Pokepic_SetAttr(monShowData->opponentData->pokepic, 12, 0x100);
+            Pokepic_SetAttr(monShowData->opponentData->pokepic, 13, 0x100);
+
+            if (monShowData->face == 2) {
+                Pokepic_SetAttr(monShowData->opponentData->pokepic, 0x2D, FALSE);
+            }
+            
+            ov12_02261F38(monShowData->battleSys, monShowData->battler, monShowData->battlerType, monShowData->opponentData->pokepic, monShowData->opponentData->narc, monShowData->species, monShowData->formNum, monShowData->face, monShowData->cryMod);
+
+            Pokepic_StartPaletteFade(monShowData->opponentData->pokepic, 16, 0, 1, ov12_0226D15A[monShowData->capturedBall]);
+
+            monShowData->state = 5;
+        } else {
+            Pokepic_AddAttr(monShowData->opponentData->pokepic, 12, 0x20);
+            Pokepic_AddAttr(monShowData->opponentData->pokepic, 13, 0x20);
+            sub_0200914C(monShowData->opponentData->pokepic, monShowData->height);
+        }
+        break;
+    case 5:
+        if (ov07_02232A54(monShowData->ballCapsuleSealEffect) == 0) {
+            monShowData->state = 6;
+        }
+        break;
+    case 6:
+        if (sub_02017068(ov12_0223B750(monShowData->battleSys), monShowData->battler) == TRUE
+            && Pokepic_IsAnimFinished(monShowData->opponentData->pokepic) == FALSE) {
+            ov07_02233ECC(monShowData->opponentData->ballData);
+            monShowData->opponentData->ballData = NULL;
+            ov07_02232AB8(monShowData->ballCapsuleSealEffect);
+
+            if (monShowData->isShiny) {
+                MoveAnimation moveAnim;
+
+                monShowData->battleAnimSys = ov07_0221BEDC(HEAP_ID_BATTLE);
+                BattleController_SetMoveAnimation(monShowData->battleSys, NULL, &moveAnim, 1, 11, monShowData->battler, monShowData->battler, NULL);
+                BattleDisplay_PlayMoveAnimation(monShowData->battleSys, monShowData->opponentData, monShowData->battleAnimSys, &moveAnim);
+                monShowData->state = 7;
+            } else {
+                monShowData->state = 0xFF;
+            }
+        }
+        break;
+    case 7:
+        ov07_0221C394(monShowData->battleAnimSys);
+
+        if (ov07_0221C3B0(monShowData->battleAnimSys) == FALSE) {
+            ov07_0221C3C0(monShowData->battleAnimSys);
+            ov07_0221BFE0(monShowData->battleAnimSys);
+            monShowData->state = 0xFF;
+        }
+        break;
+    default:
+        sub_02005B58(FALSE);
+        BattleController_EmitClearCommand(monShowData->battleSys, monShowData->battler, monShowData->command);
+        Heap_Free(data);
+        SysTask_Destroy(task);
+        break;
+    }
 }

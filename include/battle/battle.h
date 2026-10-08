@@ -164,6 +164,8 @@ typedef struct MoveFailFlags {
     u32 unused : 21;
 } MoveFailFlags;
 
+typedef struct BattleAnimSystem BattleAnimSystem;
+
 typedef struct UnkBattlemonSub {
     u32 disabledTurns : 3;
     u32 encoredTurns : 3;
@@ -555,7 +557,7 @@ struct BattleSystem {
     Party *trainerParty[4];
     SOUND_CHATOT *chatotVoice[4];
     PokepicManager *pokepicManager;
-    u32 *unk8C;
+    BattleAnimSystem *unk8C;
     SpriteSystem *spriteRenderer;
     SpriteManager *gfxHandler;
     u32 *unk98;
@@ -775,5 +777,11 @@ typedef struct BattlerSpriteContext {
     u32 personalities[4];
     u8 types[4];
 } BattlerSpriteContext;
+
+typedef struct {
+    int battlerType;
+    int ballTypeOverride;
+    Pokemon *mon;
+} BallCapsuleConfig;
 
 #endif

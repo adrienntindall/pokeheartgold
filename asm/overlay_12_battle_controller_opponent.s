@@ -6,1193 +6,6 @@
 
 	.text
 
-	thumb_func_start BattleDisplayTask_SetEncounter
-BattleDisplayTask_SetEncounter: ; 0x0225B494
-	push {r4, r5, r6, lr}
-	sub sp, #0x70
-	add r4, r1, #0
-	add r6, r0, #0
-	ldr r0, [r4]
-	bl ov12_0223A8DC
-	ldrb r1, [r4, #0x12]
-	add r5, r0, #0
-	cmp r1, #4
-	bls _0225B4AC
-	b _0225B798
-_0225B4AC:
-	add r1, r1, r1
-	add r1, pc
-	ldrh r1, [r1, #6]
-	lsl r1, r1, #0x10
-	asr r1, r1, #0x10
-	add pc, r1
-_0225B4B8: ; jump table
-	.short _0225B4C2 - _0225B4B8 - 2 ; case 0
-	.short _0225B4CC - _0225B4B8 - 2 ; case 1
-	.short _0225B4DA - _0225B4B8 - 2 ; case 2
-	.short _0225B728 - _0225B4B8 - 2 ; case 3
-	.short _0225B77C - _0225B4B8 - 2 ; case 4
-_0225B4C2:
-	mov r0, #0x1c
-	str r0, [r4, #0x20]
-	ldrb r0, [r4, #0x12]
-	add r0, r0, #1
-	strb r0, [r4, #0x12]
-_0225B4CC:
-	ldr r0, [r4, #0x20]
-	sub r0, r0, #1
-	str r0, [r4, #0x20]
-	bne _0225B5A0
-	ldrb r0, [r4, #0x12]
-	add r0, r0, #1
-	strb r0, [r4, #0x12]
-_0225B4DA:
-	ldrb r0, [r4, #0x13]
-	add r1, sp, #0x14
-	cmp r0, #2
-	ldr r0, [r4, #0xc]
-	beq _0225B4E6
-	b _0225B61A
-_0225B4E6:
-	ldr r0, [r0]
-	add r1, #2
-	add r2, sp, #0x14
-	bl ManagedSprite_GetPositionXY
-	ldr r0, [r4, #0x1c]
-	cmp r0, #1
-	beq _0225B4FA
-	cmp r0, #3
-	bne _0225B51C
-_0225B4FA:
-	add r1, sp, #0x14
-	mov r0, #2
-	ldrsh r0, [r1, r0]
-	cmp r0, #0xc0
-	ldr r0, [r4, #0xc]
-	bge _0225B512
-	ldr r0, [r0]
-	mov r1, #8
-	mov r2, #0
-	bl ManagedSprite_OffsetPositionXY
-	b _0225B51C
-_0225B512:
-	ldr r0, [r0]
-	mov r1, #0xc0
-	mov r2, #0x58
-	bl ManagedSprite_SetPositionXY
-_0225B51C:
-	ldr r0, [r4, #0xc]
-	add r1, sp, #0x14
-	ldr r0, [r0]
-	add r1, #2
-	add r2, sp, #0x14
-	bl ManagedSprite_GetPositionXY
-	ldr r0, [r4, #0x1c]
-	cmp r0, #1
-	bne _0225B540
-	add r3, sp, #0x14
-	mov r2, #2
-	ldrsh r2, [r3, r2]
-	ldr r0, [r4, #8]
-	mov r1, #0
-	bl Pokepic_SetAttr
-	b _0225B590
-_0225B540:
-	cmp r0, #3
-	bne _0225B56A
-	ldr r0, [r4, #8]
-	mov r1, #0
-	bl Pokepic_GetAttr
-	add r3, sp, #0x14
-	mov r2, #2
-	ldrsh r1, [r3, r2]
-	sub r0, r0, r1
-	strh r0, [r3, #2]
-	ldrsh r0, [r3, r2]
-	mov r1, #0
-	sub r0, #0x18
-	strh r0, [r3, #2]
-	ldrsh r2, [r3, r2]
-	ldr r0, [r4, #8]
-	neg r2, r2
-	bl Pokepic_AddAttr
-	b _0225B590
-_0225B56A:
-	cmp r0, #5
-	bne _0225B590
-	ldr r0, [r4, #8]
-	mov r1, #0
-	bl Pokepic_GetAttr
-	add r3, sp, #0x14
-	mov r2, #2
-	ldrsh r1, [r3, r2]
-	sub r0, r1, r0
-	strh r0, [r3, #2]
-	ldrsh r0, [r3, r2]
-	mov r1, #0
-	sub r0, #0x10
-	strh r0, [r3, #2]
-	ldrsh r2, [r3, r2]
-	ldr r0, [r4, #8]
-	bl Pokepic_AddAttr
-_0225B590:
-	ldr r0, [r4, #8]
-	mov r1, #0
-	bl Pokepic_GetAttr
-	mov r1, #0x14
-	ldrsh r1, [r4, r1]
-	cmp r0, r1
-	bge _0225B5A2
-_0225B5A0:
-	b _0225B7B4
-_0225B5A2:
-	ldr r0, [r4, #8]
-	mov r1, #0x2c
-	mov r2, #0
-	bl Pokepic_SetAttr
-	ldr r0, [r4, #8]
-	mov r1, #0x2d
-	mov r2, #0
-	bl Pokepic_SetAttr
-	mov r2, #0x14
-	ldrsh r2, [r4, r2]
-	ldr r0, [r4, #8]
-	mov r1, #0
-	bl Pokepic_SetAttr
-	mov r0, #0x69
-	ldr r1, [r4, #4]
-	lsl r0, r0, #2
-	ldr r0, [r1, r0]
-	str r0, [sp]
-	ldrh r0, [r4, #0x16]
-	str r0, [sp, #4]
-	add r0, r4, #0
-	add r0, #0x2c
-	ldrb r0, [r0]
-	str r0, [sp, #8]
-	ldrb r0, [r4, #0x13]
-	str r0, [sp, #0xc]
-	ldr r0, [r4, #0x18]
-	str r0, [sp, #0x10]
-	ldrb r1, [r4, #0x11]
-	ldr r0, [r4]
-	ldr r2, [r4, #0x1c]
-	ldr r3, [r4, #8]
-	bl ov12_02261F38
-	ldr r0, [r4, #0x1c]
-	cmp r0, #1
-	beq _0225B5F6
-	cmp r0, #3
-	bne _0225B602
-_0225B5F6:
-	ldr r0, [r4, #0xc]
-	mov r1, #0xc0
-	ldr r0, [r0]
-	mov r2, #0x58
-	bl ManagedSprite_SetPositionXY
-_0225B602:
-	mov r2, #0
-	str r2, [sp]
-	ldr r0, [r4, #8]
-	mov r1, #8
-	add r3, r2, #0
-	bl Pokepic_StartPaletteFade
-	ldrb r0, [r4, #0x12]
-	add sp, #0x70
-	add r0, r0, #1
-	strb r0, [r4, #0x12]
-	pop {r4, r5, r6, pc}
-_0225B61A:
-	ldr r0, [r0]
-	add r1, #2
-	add r2, sp, #0x14
-	bl ManagedSprite_GetPositionXY
-	ldr r0, [r4, #0x1c]
-	cmp r0, #0
-	beq _0225B62E
-	cmp r0, #2
-	bne _0225B650
-_0225B62E:
-	add r0, sp, #0x14
-	mov r1, #2
-	ldrsh r0, [r0, r1]
-	cmp r0, #0x40
-	ldr r0, [r4, #0xc]
-	ble _0225B646
-	ldr r0, [r0]
-	sub r1, #0xa
-	mov r2, #0
-	bl ManagedSprite_OffsetPositionXY
-	b _0225B650
-_0225B646:
-	ldr r0, [r0]
-	mov r1, #0x40
-	mov r2, #0x88
-	bl ManagedSprite_SetPositionXY
-_0225B650:
-	ldr r0, [r4, #0xc]
-	add r1, sp, #0x14
-	ldr r0, [r0]
-	add r1, #2
-	add r2, sp, #0x14
-	bl ManagedSprite_GetPositionXY
-	ldr r0, [r4, #0x1c]
-	cmp r0, #0
-	bne _0225B674
-	add r3, sp, #0x14
-	mov r2, #2
-	ldrsh r2, [r3, r2]
-	ldr r0, [r4, #8]
-	mov r1, #0
-	bl Pokepic_SetAttr
-	b _0225B6C4
-_0225B674:
-	cmp r0, #2
-	bne _0225B69C
-	ldr r0, [r4, #8]
-	mov r1, #0
-	bl Pokepic_GetAttr
-	add r3, sp, #0x14
-	mov r2, #2
-	ldrsh r1, [r3, r2]
-	sub r0, r1, r0
-	strh r0, [r3, #2]
-	ldrsh r0, [r3, r2]
-	mov r1, #0
-	sub r0, #0x18
-	strh r0, [r3, #2]
-	ldrsh r2, [r3, r2]
-	ldr r0, [r4, #8]
-	bl Pokepic_AddAttr
-	b _0225B6C4
-_0225B69C:
-	cmp r0, #4
-	bne _0225B6C4
-	ldr r0, [r4, #8]
-	mov r1, #0
-	bl Pokepic_GetAttr
-	add r3, sp, #0x14
-	mov r2, #2
-	ldrsh r1, [r3, r2]
-	sub r0, r0, r1
-	strh r0, [r3, #2]
-	ldrsh r0, [r3, r2]
-	mov r1, #0
-	sub r0, #0x10
-	strh r0, [r3, #2]
-	ldrsh r2, [r3, r2]
-	ldr r0, [r4, #8]
-	neg r2, r2
-	bl Pokepic_AddAttr
-_0225B6C4:
-	mov r0, #0x14
-	ldrsh r5, [r4, r0]
-	ldr r0, [r4, #8]
-	mov r1, #0
-	bl Pokepic_GetAttr
-	cmp r0, r5
-	bgt _0225B7B4
-	ldr r0, [r4, #8]
-	mov r1, #0
-	add r2, r5, #0
-	bl Pokepic_SetAttr
-	mov r0, #0x69
-	ldr r1, [r4, #4]
-	lsl r0, r0, #2
-	ldr r0, [r1, r0]
-	str r0, [sp]
-	ldrh r0, [r4, #0x16]
-	str r0, [sp, #4]
-	add r0, r4, #0
-	add r0, #0x2c
-	ldrb r0, [r0]
-	str r0, [sp, #8]
-	ldrb r0, [r4, #0x13]
-	str r0, [sp, #0xc]
-	ldr r0, [r4, #0x18]
-	str r0, [sp, #0x10]
-	ldrb r1, [r4, #0x11]
-	ldr r0, [r4]
-	ldr r2, [r4, #0x1c]
-	ldr r3, [r4, #8]
-	bl ov12_02261F38
-	ldr r0, [r4, #0x1c]
-	cmp r0, #0
-	beq _0225B712
-	cmp r0, #2
-	bne _0225B71E
-_0225B712:
-	ldr r0, [r4, #0xc]
-	mov r1, #0x40
-	ldr r0, [r0]
-	mov r2, #0x88
-	bl ManagedSprite_SetPositionXY
-_0225B71E:
-	ldrb r0, [r4, #0x12]
-	add sp, #0x70
-	add r0, r0, #1
-	strb r0, [r4, #0x12]
-	pop {r4, r5, r6, pc}
-_0225B728:
-	ldr r0, [r4]
-	bl ov12_0223B750
-	ldrb r1, [r4, #0x11]
-	bl sub_02017068
-	cmp r0, #1
-	bne _0225B7B4
-	ldr r0, [r4, #8]
-	bl Pokepic_IsAnimFinished
-	cmp r0, #0
-	bne _0225B7B4
-	ldr r0, [r4, #0x28]
-	cmp r0, #0
-	beq _0225B774
-	ldrb r1, [r4, #0x11]
-	mov r0, #0xb
-	add r2, sp, #0x18
-	str r0, [sp]
-	str r1, [sp, #4]
-	str r1, [sp, #8]
-	mov r1, #0
-	str r1, [sp, #0xc]
-	ldr r0, [r4]
-	mov r3, #1
-	bl BattleController_SetMoveAnimation
-	ldr r0, [r4]
-	ldr r1, [r4, #4]
-	add r2, r5, #0
-	add r3, sp, #0x18
-	bl ov12_02261B80
-	mov r0, #4
-	add sp, #0x70
-	strb r0, [r4, #0x12]
-	pop {r4, r5, r6, pc}
-_0225B774:
-	mov r0, #0xff
-	add sp, #0x70
-	strb r0, [r4, #0x12]
-	pop {r4, r5, r6, pc}
-_0225B77C:
-	bl ov07_0221C394
-	add r0, r5, #0
-	bl ov07_0221C3B0
-	cmp r0, #0
-	bne _0225B7B4
-	add r0, r5, #0
-	bl ov07_0221C3C0
-	mov r0, #0xff
-	add sp, #0x70
-	strb r0, [r4, #0x12]
-	pop {r4, r5, r6, pc}
-_0225B798:
-	mov r0, #0
-	bl sub_02005B58
-	ldrb r1, [r4, #0x11]
-	ldrb r2, [r4, #0x10]
-	ldr r0, [r4]
-	bl BattleController_EmitClearCommand
-	add r0, r4, #0
-	bl Heap_Free
-	add r0, r6, #0
-	bl SysTask_Destroy
-_0225B7B4:
-	add sp, #0x70
-	pop {r4, r5, r6, pc}
-	thumb_func_end BattleDisplayTask_SetEncounter
-
-	thumb_func_start ov12_0225B7B8
-ov12_0225B7B8: ; 0x0225B7B8
-	push {r4, r5, r6, lr}
-	sub sp, #0x70
-	add r4, r1, #0
-	add r6, r0, #0
-	ldr r0, [r4]
-	bl ov12_0223A8DC
-	ldrb r1, [r4, #0x12]
-	add r5, r0, #0
-	cmp r1, #4
-	bls _0225B7D0
-	b _0225B940
-_0225B7D0:
-	add r1, r1, r1
-	add r1, pc
-	ldrh r1, [r1, #6]
-	lsl r1, r1, #0x10
-	asr r1, r1, #0x10
-	add pc, r1
-_0225B7DC: ; jump table
-	.short _0225B7E6 - _0225B7DC - 2 ; case 0
-	.short _0225B7F0 - _0225B7DC - 2 ; case 1
-	.short _0225B800 - _0225B7DC - 2 ; case 2
-	.short _0225B8D0 - _0225B7DC - 2 ; case 3
-	.short _0225B924 - _0225B7DC - 2 ; case 4
-_0225B7E6:
-	mov r0, #0x1c
-	str r0, [r4, #0x20]
-	ldrb r0, [r4, #0x12]
-	add r0, r0, #1
-	strb r0, [r4, #0x12]
-_0225B7F0:
-	ldr r0, [r4, #0x20]
-	sub r0, r0, #1
-	str r0, [r4, #0x20]
-	beq _0225B7FA
-	b _0225B95C
-_0225B7FA:
-	ldrb r0, [r4, #0x12]
-	add r0, r0, #1
-	strb r0, [r4, #0x12]
-_0225B800:
-	ldr r0, [r4, #0xc]
-	add r1, sp, #0x14
-	ldr r0, [r0]
-	add r1, #2
-	add r2, sp, #0x14
-	bl ManagedSprite_GetPositionXY
-	ldr r0, [r4, #0x1c]
-	cmp r0, #1
-	beq _0225B818
-	cmp r0, #3
-	bne _0225B83A
-_0225B818:
-	add r1, sp, #0x14
-	mov r0, #2
-	ldrsh r0, [r1, r0]
-	cmp r0, #0xc0
-	ldr r0, [r4, #0xc]
-	bge _0225B830
-	ldr r0, [r0]
-	mov r1, #8
-	mov r2, #0
-	bl ManagedSprite_OffsetPositionXY
-	b _0225B83A
-_0225B830:
-	ldr r0, [r0]
-	mov r1, #0xc0
-	mov r2, #0x58
-	bl ManagedSprite_SetPositionXY
-_0225B83A:
-	ldr r0, [r4, #0xc]
-	add r1, sp, #0x14
-	ldr r0, [r0]
-	add r1, #2
-	add r2, sp, #0x14
-	bl ManagedSprite_GetPositionXY
-	ldr r0, [r4, #8]
-	mov r1, #1
-	mov r2, #4
-	bl Pokepic_AddAttr
-	ldr r0, [r4, #8]
-	mov r1, #1
-	bl Pokepic_GetAttr
-	mov r1, #0x14
-	ldrsh r1, [r4, r1]
-	cmp r0, r1
-	blt _0225B95C
-	ldr r0, [r4, #8]
-	mov r1, #0x2c
-	mov r2, #0
-	bl Pokepic_SetAttr
-	ldr r0, [r4, #8]
-	mov r1, #0x2d
-	mov r2, #0
-	bl Pokepic_SetAttr
-	mov r2, #0x14
-	ldrsh r2, [r4, r2]
-	ldr r0, [r4, #8]
-	mov r1, #1
-	bl Pokepic_SetAttr
-	mov r0, #0x69
-	ldr r1, [r4, #4]
-	lsl r0, r0, #2
-	ldr r0, [r1, r0]
-	str r0, [sp]
-	ldrh r0, [r4, #0x16]
-	str r0, [sp, #4]
-	add r0, r4, #0
-	add r0, #0x2c
-	ldrb r0, [r0]
-	str r0, [sp, #8]
-	ldrb r0, [r4, #0x13]
-	str r0, [sp, #0xc]
-	ldr r0, [r4, #0x18]
-	str r0, [sp, #0x10]
-	ldrb r1, [r4, #0x11]
-	ldr r0, [r4]
-	ldr r2, [r4, #0x1c]
-	ldr r3, [r4, #8]
-	bl ov12_02261F38
-	ldr r0, [r4, #0xc]
-	mov r1, #0xc0
-	ldr r0, [r0]
-	mov r2, #0x58
-	bl ManagedSprite_SetPositionXY
-	mov r2, #0
-	str r2, [sp]
-	ldr r0, [r4, #8]
-	mov r1, #8
-	add r3, r2, #0
-	bl Pokepic_StartPaletteFade
-	ldrb r0, [r4, #0x12]
-	add sp, #0x70
-	add r0, r0, #1
-	strb r0, [r4, #0x12]
-	pop {r4, r5, r6, pc}
-_0225B8D0:
-	ldr r0, [r4]
-	bl ov12_0223B750
-	ldrb r1, [r4, #0x11]
-	bl sub_02017068
-	cmp r0, #1
-	bne _0225B95C
-	ldr r0, [r4, #8]
-	bl Pokepic_IsAnimFinished
-	cmp r0, #0
-	bne _0225B95C
-	ldr r0, [r4, #0x28]
-	cmp r0, #0
-	beq _0225B91C
-	ldrb r1, [r4, #0x11]
-	mov r0, #0xb
-	add r2, sp, #0x18
-	str r0, [sp]
-	str r1, [sp, #4]
-	str r1, [sp, #8]
-	mov r1, #0
-	str r1, [sp, #0xc]
-	ldr r0, [r4]
-	mov r3, #1
-	bl BattleController_SetMoveAnimation
-	ldr r0, [r4]
-	ldr r1, [r4, #4]
-	add r2, r5, #0
-	add r3, sp, #0x18
-	bl ov12_02261B80
-	mov r0, #4
-	add sp, #0x70
-	strb r0, [r4, #0x12]
-	pop {r4, r5, r6, pc}
-_0225B91C:
-	mov r0, #0xff
-	add sp, #0x70
-	strb r0, [r4, #0x12]
-	pop {r4, r5, r6, pc}
-_0225B924:
-	bl ov07_0221C394
-	add r0, r5, #0
-	bl ov07_0221C3B0
-	cmp r0, #0
-	bne _0225B95C
-	add r0, r5, #0
-	bl ov07_0221C3C0
-	mov r0, #0xff
-	add sp, #0x70
-	strb r0, [r4, #0x12]
-	pop {r4, r5, r6, pc}
-_0225B940:
-	mov r0, #0
-	bl sub_02005B58
-	ldrb r1, [r4, #0x11]
-	ldrb r2, [r4, #0x10]
-	ldr r0, [r4]
-	bl BattleController_EmitClearCommand
-	add r0, r4, #0
-	bl Heap_Free
-	add r0, r6, #0
-	bl SysTask_Destroy
-_0225B95C:
-	add sp, #0x70
-	pop {r4, r5, r6, pc}
-	thumb_func_end ov12_0225B7B8
-
-	thumb_func_start ov12_0225B960
-ov12_0225B960: ; 0x0225B960
-	push {r3, r4, r5, lr}
-	sub sp, #0xb0
-	add r4, r1, #0
-	add r5, r0, #0
-	add r0, r4, #0
-	add r0, #0x83
-	ldrb r0, [r0]
-	cmp r0, #7
-	bls _0225B974
-	b _0225BDFC
-_0225B974:
-	add r0, r0, r0
-	add r0, pc
-	ldrh r0, [r0, #6]
-	lsl r0, r0, #0x10
-	asr r0, r0, #0x10
-	add pc, r0
-_0225B980: ; jump table
-	.short _0225B990 - _0225B980 - 2 ; case 0
-	.short _0225BA16 - _0225B980 - 2 ; case 1
-	.short _0225BA5A - _0225B980 - 2 ; case 2
-	.short _0225BBC0 - _0225B980 - 2 ; case 3
-	.short _0225BBDC - _0225B980 - 2 ; case 4
-	.short _0225BD3C - _0225B980 - 2 ; case 5
-	.short _0225BD50 - _0225B980 - 2 ; case 6
-	.short _0225BDD6 - _0225B980 - 2 ; case 7
-_0225B990:
-	add r0, r4, #0
-	mov r1, #0
-	add r0, #0x96
-	strb r1, [r0]
-	str r1, [r4, #0x10]
-	ldr r0, [r4]
-	bl BattleSystem_GetBattleType
-	mov r1, #8
-	tst r0, r1
-	ldr r0, [r4]
-	beq _0225B9C8
-	bl BattleSystem_GetBattleSpecial
-	mov r1, #0x20
-	tst r0, r1
-	bne _0225BA06
-	add r0, r4, #0
-	add r0, #0x82
-	ldrb r0, [r0]
-	cmp r0, #2
-	bne _0225BA06
-	ldr r0, [r4]
-	mov r1, #5
-	bl ov07_0221FDFC
-	str r0, [r4, #0x10]
-	b _0225BA06
-_0225B9C8:
-	bl BattleSystem_GetBattleSpecial
-	mov r1, #0x20
-	tst r0, r1
-	bne _0225BA06
-	ldr r0, [r4]
-	bl BattleSystem_IsInitialized
-	cmp r0, #1
-	bne _0225B9F2
-	add r0, r4, #0
-	add r0, #0x82
-	ldrb r0, [r0]
-	cmp r0, #2
-	bne _0225B9F2
-	ldr r0, [r4]
-	mov r1, #5
-	bl ov07_0221FDFC
-	str r0, [r4, #0x10]
-	b _0225BA06
-_0225B9F2:
-	add r0, r4, #0
-	add r0, #0x82
-	ldrb r0, [r0]
-	cmp r0, #0
-	bne _0225BA06
-	ldr r0, [r4]
-	mov r1, #5
-	bl ov07_0221FDFC
-	str r0, [r4, #0x10]
-_0225BA06:
-	add r0, r4, #0
-	add r0, #0x83
-	ldrb r0, [r0]
-	add r4, #0x83
-	add sp, #0xb0
-	add r0, r0, #1
-	strb r0, [r4]
-	pop {r3, r4, r5, pc}
-_0225BA16:
-	add r1, sp, #0x4c
-	mov r0, #0
-	str r0, [r1]
-	str r0, [r1, #4]
-	str r0, [r1, #8]
-	add r0, r4, #0
-	add r0, #0x82
-	ldrb r0, [r0]
-	add r1, r4, #0
-	add r2, r4, #0
-	str r0, [sp, #0x4c]
-	add r1, #0x81
-	add r2, #0x8c
-	ldrb r1, [r1]
-	ldrb r2, [r2]
-	ldr r0, [r4]
-	bl BattleSystem_GetPartyMon
-	str r0, [sp, #0x54]
-	mov r0, #5
-	add r1, sp, #0x4c
-	bl ov07_02232694
-	str r0, [r4, #8]
-	bl ov07_022329B0
-	add r0, r4, #0
-	add r0, #0x83
-	ldrb r0, [r0]
-	add r4, #0x83
-	add sp, #0xb0
-	add r0, r0, #1
-	strb r0, [r4]
-	pop {r3, r4, r5, pc}
-_0225BA5A:
-	ldr r0, [r4, #4]
-	add r0, #0x88
-	ldr r0, [r0]
-	bl ov07_02233F20
-	cmp r0, #0
-	bne _0225BAA2
-	ldr r0, [r4, #8]
-	bl ov07_02232A04
-	cmp r0, #1
-	bne _0225BAA2
-	ldr r0, [r4, #4]
-	add r0, #0x88
-	ldr r0, [r0]
-	bl ov07_02233EA0
-	cmp r0, #1
-	bne _0225BAA2
-	add r0, r4, #0
-	add r0, #0x82
-	ldrb r0, [r0]
-	cmp r0, #4
-	bne _0225BAAC
-	add r0, r4, #0
-	add r0, #0x96
-	ldrb r0, [r0]
-	add r1, r0, #1
-	add r0, r4, #0
-	add r0, #0x96
-	strb r1, [r0]
-	add r0, r4, #0
-	add r0, #0x96
-	ldrb r0, [r0]
-	cmp r0, #0xc
-	bhs _0225BAA4
-_0225BAA2:
-	b _0225BE20
-_0225BAA4:
-	add r0, r4, #0
-	mov r1, #0
-	add r0, #0x96
-	strb r1, [r0]
-_0225BAAC:
-	ldr r0, [r4]
-	bl BattleSystem_GetPokepicManager
-	add r2, r4, #0
-	add r3, r4, #0
-	add r5, r0, #0
-	mov r0, #0x69
-	add r2, #0x86
-	add r3, #0x82
-	ldr r1, [r4, #4]
-	lsl r0, r0, #2
-	ldr r0, [r1, r0]
-	ldrh r2, [r2]
-	ldrb r3, [r3]
-	add r1, sp, #0x24
-	bl NARC_ReadPokepicAnimScript
-	add r0, r4, #0
-	add r0, #0x82
-	ldrb r3, [r0]
-	mov r0, #6
-	add r2, r4, #0
-	add r1, r3, #0
-	mul r1, r0
-	ldr r0, _0225BE24 ; =ov07_022377F4 + 2
-	add r2, #0x14
-	ldrsh r0, [r0, r1]
-	str r0, [sp]
-	ldr r0, _0225BE28 ; =ov07_022377F4 + 4
-	ldrsh r0, [r0, r1]
-	add r1, r5, #0
-	lsl r5, r3, #2
-	str r0, [sp, #4]
-	add r0, r4, #0
-	add r0, #0x85
-	ldrb r0, [r0]
-	ldr r3, _0225BE2C ; =gBattlerEncounterX
-	str r0, [sp, #8]
-	mov r0, #0x90
-	ldrsb r0, [r4, r0]
-	ldrsh r3, [r3, r5]
-	str r0, [sp, #0xc]
-	mov r0, #0x91
-	ldrsb r0, [r4, r0]
-	str r0, [sp, #0x10]
-	add r0, r4, #0
-	add r0, #0x93
-	ldrb r0, [r0]
-	str r0, [sp, #0x14]
-	add r0, r4, #0
-	add r0, #0x81
-	ldrb r0, [r0]
-	str r0, [sp, #0x18]
-	add r0, sp, #0x24
-	str r0, [sp, #0x1c]
-	mov r0, #0
-	str r0, [sp, #0x20]
-	ldr r0, [r4]
-	bl ov12_022612A4
-	ldr r1, [r4, #4]
-	mov r2, #0
-	str r0, [r1, #0x20]
-	ldr r0, [r4, #4]
-	mov r1, #0xc
-	ldr r0, [r0, #0x20]
-	bl Pokepic_SetAttr
-	ldr r0, [r4, #4]
-	mov r1, #0xd
-	ldr r0, [r0, #0x20]
-	mov r2, #0
-	bl Pokepic_SetAttr
-	ldr r0, [r4, #4]
-	mov r1, #0x2c
-	ldr r0, [r0, #0x20]
-	mov r2, #0
-	bl Pokepic_SetAttr
-	ldr r0, [r4, #4]
-	mov r1, #6
-	ldr r0, [r0, #0x20]
-	mov r2, #1
-	bl Pokepic_SetAttr
-	add r0, r4, #0
-	add r0, #0x8e
-	ldrh r0, [r0]
-	mov r3, #0
-	lsl r1, r0, #1
-	ldr r0, _0225BE30 ; =ov12_0226D15A
-	ldrh r0, [r0, r1]
-	mov r1, #0x10
-	add r2, r1, #0
-	str r0, [sp]
-	ldr r0, [r4, #4]
-	ldr r0, [r0, #0x20]
-	bl Pokepic_StartPaletteFade
-	ldr r0, [r4, #4]
-	mov r1, #6
-	ldr r0, [r0, #0x20]
-	mov r2, #0
-	bl Pokepic_SetAttr
-	ldr r0, [r4, #8]
-	bl ov07_02232A44
-	add r0, r4, #0
-	add r0, #0x84
-	ldrb r0, [r0]
-	cmp r0, #2
-	ldr r0, _0225BE34 ; =0x00000706
-	bne _0225BB9A
-	mov r1, #0x75
-	bl sub_0200602C
-	b _0225BBA2
-_0225BB9A:
-	mov r1, #0x74
-	mvn r1, r1
-	bl sub_0200602C
-_0225BBA2:
-	ldr r0, [r4, #0x10]
-	cmp r0, #0
-	beq _0225BBB0
-	bl ov07_0221FE08
-	mov r0, #0
-	str r0, [r4, #0x10]
-_0225BBB0:
-	add r0, r4, #0
-	add r0, #0x83
-	ldrb r0, [r0]
-	add r4, #0x83
-	add sp, #0xb0
-	add r0, r0, #1
-	strb r0, [r4]
-	pop {r3, r4, r5, pc}
-_0225BBC0:
-	ldr r0, [r4, #4]
-	add r0, #0x88
-	ldr r0, [r0]
-	bl ov07_02233E88
-	cmp r0, #1
-	beq _0225BBDC
-	add r0, r4, #0
-	add r0, #0x83
-	ldrb r0, [r0]
-	add r1, r0, #1
-	add r0, r4, #0
-	add r0, #0x83
-	strb r1, [r0]
-_0225BBDC:
-	ldr r0, [r4, #4]
-	mov r1, #0xc
-	ldr r0, [r0, #0x20]
-	bl Pokepic_GetAttr
-	mov r1, #1
-	lsl r1, r1, #8
-	cmp r0, r1
-	bne _0225BC72
-	ldr r0, [r4, #8]
-	bl ov07_02232A54
-	cmp r0, #0
-	bne _0225BC72
-	add r0, r4, #0
-	add r0, #0x84
-	ldrb r0, [r0]
-	cmp r0, #2
-	bne _0225BC0E
-	ldr r0, [r4, #4]
-	mov r1, #0x2d
-	ldr r0, [r0, #0x20]
-	mov r2, #0
-	bl Pokepic_SetAttr
-_0225BC0E:
-	mov r0, #0x69
-	ldr r3, [r4, #4]
-	lsl r0, r0, #2
-	ldr r0, [r3, r0]
-	add r1, r4, #0
-	str r0, [sp]
-	add r0, r4, #0
-	add r0, #0x86
-	ldrh r0, [r0]
-	add r2, r4, #0
-	add r1, #0x81
-	str r0, [sp, #4]
-	add r0, r4, #0
-	add r0, #0x97
-	ldrb r0, [r0]
-	add r2, #0x82
-	str r0, [sp, #8]
-	add r0, r4, #0
-	add r0, #0x84
-	ldrb r0, [r0]
-	str r0, [sp, #0xc]
-	add r0, r4, #0
-	add r0, #0x88
-	ldr r0, [r0]
-	str r0, [sp, #0x10]
-	ldrb r1, [r1]
-	ldrb r2, [r2]
-	ldr r0, [r4]
-	ldr r3, [r3, #0x20]
-	bl ov12_02261F38
-	add r0, r4, #0
-	add r0, #0x8e
-	ldrh r0, [r0]
-	mov r2, #0
-	add r3, r2, #0
-	lsl r1, r0, #1
-	ldr r0, _0225BE30 ; =ov12_0226D15A
-	ldrh r0, [r0, r1]
-	mov r1, #0x10
-	str r0, [sp]
-	ldr r0, [r4, #4]
-	ldr r0, [r0, #0x20]
-	bl Pokepic_StartPaletteFade
-	mov r0, #5
-	add r4, #0x83
-	add sp, #0xb0
-	strb r0, [r4]
-	pop {r3, r4, r5, pc}
-_0225BC72:
-	ldr r0, [r4, #4]
-	mov r1, #0xc
-	ldr r0, [r0, #0x20]
-	bl Pokepic_GetAttr
-	mov r2, #1
-	lsl r2, r2, #8
-	cmp r0, r2
-	ldr r0, [r4, #4]
-	blt _0225BD16
-	ldr r0, [r0, #0x20]
-	mov r1, #0xc
-	bl Pokepic_SetAttr
-	ldr r0, [r4, #4]
-	mov r1, #0xd
-	add r2, r1, #0
-	ldr r0, [r0, #0x20]
-	add r2, #0xf3
-	bl Pokepic_SetAttr
-	add r0, r4, #0
-	add r0, #0x84
-	ldrb r0, [r0]
-	cmp r0, #2
-	bne _0225BCB2
-	ldr r0, [r4, #4]
-	mov r1, #0x2d
-	ldr r0, [r0, #0x20]
-	mov r2, #0
-	bl Pokepic_SetAttr
-_0225BCB2:
-	mov r0, #0x69
-	ldr r3, [r4, #4]
-	lsl r0, r0, #2
-	ldr r0, [r3, r0]
-	add r1, r4, #0
-	str r0, [sp]
-	add r0, r4, #0
-	add r0, #0x86
-	ldrh r0, [r0]
-	add r2, r4, #0
-	add r1, #0x81
-	str r0, [sp, #4]
-	add r0, r4, #0
-	add r0, #0x97
-	ldrb r0, [r0]
-	add r2, #0x82
-	str r0, [sp, #8]
-	add r0, r4, #0
-	add r0, #0x84
-	ldrb r0, [r0]
-	str r0, [sp, #0xc]
-	add r0, r4, #0
-	add r0, #0x88
-	ldr r0, [r0]
-	str r0, [sp, #0x10]
-	ldrb r1, [r1]
-	ldrb r2, [r2]
-	ldr r0, [r4]
-	ldr r3, [r3, #0x20]
-	bl ov12_02261F38
-	add r0, r4, #0
-	add r0, #0x8e
-	ldrh r0, [r0]
-	mov r2, #0
-	mov r3, #1
-	lsl r1, r0, #1
-	ldr r0, _0225BE30 ; =ov12_0226D15A
-	ldrh r0, [r0, r1]
-	mov r1, #0x10
-	str r0, [sp]
-	ldr r0, [r4, #4]
-	ldr r0, [r0, #0x20]
-	bl Pokepic_StartPaletteFade
-	mov r0, #5
-	add r4, #0x83
-	add sp, #0xb0
-	strb r0, [r4]
-	pop {r3, r4, r5, pc}
-_0225BD16:
-	ldr r0, [r0, #0x20]
-	mov r1, #0xc
-	mov r2, #0x20
-	bl Pokepic_AddAttr
-	ldr r0, [r4, #4]
-	mov r1, #0xd
-	ldr r0, [r0, #0x20]
-	mov r2, #0x20
-	bl Pokepic_AddAttr
-	ldr r0, [r4, #4]
-	mov r1, #0x90
-	ldrsb r1, [r4, r1]
-	ldr r0, [r0, #0x20]
-	bl sub_0200914C
-	add sp, #0xb0
-	pop {r3, r4, r5, pc}
-_0225BD3C:
-	ldr r0, [r4, #8]
-	bl ov07_02232A54
-	cmp r0, #0
-	bne _0225BE20
-	mov r0, #6
-	add r4, #0x83
-	add sp, #0xb0
-	strb r0, [r4]
-	pop {r3, r4, r5, pc}
-_0225BD50:
-	ldr r0, [r4]
-	bl ov12_0223B750
-	add r1, r4, #0
-	add r1, #0x81
-	ldrb r1, [r1]
-	bl sub_02017068
-	cmp r0, #1
-	bne _0225BE20
-	ldr r0, [r4, #4]
-	ldr r0, [r0, #0x20]
-	bl Pokepic_IsAnimFinished
-	cmp r0, #0
-	bne _0225BE20
-	ldr r0, [r4, #4]
-	add r0, #0x88
-	ldr r0, [r0]
-	bl ov07_02233ECC
-	ldr r0, [r4, #4]
-	mov r1, #0
-	add r0, #0x88
-	str r1, [r0]
-	ldr r0, [r4, #8]
-	bl ov07_02232AB8
-	add r0, r4, #0
-	add r0, #0x92
-	ldrb r0, [r0]
-	cmp r0, #0
-	beq _0225BDCC
-	mov r0, #5
-	bl ov07_0221BEDC
-	str r0, [r4, #0x24]
-	add r0, r4, #0
-	add r0, #0x81
-	ldrb r1, [r0]
-	mov r0, #0xb
-	add r2, sp, #0x58
-	str r0, [sp]
-	str r1, [sp, #4]
-	str r1, [sp, #8]
-	mov r1, #0
-	str r1, [sp, #0xc]
-	ldr r0, [r4]
-	mov r3, #1
-	bl BattleController_SetMoveAnimation
-	ldr r0, [r4]
-	ldr r1, [r4, #4]
-	ldr r2, [r4, #0x24]
-	add r3, sp, #0x58
-	bl ov12_02261B80
-	mov r0, #7
-	add r4, #0x83
-	add sp, #0xb0
-	strb r0, [r4]
-	pop {r3, r4, r5, pc}
-_0225BDCC:
-	mov r0, #0xff
-	add r4, #0x83
-	add sp, #0xb0
-	strb r0, [r4]
-	pop {r3, r4, r5, pc}
-_0225BDD6:
-	ldr r0, [r4, #0x24]
-	bl ov07_0221C394
-	ldr r0, [r4, #0x24]
-	bl ov07_0221C3B0
-	cmp r0, #0
-	bne _0225BE20
-	ldr r0, [r4, #0x24]
-	bl ov07_0221C3C0
-	ldr r0, [r4, #0x24]
-	bl ov07_0221BFE0
-	mov r0, #0xff
-	add r4, #0x83
-	add sp, #0xb0
-	strb r0, [r4]
-	pop {r3, r4, r5, pc}
-_0225BDFC:
-	mov r0, #0
-	bl sub_02005B58
-	add r1, r4, #0
-	add r2, r4, #0
-	add r1, #0x81
-	add r2, #0x80
-	ldrb r1, [r1]
-	ldrb r2, [r2]
-	ldr r0, [r4]
-	bl BattleController_EmitClearCommand
-	add r0, r4, #0
-	bl Heap_Free
-	add r0, r5, #0
-	bl SysTask_Destroy
-_0225BE20:
-	add sp, #0xb0
-	pop {r3, r4, r5, pc}
-	.balign 4, 0
-_0225BE24: .word ov07_022377F4 + 2
-_0225BE28: .word ov07_022377F4 + 4
-_0225BE2C: .word gBattlerEncounterX
-_0225BE30: .word ov12_0226D15A
-_0225BE34: .word 0x00000706
-	thumb_func_end ov12_0225B960
-
 	thumb_func_start ov12_0225BE38
 ov12_0225BE38: ; 0x0225BE38
 	push {r4, r5, lr}
@@ -1425,7 +238,7 @@ _0225BFE4:
 	ldr r1, [r4, #4]
 	ldr r2, [r4, #0x24]
 	add r3, sp, #0xa4
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	add r0, r4, #0
 	add r0, #0x83
 	ldrb r0, [r0]
@@ -1549,7 +362,7 @@ _0225C0B0:
 	ldr r1, [r4, #4]
 	ldr r2, [r4, #0x24]
 	add r3, sp, #0x4c
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	mov r0, #6
 	add r4, #0x83
 	add sp, #0xfc
@@ -2115,7 +928,7 @@ _0225C588:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0x180
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	mov r0, #7
 	add r4, #0x83
 	add sp, #0x1d8
@@ -2166,7 +979,7 @@ _0225C5FE:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0x128
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	add r0, r4, #0
 	add r0, #0x83
 	ldrb r0, [r0]
@@ -2210,7 +1023,7 @@ _0225C64A:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0x80
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	mov r0, #0x1a
 	ldr r1, [r4, #4]
 	mov r2, #1
@@ -2382,7 +1195,7 @@ _0225C7C2:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0x1a4
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	add r0, r4, #0
 	add r0, #0x83
 	ldrb r0, [r0]
@@ -2477,7 +1290,7 @@ _0225C87A:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0x14c
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	mov r0, #5
 	add r4, #0x83
 	add sp, #0x1fc
@@ -2528,7 +1341,7 @@ _0225C8E4:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0xf4
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	add r0, r4, #0
 	add r0, #0x83
 	ldrb r0, [r0]
@@ -2572,7 +1385,7 @@ _0225C930:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0x4c
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	mov r0, #0x1a
 	ldr r1, [r4, #4]
 	mov r2, #1
@@ -2659,7 +1472,7 @@ _0225C9F4:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0x120
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	add r0, r4, #0
 	add r0, #0x6b
 	ldrb r0, [r0]
@@ -2703,7 +1516,7 @@ _0225CA3C:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0x78
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	mov r0, #0x1a
 	ldr r1, [r4, #4]
 	mov r2, #0
@@ -2982,7 +1795,7 @@ _0225CC90:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0x110
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	add r0, r4, #0
 	add r0, #0x6b
 	ldrb r0, [r0]
@@ -3026,7 +1839,7 @@ _0225CCD8:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0x68
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	mov r0, #0x1a
 	ldr r1, [r4, #4]
 	mov r2, #0
@@ -3074,7 +1887,7 @@ _0225CD58:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0x10
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	add r0, r4, #0
 	add r0, #0x6b
 	ldrb r0, [r0]
@@ -7135,7 +5948,7 @@ _0225EE3E:
 	ldr r0, [r4]
 	add r1, r5, #0
 	add r3, sp, #0x1b8
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	ldrb r0, [r4, #0xe]
 	add sp, #0x1fc
 	add sp, #0x14
@@ -7167,7 +5980,7 @@ _0225EE7E:
 	ldr r0, [r4]
 	add r1, r5, #0
 	add r3, sp, #0x160
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	ldrb r0, [r4, #0xe]
 	add sp, #0x1fc
 	add sp, #0x14
@@ -7200,7 +6013,7 @@ _0225EEC4:
 	ldr r0, [r4]
 	add r1, r5, #0
 	add r3, sp, #0x108
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	b _0225EF6C
 _0225EF02:
 	cmp r0, #0x38
@@ -7225,7 +6038,7 @@ _0225EF02:
 	ldr r0, [r4]
 	add r1, r5, #0
 	add r3, sp, #0x108
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	b _0225EF6C
 _0225EF3A:
 	ldrb r1, [r4, #0xd]
@@ -7248,7 +6061,7 @@ _0225EF3A:
 	ldr r0, [r4]
 	add r1, r5, #0
 	add r3, sp, #0x108
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 _0225EF6C:
 	ldrb r0, [r4, #0xe]
 	add sp, #0x1fc
@@ -7376,7 +6189,7 @@ _0225F02A:
 	ldr r0, [r4]
 	add r1, r5, #0
 	add r3, sp, #0xb0
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	ldrb r0, [r4, #0xe]
 	add sp, #0x1fc
 	add sp, #0x14
@@ -8990,7 +7803,7 @@ _0225FD4C:
 	ldr r1, [r4, #4]
 	ldr r2, [r4, #0xc]
 	add r3, sp, #0x1b8
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	add sp, #0x1fc
 	mov r0, #1
 	add r4, #0x6a
@@ -9032,7 +7845,7 @@ _0225FDA6:
 	ldr r1, [r4, #4]
 	ldr r2, [r4, #0xc]
 	add r3, sp, #0x110
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	mov r0, #0x1a
 	add sp, #0x1fc
 	ldr r1, [r4, #4]
@@ -9074,7 +7887,7 @@ _0225FE30:
 	ldr r1, [r4, #4]
 	ldr r2, [r4, #0xc]
 	add r3, #0x10
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	add r0, r4, #0
 	add r0, #0x6a
 	ldrb r0, [r0]
@@ -9135,7 +7948,7 @@ _0225FE7E:
 	ldr r1, [r4, #4]
 	ldr r2, [r4, #0xc]
 	add r3, sp, #0xb8
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	add sp, #0x1fc
 	mov r0, #7
 	add r4, #0x6a
@@ -9177,7 +7990,7 @@ _0225FED8:
 	ldr r1, [r4, #4]
 	ldr r2, [r4, #0xc]
 	add r3, sp, #0x10
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	mov r0, #0x1a
 	add sp, #0x1fc
 	ldr r1, [r4, #4]
@@ -9477,7 +8290,7 @@ _0226012E:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0xbc
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	add r0, r4, #0
 	add r0, #0x66
 	ldrb r0, [r0]
@@ -9521,7 +8334,7 @@ _0226017A:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0x14
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	mov r0, #0x1a
 	ldr r1, [r4, #4]
 	mov r2, #0
@@ -9909,7 +8722,7 @@ _0226048C:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0xb8
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	add r0, r4, #0
 	add r0, #0x62
 	ldrb r0, [r0]
@@ -9953,7 +8766,7 @@ _022604E0:
 	ldr r1, [r4, #4]
 	add r2, r5, #0
 	add r3, sp, #0x10
-	bl ov12_02261B80
+	bl BattleDisplay_PlayMoveAnimation
 	mov r0, #0x1a
 	ldr r1, [r4, #4]
 	mov r2, #1
@@ -12810,8 +11623,8 @@ _02261B5A:
 	pop {r3, r4, r5, r6, r7, pc}
 	thumb_func_end BattleDisplay_NewManagedSpriteTrainer
 
-	thumb_func_start ov12_02261B80
-ov12_02261B80: ; 0x02261B80
+	thumb_func_start BattleDisplay_PlayMoveAnimation
+BattleDisplay_PlayMoveAnimation: ; 0x02261B80
 	push {r4, r5, r6, r7, lr}
 	sub sp, #0xac
 	str r0, [sp]
@@ -12949,7 +11762,7 @@ _02261BCE:
 	bl ov07_0221C01C
 	add sp, #0xac
 	pop {r4, r5, r6, r7, pc}
-	thumb_func_end ov12_02261B80
+	thumb_func_end BattleDisplay_PlayMoveAnimation
 
 	thumb_func_start BattleDisplay_PopulateBattlerContext
 BattleDisplay_PopulateBattlerContext: ; 0x02261CA8

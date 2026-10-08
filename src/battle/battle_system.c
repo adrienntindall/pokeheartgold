@@ -103,7 +103,7 @@ PokepicManager *BattleSystem_GetPokepicManager(BattleSystem *battleSystem) {
     return battleSystem->pokepicManager;
 }
 
-u32 *ov12_0223A8DC(BattleSystem *battleSystem) {
+BattleAnimSystem *ov12_0223A8DC(BattleSystem *battleSystem) {
     return battleSystem->unk8C;
 }
 
