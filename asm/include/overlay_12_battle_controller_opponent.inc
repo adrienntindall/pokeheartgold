@@ -300,9 +300,9 @@
 .public PartyGauge_DeleteAndFreeResources
 .public ov12_02258BA0
 .public ov12_0225B454
-.public ov12_0225B434
-.public ov12_0225B3D4
-.public ov12_0225B3A0
+.public BattleDisplay_PlayMusic
+.public BattleDisplay_FlyMoveHitSoundEffect
+.public BattleDisplay_RefreshSprite
 .public BattleDisplay_PrintForfeitMessage
 .public ov12_0226D120
 .public BattleDisplay_InitTaskSetupUI

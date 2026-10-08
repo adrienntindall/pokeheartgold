@@ -1,6 +1,7 @@
 #include "battle/battle_display.h"
 #include "constants/battle.h"
 #include "constants/message_tags.h"
+#include "constants/sndseq.h"
 
 extern void ov12_02260668(SysTask *, void *);
 
@@ -39,7 +40,7 @@ extern const s16 ov07_022377F4[][3];
 extern s16 gBattlerEncounterX[][2];
 
 extern void ov12_0225B7B8(SysTask *, void *);
-extern void ov12_0225B494(SysTask *, void *);
+extern void BattleDisplayTask_SetEncounter(SysTask *, void *);
 
 void BattleDisplay_InitTaskSetEncounter(BattleSystem *battleSys, OpponentData *opponentData, MonEncounterMessage *message)
 {
@@ -124,7 +125,7 @@ void BattleDisplay_InitTaskSetEncounter(BattleSystem *battleSys, OpponentData *o
     if (monEncounterData->face == 2 && (BattleSystem_GetBattleSpecial(battleSys) & 0x40)) {
         SysTask_CreateOnMainQueue(ov12_0225B7B8, monEncounterData, 0);
     } else {
-        SysTask_CreateOnMainQueue(ov12_0225B494, monEncounterData, 0);
+        SysTask_CreateOnMainQueue(BattleDisplayTask_SetEncounter, monEncounterData, 0);
     }
 
     sub_02005B58(TRUE);
@@ -1646,4 +1647,69 @@ void BattleDisplay_PrintForfeitMessage(BattleSystem *battleSys, OpponentData *op
     waitTask->msgIdx = BattleSystem_PrintBattleMessage(battleSys, msgLoader, &battleMsg, BattleSystem_GetTextFrameDelay(battleSys));
 
     SysTask_CreateOnMainQueue(ov12_022605D0, waitTask, 0);
+}
+
+void BattleDisplay_RefreshSprite(BattleSystem *battleSys, OpponentData *opponentData, MoveAnimation *animation)
+{
+    BattlerSpriteContext battlerSpriteCtx;
+
+    BattleDisplay_PopulateBattlerContext(battleSys, animation, &battlerSpriteCtx, opponentData->battlerId);
+    ov07_02234A20(&battlerSpriteCtx, HEAP_ID_BATTLE);
+    BattleController_EmitClearCommand(battleSys, opponentData->battlerId, animation->command);
+}
+
+void BattleDisplay_FlyMoveHitSoundEffect(BattleSystem *battleSys, OpponentData *opponentData, MoveHitSoundMessage *message)
+{
+    int pan;
+
+    if (opponentData->battlerType & 1) {
+        pan = 0x75;
+    } else {
+        pan = -0x75;
+    }
+
+    switch (message->effectiveness) {
+    case 0:
+        sub_0200602C(SEQ_SE_DP_KOUKA_M, pan);
+        break;
+    case 2:
+        sub_0200602C(SEQ_SE_DP_KOUKA_H, pan);
+        break;
+    case 1:
+        sub_0200602C(SEQ_SE_DP_KOUKA_L, pan);
+        break;
+    }
+
+    BattleController_EmitClearCommand(battleSys, opponentData->battlerId, message->command);
+}
+
+void BattleDisplay_PlayMusic(BattleSystem *battleSys, OpponentData *opponentData, MusicPlayMessage *message)
+{
+    PlayBGM(message->bgmID);
+    BattleController_EmitClearCommand(battleSys, opponentData->battlerId, message->command);
+}
+
+typedef struct Data_022645C8 {
+    BattleSystem *battleSystem;
+    u8 command;
+    u8 battlerId;
+    u8 unk6;
+    u8 unk7;
+    u8 unk8;
+} Data_022645C8;
+
+extern void ov12_02260D84(SysTask *, void *);
+
+void ov12_0225B454(BattleSystem *battleSys, OpponentData* opponentData, Message_022645C8* message) {
+    Data_022645C8 *data = Heap_Alloc(HEAP_ID_BATTLE, sizeof(Data_022645C8));
+    MI_CpuClear8(data, sizeof(Data_022645C8));
+
+    data->unk6 = 0;
+    data->battleSystem = battleSys;
+    data->command = message->command;
+    data->unk7 = message->unk1;
+    data->unk8 = 0;
+    data->battlerId = opponentData->battlerId;
+    
+    SysTask_CreateOnMainQueue(ov12_02260D84, data, 0);
 }

@@ -724,21 +724,21 @@ static void BattleIOCmd_PrintForfeitMessage(BattleSystem *battleSys, OpponentDat
 static void BattleIOCmd_RefreshSprite(BattleSystem *battleSys, OpponentData *opponentData) {
     MoveAnimation *moveAnim = (MoveAnimation *)&opponentData->unk94[0];
 
-    ov12_0225B3A0(battleSys, opponentData, moveAnim);
+    BattleDisplay_RefreshSprite(battleSys, opponentData, moveAnim);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_FlyMoveHitSoundEffect(BattleSystem *battleSys, OpponentData *opponentData) {
     MoveHitSoundMessage *message = (MoveHitSoundMessage *)&opponentData->unk94[0];
 
-    ov12_0225B3D4(battleSys, opponentData, message);
+    BattleDisplay_FlyMoveHitSoundEffect(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_PlayMusic(BattleSystem *battleSys, OpponentData *opponentData) {
     MusicPlayMessage *message = (MusicPlayMessage *)&opponentData->unk94[0];
 
-    ov12_0225B434(battleSys, opponentData, message);
+    BattleDisplay_PlayMusic(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 

@@ -6,136 +6,8 @@
 
 	.text
 
-	thumb_func_start ov12_0225B3A0
-ov12_0225B3A0: ; 0x0225B3A0
-	push {r4, r5, r6, lr}
-	sub sp, #0x50
-	mov r3, #0x65
-	add r4, r1, #0
-	lsl r3, r3, #2
-	add r6, r2, #0
-	ldrb r3, [r4, r3]
-	add r1, r6, #0
-	add r2, sp, #0
-	add r5, r0, #0
-	bl BattleDisplay_PopulateBattlerContext
-	add r0, sp, #0
-	mov r1, #5
-	bl ov07_02234A20
-	mov r1, #0x65
-	lsl r1, r1, #2
-	ldrb r1, [r4, r1]
-	ldrb r2, [r6]
-	add r0, r5, #0
-	bl BattleController_EmitClearCommand
-	add sp, #0x50
-	pop {r4, r5, r6, pc}
-	.balign 4, 0
-	thumb_func_end ov12_0225B3A0
-
-	thumb_func_start ov12_0225B3D4
-ov12_0225B3D4: ; 0x0225B3D4
-	push {r4, r5, r6, lr}
-	add r6, r0, #0
-	add r5, r1, #0
-	ldr r0, _0225B424 ; =0x00000195
-	mov r1, #1
-	ldrb r0, [r5, r0]
-	add r4, r2, #0
-	tst r0, r1
-	beq _0225B3EA
-	mov r1, #0x75
-	b _0225B3EC
-_0225B3EA:
-	sub r1, #0x76
-_0225B3EC:
-	ldrb r0, [r4, #1]
-	cmp r0, #0
-	beq _0225B3FC
-	cmp r0, #1
-	beq _0225B40C
-	cmp r0, #2
-	beq _0225B404
-	b _0225B412
-_0225B3FC:
-	ldr r0, _0225B428 ; =0x000006FE
-	bl sub_0200602C
-	b _0225B412
-_0225B404:
-	ldr r0, _0225B42C ; =0x000006FC
-	bl sub_0200602C
-	b _0225B412
-_0225B40C:
-	ldr r0, _0225B430 ; =0x000006FD
-	bl sub_0200602C
-_0225B412:
-	mov r1, #0x65
-	lsl r1, r1, #2
-	ldrb r1, [r5, r1]
-	ldrb r2, [r4]
-	add r0, r6, #0
-	bl BattleController_EmitClearCommand
-	pop {r4, r5, r6, pc}
-	nop
-_0225B424: .word 0x00000195
-_0225B428: .word 0x000006FE
-_0225B42C: .word 0x000006FC
-_0225B430: .word 0x000006FD
-	thumb_func_end ov12_0225B3D4
-
-	thumb_func_start ov12_0225B434
-ov12_0225B434: ; 0x0225B434
-	push {r4, r5, r6, lr}
-	add r4, r2, #0
-	add r6, r0, #0
-	ldrh r0, [r4, #2]
-	add r5, r1, #0
-	bl PlayBGM
-	mov r1, #0x65
-	lsl r1, r1, #2
-	ldrb r1, [r5, r1]
-	ldrb r2, [r4]
-	add r0, r6, #0
-	bl BattleController_EmitClearCommand
-	pop {r4, r5, r6, pc}
-	.balign 4, 0
-	thumb_func_end ov12_0225B434
-
-	thumb_func_start ov12_0225B454
-ov12_0225B454: ; 0x0225B454
-	push {r3, r4, r5, r6, r7, lr}
-	add r6, r0, #0
-	add r7, r1, #0
-	mov r0, #5
-	mov r1, #0xc
-	add r5, r2, #0
-	bl Heap_Alloc
-	mov r1, #0
-	mov r2, #0xc
-	add r4, r0, #0
-	bl MI_CpuFill8
-	mov r2, #0
-	strb r2, [r4, #6]
-	str r6, [r4]
-	ldrb r0, [r5]
-	add r1, r4, #0
-	strb r0, [r4, #4]
-	ldrb r0, [r5, #1]
-	strb r0, [r4, #7]
-	mov r0, #0x65
-	strb r2, [r4, #8]
-	lsl r0, r0, #2
-	ldrb r0, [r7, r0]
-	strb r0, [r4, #5]
-	ldr r0, _0225B490 ; =ov12_02260D84
-	bl SysTask_CreateOnMainQueue
-	pop {r3, r4, r5, r6, r7, pc}
-	.balign 4, 0
-_0225B490: .word ov12_02260D84
-	thumb_func_end ov12_0225B454
-
-	thumb_func_start ov12_0225B494
-ov12_0225B494: ; 0x0225B494
+	thumb_func_start BattleDisplayTask_SetEncounter
+BattleDisplayTask_SetEncounter: ; 0x0225B494
 	push {r4, r5, r6, lr}
 	sub sp, #0x70
 	add r4, r1, #0
@@ -526,7 +398,7 @@ _0225B798:
 _0225B7B4:
 	add sp, #0x70
 	pop {r4, r5, r6, pc}
-	thumb_func_end ov12_0225B494
+	thumb_func_end BattleDisplayTask_SetEncounter
 
 	thumb_func_start ov12_0225B7B8
 ov12_0225B7B8: ; 0x0225B7B8
