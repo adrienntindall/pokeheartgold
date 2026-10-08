@@ -483,7 +483,7 @@ typedef struct BattleHpBar {
 typedef struct UnkBallData UnkBallData;
 
 typedef struct OpponentData {
-    u32 unk0[6];
+    SysTaskFunc unk0[6];
     ManagedSprite *managedSprite;
     u32 *unk1C;
     Pokepic *pokepic;
@@ -536,7 +536,7 @@ struct BattleSystem {
     BgConfig *bgConfig;
     Window *window;
     MsgData *msgData;
-    u32 *unk10;
+    MsgData *unk10;
     MessageFormat *msgFormat;
     String *msgBuffer;
     u32 unk1C;
@@ -738,5 +738,29 @@ struct UnkBallData { // TODO: Give a better name.
     int unkD8;
     int unkDC;
 }; // Size: 0xe0
+
+typedef struct BattlePartyContext {
+    Party *party;
+    void *unused1;
+    BattleSystem *battleSys;
+    enum HeapID heapID;
+    u8 unused2;
+    u8 selectedPartyIndex;
+    u8 doubleBattleFirstSelectedPartySlot;
+    u8 unused3;
+    u8 playerPokemonPartySlot;
+    u8 partnerPokemonPartySlot;
+    u32 embargoRemainingTurns[2];
+    u16 currentDamage;
+    u16 selectedBattleBagItem;
+    u16 moveToLearn;
+    s32 battler;
+    u8 pokemonPartySlots[6];
+    u8 isCursorEnabled;
+    u8 selectedBattleBagPocket;
+    u8 selectedMoveSlot;
+    u8 battlePartyMode;
+    u8 battlePartyExited;
+} BattlePartyContext;
 
 #endif

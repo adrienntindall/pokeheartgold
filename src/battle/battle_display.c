@@ -1,5 +1,6 @@
 #include "battle/battle_display.h"
 #include "constants/battle.h"
+#include "constants/message_tags.h"
 
 extern void ov12_02260668(SysTask *, void *);
 
@@ -579,4 +580,348 @@ void BattleDisplay_InitTaskSlideTrainerIn(BattleSystem *battleSys, OpponentData 
     slideTrainerInData->battler = opponentData->battlerId;
 
     SysTask_CreateOnMainQueue(ov12_0225D990, slideTrainerInData, 0);
+}
+
+extern void ov12_0225DA18(SysTask *, void *);
+
+void BattleDisplay_InitTaskSlideHealthBoxIn(BattleSystem *battleSys, OpponentData *opponentData, HealthBoxData *healthboxData)
+{
+    BattleHpBar *hpBar = &opponentData->hpBar;
+    MI_CpuClearFast(&hpBar->script, sizeof(u8));
+
+    hpBar->battleSystem = battleSys;
+    hpBar->battlerId = opponentData->battlerId;
+    hpBar->type = BattleHpBar_Util_GetBarTypeFromBattlerSide(opponentData->battlerType, BattleSystem_GetBattleType(battleSys));
+    hpBar->unk4C = healthboxData->command;
+    hpBar->hp = healthboxData->curHP;
+    hpBar->maxHp = healthboxData->maxHP;
+    hpBar->level = healthboxData->level;
+    hpBar->unk49 = healthboxData->gender;
+    hpBar->gainedHp = 0;
+    hpBar->exp = healthboxData->expFromLastLevel;
+    hpBar->maxExp = healthboxData->expToNextLevel;
+    hpBar->monId = healthboxData->selectedPartySlot;
+    hpBar->unk_4A = healthboxData->status;
+    hpBar->unk4B = healthboxData->speciesCaught;
+    hpBar->unk4D = healthboxData->delay;
+    hpBar->unk27 = healthboxData->numSafariBalls;
+
+    BattleHpBar_SetEnabled(hpBar, FALSE);
+    ov12_0226498C(hpBar, hpBar->hp, -1);
+
+    hpBar->unk10 = SysTask_CreateOnMainQueue(ov12_0225DA18, hpBar, 1000);
+}
+
+extern void ov12_0225DA8C(SysTask *, void *);
+
+void BattleDisplay_InitTaskSlideHealthBoxOut(BattleSystem *battleSys, OpponentData *opponentData)
+{
+    BattleHpBar *hpBar = &opponentData->hpBar;
+    MI_CpuClearFast(&hpBar->script, sizeof(u8));
+
+    hpBar->battleSystem = battleSys;
+    hpBar->battlerId = opponentData->battlerId;
+    hpBar->unk4C = opponentData->unk94[0];
+
+    ov12_02264FB0(hpBar, 1);
+
+    hpBar->unk10 = SysTask_CreateOnMainQueue(ov12_0225DA8C, hpBar, 1000);
+}
+
+
+typedef struct CommandSetData {
+    BattleSystem *battleSys;
+    void *hpBar;
+    u8 command;
+    u8 battler;
+    u8 state;
+    s8 unused_0B;
+    int input;
+    u8 ballStatus[2][6];
+    u8 expPercents[6];
+    u8 unused_22;
+    u8 partySlot;
+    u16 moves[4];
+    u8 curPP[4];
+    u8 maxPP[4];
+    u8 battlerType;
+    u8 msgIdx;
+    s16 curHP;
+    u16 maxHP;
+    u8 ballStatusBattler;
+    u8 switchingOrCanPickCommandMask;
+} CommandSetData;
+
+void BattleDisplay_InitTaskSetCommandSelection(BattleSystem *battleSys, OpponentData *opponentData, CommandSetMessage *message)
+{
+    CommandSetData *commandSetData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(CommandSetData));
+    int i;
+    MI_CpuClearFast(commandSetData, sizeof(CommandSetData));
+
+    commandSetData->state = 0;
+    commandSetData->unused_0B = 0;
+    commandSetData->battleSys = battleSys;
+    commandSetData->command = message->command;
+    commandSetData->battler = opponentData->battlerId;
+    commandSetData->battlerType = opponentData->battlerType;
+    commandSetData->hpBar = &opponentData->hpBar;
+    commandSetData->partySlot = message->partySlot;
+    commandSetData->curHP = message->curHP;
+    commandSetData->maxHP = message->maxHP;
+    commandSetData->ballStatusBattler = message->ballStatusBattler;
+    commandSetData->switchingOrCanPickCommandMask = message->switchingOrCanPickCommandMask;
+
+    for (i = 0; i < 2; i++) {
+        for (int j = 0; j < 6; j++) {
+            commandSetData->ballStatus[i][j] = message->ballStatus[i][j];
+        }
+    }
+
+    for (i = 0; i < 6; i++) {
+        if (message->ballStatus[0][i] == 2) {
+            commandSetData->expPercents[i] = 0;
+        } else {
+            commandSetData->expPercents[i] = message->expPercents[i];
+        }
+    }
+
+    for (int battler = 0; battler < 4; battler++) {
+        commandSetData->moves[battler] = message->moves[battler];
+        commandSetData->curPP[battler] = message->curPP[battler];
+        commandSetData->maxPP[battler] = message->maxPP[battler];
+    }
+
+    SysTask_CreateOnMainQueue(opponentData->unk0[0], commandSetData, 0);
+}
+
+typedef struct MoveSelectMenuData {
+    BattleSystem *battleSys;
+    void *hpBar;
+    int input;
+    u16 moves[4];
+    u8 ppCur[4];
+    u8 ppMax[4];
+    u8 command;
+    u8 battler;
+    u8 battlerType;
+    u8 partySlot;
+    u8 state;
+    u8 unused;
+    u16 invalidMoves;
+} MoveSelectMenuData;
+
+void BattleDisplay_InitTaskShowMoveSelectMenu(BattleSystem *battleSys, OpponentData *opponentData, MoveSelectMenuMessage *message)
+{
+    MoveSelectMenuData *moveSelectMenuData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(MoveSelectMenuData));
+
+    moveSelectMenuData->state = 0;
+    moveSelectMenuData->battleSys = battleSys;
+    moveSelectMenuData->command = opponentData->unk94[0];
+    moveSelectMenuData->battler = opponentData->battlerId;
+    moveSelectMenuData->battlerType = opponentData->battlerType;
+    moveSelectMenuData->hpBar = &opponentData->hpBar;
+    moveSelectMenuData->partySlot = message->partySlot;
+
+    for (int i = 0; i < 4; i++) {
+        moveSelectMenuData->moves[i] = message->moves[i];
+        moveSelectMenuData->ppCur[i] = message->ppCur[i];
+        moveSelectMenuData->ppMax[i] = message->ppMax[i];
+    }
+
+    moveSelectMenuData->invalidMoves = message->invalidMoves;
+
+    SysTask_CreateOnMainQueue(opponentData->unk0[1], moveSelectMenuData, 0);
+}
+
+typedef struct TargetSelectMenuData {
+    BattleSystem *battleSys;
+    void *hpBar;
+    int input;
+    u8 command;
+    u8 battler;
+    u8 battlerType;
+    u8 state;
+    TargetPokemon targetMon[4];
+    u16 range;
+    u8 shouldHidePanel;
+    u8 unused;
+} TargetSelectMenuData;
+
+void BattleDisplay_InitTaskShowTargetSelectMenu(BattleSystem *battleSys, OpponentData *opponentData, TargetSelectMenuMessage *message)
+{
+    TargetSelectMenuData *targetSelectMenuData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(TargetSelectMenuData));
+    int maxBattlers;
+    u32 battleType;
+    u8 battlerTypes[6];
+
+    targetSelectMenuData->state = 0;
+    targetSelectMenuData->battleSys = battleSys;
+    targetSelectMenuData->command = opponentData->unk94[0];
+    targetSelectMenuData->battler = opponentData->battlerId;
+    targetSelectMenuData->battlerType = opponentData->battlerType;
+    targetSelectMenuData->range = message->range;
+    targetSelectMenuData->hpBar = &opponentData->hpBar;
+    targetSelectMenuData->shouldHidePanel = message->shouldHidePanel;
+
+    ov12_0223C1C4(battleSys, &battlerTypes[0]);
+
+    maxBattlers = BattleSystem_GetMaxBattlers(battleSys);
+    battleType = BattleSystem_GetBattleType(battleSys);
+
+    for (int i = 0; i < maxBattlers; i++) {
+        targetSelectMenuData->targetMon[i] = message->targetMon[i];
+    }
+
+    SysTask_CreateOnMainQueue(opponentData->unk0[2], targetSelectMenuData, 0);
+}
+
+typedef struct PartyMenuData {
+    BattleSystem *battleSys;
+    BattlePartyContext *battlePartyCtx;
+    u8 command;
+    u8 battler;
+    u8 state;
+    u8 listMode;
+    u8 partySlots[4];
+    int canSwitch;
+    u16 selectedBattleBagItem;
+    u8 doublesSelection;
+    u8 isCursorEnabled;
+    u8 battlersSwitchingMask;
+    u8 unused[3];
+    u8 partyOrder[4][6];
+} PartyMenuData;
+
+typedef struct BagMenuData {
+    BattleSystem *battleSys;
+    void *battleBagCtx;
+    PartyMenuData *partyMenuData;
+    u8 command;
+    u8 battler;
+    u8 state;
+    u8 battlerType;
+    u8 isCursorEnabled;
+    u8 msgIdx;
+    u16 stateAfterDelay;
+    u8 hasTwoOpponents;
+    u8 semiInvulnerable;
+    u8 substitute;
+    u8 delay;
+    u8 partyOrder[4][6];
+    u8 embargoTurns[4];
+} BagMenuData;
+
+void BattleDisplay_InitTaskShowBagMenu(BattleSystem *battleSys, OpponentData *opponentData, BagMenuMessage *message)
+{
+    BagMenuData *bagMenuData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(BagMenuData));
+
+    bagMenuData->partyMenuData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(PartyMenuData));
+    bagMenuData->partyMenuData->battlePartyCtx = Heap_Alloc(HEAP_ID_BATTLE, sizeof(BattlePartyContext));
+    bagMenuData->partyMenuData->battlePartyCtx->party = SaveArray_Party_Alloc(HEAP_ID_BATTLE);
+    bagMenuData->state = 0;
+    bagMenuData->battleSys = battleSys;
+    bagMenuData->command = message->command;
+    bagMenuData->battler = opponentData->battlerId;
+    bagMenuData->battlerType = opponentData->battlerType;
+    bagMenuData->hasTwoOpponents = message->hasTwoOpponents;
+    bagMenuData->semiInvulnerable = message->semiInvulnerable;
+    bagMenuData->substitute = message->substitute;
+
+    for (int i = 0; i < 4; i++) {
+        bagMenuData->partyMenuData->partySlots[i] = message->partySlots[i];
+
+        for (int j = 0; j < 6; j++) {
+            bagMenuData->partyOrder[i][j] = message->partyOrder[i][j];
+        }
+
+        bagMenuData->embargoTurns[i] = message->embargoTurns[i];
+    }
+
+    SysTask_CreateOnMainQueue(opponentData->unk0[3], bagMenuData, 0);
+}
+
+void BattleDisplay_InitTaskShowPartyMenu(BattleSystem *battleSys, OpponentData *opponentData, PartyMenuMessage *message)
+{
+    PartyMenuData *partyMenuData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(PartyMenuData));
+
+    partyMenuData->state = 0;
+    partyMenuData->battleSys = battleSys;
+    partyMenuData->command = message->command;
+    partyMenuData->battler = message->battler;
+    partyMenuData->listMode = message->listMode;
+    partyMenuData->canSwitch = message->canSwitch;
+    partyMenuData->doublesSelection = message->doublesSelection;
+    partyMenuData->selectedBattleBagItem = 0;
+    partyMenuData->battlersSwitchingMask = message->battlersSwitchingMask;
+
+    for (int i = 0; i < 4; i++) {
+        partyMenuData->partySlots[i] = message->selectedPartySlot[i];
+
+        for (int j = 0; j < 6; j++) {
+            partyMenuData->partyOrder[i][j] = message->partyOrder[i][j];
+        }
+    }
+
+    SysTask_CreateOnMainQueue(opponentData->unk0[4], partyMenuData, 0);
+}
+
+typedef struct YesNoMenuData {
+    BattleSystem *battleSys;
+    void *hpBar;
+    int input;
+    u8 command;
+    u8 battler;
+    u8 state;
+    u8 yesNoType;
+    int promptMsg;
+    int nickname;
+    u16 move;
+    u16 msgIdx;
+} YesNoMenuData;
+
+void BattleDisplay_InitTaskShowYesNoMenu(BattleSystem *battleSys, OpponentData *opponentData, YesNoMenuMessage *message)
+{
+    YesNoMenuData *yesNoMenuData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(YesNoMenuData));
+
+    yesNoMenuData->state = 0;
+    yesNoMenuData->battleSys = battleSys;
+    yesNoMenuData->command = message->command;
+    yesNoMenuData->battler = opponentData->battlerId;
+    yesNoMenuData->hpBar = &opponentData->hpBar;
+    yesNoMenuData->promptMsg = message->promptMsg;
+    yesNoMenuData->yesNoType = message->yesNoType;
+    yesNoMenuData->move = message->move;
+    yesNoMenuData->nickname = message->nickname;
+
+    SysTask_CreateOnMainQueue(opponentData->unk0[5], yesNoMenuData, 0);
+}
+
+typedef struct BattleMessageWaitTask {
+    BattleSystem *battleSys;
+    u8 command;
+    u8 battler;
+    u8 msgIdx;
+} BattleMessageWaitTask;
+
+extern void ov12_022605D0(SysTask *, void *);
+
+void BattleDisplay_PrintAttackMessage(BattleSystem *battleSys, OpponentData *opponentData, AttackMsgMessage *message)
+{
+    BattleMessageWaitTask *waitTask;
+    MsgData *msgLoader = ov12_0223A934(battleSys);
+    BattleMessage battleMsg;
+
+    waitTask = (BattleMessageWaitTask *)Heap_Alloc(HEAP_ID_BATTLE, sizeof(BattleMessageWaitTask));
+
+    waitTask->battleSys = battleSys;
+    waitTask->command = message->command;
+    waitTask->battler = opponentData->battlerId;
+
+    battleMsg.id = message->move * 3;
+    battleMsg.tag = TAG_NICKNAME;
+    battleMsg.param[0] = opponentData->battlerId | (message->partySlot << 8);
+
+    waitTask->msgIdx = BattleSystem_PrintBattleMessage(battleSys, msgLoader, &battleMsg, BattleSystem_GetTextFrameDelay(battleSys));
+
+    SysTask_CreateOnMainQueue(ov12_022605D0, waitTask, 0);
 }

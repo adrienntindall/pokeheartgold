@@ -254,12 +254,12 @@ static void BattleIOCmd_SlideTrainerIn(BattleSystem *battleSys, OpponentData *op
 static void BattleIOCmd_SlideHealthBoxIn(BattleSystem *battleSys, OpponentData *opponentData) {
     HealthBoxData *healthboxData = (HealthBoxData *)&opponentData->unk94[0];
 
-    ov12_0225A414(battleSys, opponentData, healthboxData);
+    BattleDisplay_InitTaskSlideHealthBoxIn(battleSys, opponentData, healthboxData);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_SlideHealthBoxOut(BattleSystem *battleSys, OpponentData *opponentData) {
-    ov12_0225A4DC(battleSys, opponentData);
+    BattleDisplay_InitTaskSlideHealthBoxOut(battleSys, opponentData);
     ov12_02259928(opponentData);
 }
 
@@ -267,49 +267,49 @@ static void BattleIOCmd_SetCommandSelection(BattleSystem *battleSys, OpponentDat
     CommandSetMessage *message = (CommandSetMessage *)&opponentData->unk94[0];
 
     ov12_0223BB6C(battleSys, message->switchingOrCanPickCommandMask);
-    ov12_0225A524(battleSys, opponentData, message);
+    BattleDisplay_InitTaskSetCommandSelection(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_ShowMoveSelectMenu(BattleSystem *battleSys, OpponentData *opponentData) {
     MoveSelectMenuMessage *message = (MoveSelectMenuMessage *)&opponentData->unk94[0];
 
-    ov12_0225A604(battleSys, opponentData, message);
+    BattleDisplay_InitTaskShowMoveSelectMenu(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_ShowTargetSelectMenu(BattleSystem *battleSys, OpponentData *opponentData) {
     TargetSelectMenuMessage *message = (TargetSelectMenuMessage *)&opponentData->unk94[0];
 
-    ov12_0225A674(battleSys, opponentData, message);
+    BattleDisplay_InitTaskShowTargetSelectMenu(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_ShowBagMenu(BattleSystem *battleSys, OpponentData *opponentData) {
     BagMenuMessage *message = (BagMenuMessage *)&opponentData->unk94[0];
 
-    ov12_0225A700(battleSys, opponentData, message);
+    BattleDisplay_InitTaskShowBagMenu(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_ShowPartyMenu(BattleSystem *battleSys, OpponentData *opponentData) {
     PartyMenuMessage *message = (PartyMenuMessage *)&opponentData->unk94[0];
 
-    ov12_0225A7AC(battleSys, opponentData, message);
+    BattleDisplay_InitTaskShowPartyMenu(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_ShowYesNoMenu(BattleSystem *battleSys, OpponentData *opponentData) {
     YesNoMenuMessage *message = (YesNoMenuMessage *)&opponentData->unk94[0];
 
-    ov12_0225A818(battleSys, opponentData, message);
+    BattleDisplay_InitTaskShowYesNoMenu(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 
 static void BattleIOCmd_PrintAttackMessage(BattleSystem *battleSys, OpponentData *opponentData) {
     AttackMsgMessage *message = (AttackMsgMessage *)&opponentData->unk94[0];
 
-    ov12_0225A85C(battleSys, opponentData, message);
+    BattleDisplay_PrintAttackMessage(battleSys, opponentData, message);
     ov12_02259928(opponentData);
 }
 

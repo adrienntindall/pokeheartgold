@@ -143,7 +143,7 @@ MsgData *BattleSystem_GetMessageLoader(BattleSystem *battleSystem) {
     return battleSystem->msgData;
 }
 
-u32 *ov12_0223A934(BattleSystem *battleSystem) {
+MsgData *ov12_0223A934(BattleSystem *battleSystem) {
     return battleSystem->unk10;
 }
 

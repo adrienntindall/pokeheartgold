@@ -28,7 +28,7 @@ void ov12_0223A914(BattleSystem *battleSystem, int index, u32 *a2);
 BattleNumberPrinter *BattleSystem_GetHpNumPrinter(BattleSystem *battleSystem);
 BattleNumberPrinter *BattleSystem_GetLevelNumPrinter(BattleSystem *battleSystem);
 MsgData *BattleSystem_GetMessageLoader(BattleSystem *battleSystem);
-u32 *ov12_0223A934(BattleSystem *battleSystem);
+MsgData *ov12_0223A934(BattleSystem *battleSystem);
 PaletteData *BattleSystem_GetPaletteData(BattleSystem *battleSystem);
 Pokedex *BattleSystem_GetPokedex(BattleSystem *battleSystem);
 u8 *BattleSystem_GetServerMessage(BattleSystem *battleSystem);
