@@ -304,7 +304,7 @@
 .public BattleDisplay_FlyMoveHitSoundEffect
 .public BattleDisplay_RefreshSprite
 .public BattleDisplay_PrintForfeitMessage
-.public ov12_0226D120
+.public sBallThrowTypes
 .public BattleDisplay_InitTaskSetupUI
 .public BattleDisplay_InitTaskSetEncounter
 .public BattleDisplay_InitTaskShowEncounter
